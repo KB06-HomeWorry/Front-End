@@ -25,7 +25,7 @@ import Footer from './components/layout/Footer.vue';
 }
 
 .main-content {
-  padding-top: 70px;
+  padding-top: 60px;
   flex: 1;
   padding-bottom: 70px;
 }
