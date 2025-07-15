@@ -8,29 +8,63 @@
         class="tab-item"
         active-class="active"
       >
-        <template v-if="tab.icon">
-          <img :src="tab.icon" :alt="tab.label" class="tab-icon" />
-        </template>
-        <template v-else>
-          <div class="icon-placeholder" />
-        </template>
-
+        <img
+          :src="route.path === tab.to ? tab.iconDark : tab.iconLight"
+          :alt="tab.label"
+          class="tab-icon"
+        />
         <span class="tab-label">{{ tab.label }}</span>
       </RouterLink>
+
     </nav>
   </footer>
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router';
+import { useRoute } from 'vue-router';
+import homeLight from '@/assets/icons/nav_home_light.png';
+import homeDark from '@/assets/icons/nav_home_dark.png';
+import mapLight from '@/assets/icons/nav_map_light.png';
+import mapDark from '@/assets/icons/nav_map_dark.png';
+import analysisLight from '@/assets/icons/nav_analysis_light.png';
+import analysisDark from '@/assets/icons/nav_analysis_dark.png';
+import myLight from '@/assets/icons/nav_my_light.png';
+import myDark from '@/assets/icons/nav_my_dark.png';
+
+const route = useRoute();
 
 const tabs = [
-  { name: 'home', label: '홈', icon: null, to: '/' },
-  { name: 'map', label: '지도', icon: null, to: '/map' },
-  { name: 'analysis', label: '분석', icon: null, to: '/analysis' },
-  { name: 'my', label: 'MY', icon: null, to: '/my' },
+  {
+    name: 'home',
+    label: '홈',
+    iconLight: homeLight,
+    iconDark: homeDark,
+    to: '/',
+  },
+  {
+    name: 'map',
+    label: '지도',
+    iconLight: mapLight,
+    iconDark: mapDark,
+    to: '/map',
+  },
+  {
+    name: 'analysis',
+    label: '분석',
+    iconLight: analysisLight,
+    iconDark: analysisDark,
+    to: '/analysis',
+  },
+  {
+    name: 'my',
+    label: '마이페이지',
+    iconLight: myLight,
+    iconDark: myDark,
+    to: '/my',
+  },
 ];
 </script>
+
 
 <style scoped>
 .footer {
@@ -41,7 +75,6 @@ const tabs = [
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--color-white);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
 }
 
@@ -58,36 +91,20 @@ const tabs = [
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--color-black);
+  color: var(--color-mediumgray);
   text-decoration: none;
   font-size: 0.75rem;
   font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .tab-icon {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
-}
-
-.icon-placeholder {
-  width: 24px;
-  height: 24px;
-  margin-bottom: 4px;
-  background-color: var(--color-light, #e0e0e0);
-  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  margin-bottom: 3px;
 }
 
 .tab-item.active {
   color: var(--color-primary);
 }
 
-.tab-item.active .tab-icon {
-  filter: brightness(0) saturate(100%) invert(18%) sepia(83%) saturate(5182%)
-    hue-rotate(224deg) brightness(94%) contrast(101%);
-}
-
-.tab-item.active .icon-placeholder {
-  background-color: var(--color-primary);
-}
 </style>
