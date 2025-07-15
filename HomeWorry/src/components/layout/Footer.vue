@@ -24,16 +24,9 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 
-// import iconHome from '@/assets/icon-home.svg';
-// import iconChecklist from '@/assets/icon-checklist.svg';
-// import iconRisk from '@/assets/icon-risk.svg';
-// import iconContract from '@/assets/icon-contract.svg';
-// import iconMy from '@/assets/icon-my.svg';
-
 const tabs = [
-  { name: 'map', label: '지도', icon: null, to: '/map' },
-  { name: 'agency', label: '중개사', icon: null, to: '/agency' },
   { name: 'home', label: '홈', icon: null, to: '/' },
+  { name: 'map', label: '지도', icon: null, to: '/map' },
   { name: 'analysis', label: '분석', icon: null, to: '/analysis' },
   { name: 'my', label: 'MY', icon: null, to: '/my' },
 ];

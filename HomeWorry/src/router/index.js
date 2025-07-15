@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '@/pages/HomeView.vue';
-import NotFoundPage from '@/pages/NotFoundPage.vue';
+import HomePage from '../pages/HomePage.vue';
+import mapRoutes from './map';
+import analysisRoutes from './analysis';
+import myRoutes from './my';
+import notfoundRoutes from './notfound';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,13 +11,12 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: HomePage,
     },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'notfound',
-      component: NotFoundPage,
-    },
+    ...mapRoutes,
+    ...analysisRoutes,
+    ...myRoutes,
+    ...notfoundRoutes,
   ],
 });
 
