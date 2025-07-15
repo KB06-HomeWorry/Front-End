@@ -1,0 +1,25 @@
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  outline: inherit;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+li {
+  list-style: none;
+}
+input:focus {
+  outline: none;
+}
