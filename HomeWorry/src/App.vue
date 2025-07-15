@@ -1,14 +1,18 @@
 <template>
   <div class="app-wrapper">
-    <header><Header /></header>
-    <RouterView />
-    <footer><Footer /></footer>
+    <Header />
+    <main class="main-content">
+      <RouterView />
+    </main>
+    <Footer />
   </div>
 </template>
+
 <script setup>
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
 </script>
+
 <style scoped>
 .app-wrapper {
   max-width: 390px;
@@ -18,5 +22,11 @@ import Footer from './components/layout/Footer.vue';
   background-color: #fff;
   display: flex;
   flex-direction: column;
+}
+
+.main-content {
+  padding-top: 70px;
+  flex: 1;
+  padding-bottom: 70px;
 }
 </style>
