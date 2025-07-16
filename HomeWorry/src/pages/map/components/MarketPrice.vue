@@ -1,10 +1,10 @@
 <template>
   <div class="price-box">
-    <div class="top-section">
+    <div class="top-section bodyMedium12px">
       <span class="top-text">{{ location }}</span>
     </div>
     <div class="divider"></div>
-    <div class="bottom-section">
+    <div class="bottom-section titleBold16px">
       <span class="bottom-text">{{ price }}</span>
     </div>
   </div>
@@ -37,6 +37,7 @@ defineEmits(['click']);
   display: flex;
   align-items: center;
   justify-content: center;
+    padding-top: 3px;       
 }
 
 .bottom-section {
@@ -45,7 +46,7 @@ defineEmits(['click']);
   display: flex;
   align-items: flex-start;  
   justify-content: center;
-  padding-top: 2px;       
+  padding-top: 6px;       
 }
 
 .divider {
@@ -56,12 +57,10 @@ defineEmits(['click']);
 }
 
 .top-text {
-  font-size: 12px;
   color: #fff;
 }
 
 .bottom-text {
-  font-size: 16px;
   color: #111F5C;
 }
 </style>
