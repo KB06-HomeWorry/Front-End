@@ -38,10 +38,9 @@ const isWhiteBg = computed(() => {
   height: 35px;
   text-align: center;
   padding: 0;
-  line-height: 35px;
   border: none;
   color: var(--color-white);
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition);
 }
 
 .white-bg {
