@@ -33,8 +33,8 @@ defineEmits(['click']);
   padding: 0;
   line-height: 73px;
   background-color: #ffffff;
-  border: 1px solid var(--color-primary);
-  color: var(--color-black);
+  border: 1px solid var(--color-lightgray);
+  color: var(--color-primary);
   transition: all 0.2s ease-in-out;
 }
 
@@ -61,6 +61,6 @@ defineEmits(['click']);
 }
 
 .btn-lgshort-wrapper:hover {
-  border-color: var(--color-secondary);
+  border-color: var(--color-primary);
 }
 </style>
