@@ -27,15 +27,15 @@ defineEmits(['click']);
 <style scoped>
 .btn-lg-wrapper {
   border-radius: 12px;
-  width: 359px;
-  height: 73px;
+  width: 360px;
+  height: 74px;
   text-align: center;
   padding: 0;
   line-height: 73px;
   background-color: #ffffff;
-  border: 1px solid var(--color-primary);
-  color: var(--color-black);
-  transition: all 0.2s ease-in-out;
+  border: 1px solid var(--color-lightgray);
+  color: var(--color-primary);
+  transition: all 0.1s ease-in-out;
 }
 
 .btn-content {
@@ -50,15 +50,19 @@ defineEmits(['click']);
   height: 100%;
   display: flex;
   align-items: center;
+  padding-top: 1px;    /* 텍스트가 중앙에 맞지 않아서 강제로 부여함 */
 }
 
 .btn-icon {
   width: 40px;
   height: 40px;
   flex-shrink: 0;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25))
+
 }
 
 .btn-lg-wrapper:hover {
-  border-color: var(--color-secondary);
+  border : 1.5px solid var(--color-primary);
+  /* border-color: var(--color-primary); */
 }
 </style>
