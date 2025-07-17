@@ -5,7 +5,7 @@
         v-for="tab in tabs"
         :key="tab.name"
         :to="tab.to"
-        class="tab-item"
+        class="tab-item bodyLight12px"
         active-class="active"
       >
         <img
@@ -71,7 +71,7 @@ const tabs = [
   position: fixed;
   bottom: 0;
   width: 100%;
-  max-width: 390px;
+  max-width: 393px;
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--color-white);
@@ -82,25 +82,24 @@ const tabs = [
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 64px;
+  height: 70px;
   border-top: 1px solid var(--color-light);
 }
 
 .tab-item {
+  flex:1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: var(--color-mediumgray);
   text-decoration: none;
-  font-size: 0.75rem;
-  font-family: 'GmarketSansMedium', sans-serif;
 }
 
 .tab-icon {
-  width: 26px;
-  height: 26px;
-  margin-bottom: 3px;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 5px;
 }
 
 .tab-item.active {
