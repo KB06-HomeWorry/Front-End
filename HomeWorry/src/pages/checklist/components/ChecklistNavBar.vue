@@ -12,7 +12,7 @@
       >
         {{ index + 1 }}
       </button>
-      <div class="label bodyMedium12px">{{ step }}</div>
+      <div class="label bodyMedium10px">{{ step }}</div>
       <div
         v-if="index !== steps.length - 1"
         class="line"
@@ -30,18 +30,47 @@ const props = defineProps({
   },
 });
 
+import { useChecklistStore } from '@/stores/checklist';
+import { ref, onMounted } from 'vue';
+import { watch } from 'vue';
+
 const emit = defineEmits(['update:currentStep']);
 
-const steps = ['계약 전', '중도금 납부', '잔금 및 입주', '입주 후'];
+const checklistStore = useChecklistStore();
+const salesSteps = ['계약 전', '중도금 납부', '잔금 및 소유권 이전', '입주 후'];
+const rentSteps = ['계약 전', '중도금 납부', '잔금 및 입주', '입주 후'];
+const steps = ref([]);
 
 let selectedStage = '';
+
+onMounted(() => {
+  checkType();
+});
+
+function checkType() {
+  if (checklistStore.checklistData.type === '매매') {
+    steps.value = salesSteps;
+  } else if (checklistStore.checklistData.type === '전/월세') {
+    steps.value = rentSteps;
+  } else {
+    console.error('Unknown checklist type:', checklistStore.checklistData.type);
+  }
+}
 
 function handleStepClick(stepNumber, stepName) {
   emit('update:currentStep', stepNumber);
 
   selectedStage = stepName;
+  checklistStore.checklistData.stage = stepName;
   console.log('선택된 stage:', selectedStage);
 }
+
+watch(
+  () => [checklistStore.checklistData.type],
+  () => {
+    window.location.reload();
+  }
+);
 </script>
 
 <style scoped>
@@ -98,5 +127,9 @@ function handleStepClick(stepNumber, stepName) {
 
 .line.completed {
   background-color: var(--color-secondarylight);
+}
+
+.label {
+  padding-top: 4px;
 }
 </style>

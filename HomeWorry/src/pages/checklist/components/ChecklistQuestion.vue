@@ -1,7 +1,6 @@
 <template>
   <div>
     문제
-
     <ul>
       <li
         v-for="item in checklist"
@@ -9,8 +8,15 @@
         style="margin-bottom: 16px"
       >
         <div id="checklist-content">
-          <div id="checklist-order">
-            <strong>{{ item.orderNum }}</strong>
+          <div id="checklist-box">
+            <input
+              type="checkbox"
+              v-model="item.checked"
+              :id="'checklist-' + item.checklistId"
+            />
+            <label :for="'checklist-' + item.checklistId">
+              {{ item.title }}
+            </label>
           </div>
           <div id="checklist-question">{{ item.content }}</div>
         </div>
@@ -22,10 +28,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { watch } from "vue";
-import axios from "axios";
-import { useChecklistStore } from "@/stores/checklist";
+import { ref, onMounted, watch } from 'vue';
+import axios from 'axios';
+import { useChecklistStore } from '@/stores/checklist';
 const checklistStore = useChecklistStore();
 
 const checklist = ref([]);
@@ -33,27 +38,24 @@ const checklist = ref([]);
 const loadChecklist = async () => {
   const type = checklistStore.checklistData.type;
   const stage = checklistStore.checklistData.stage;
-  console.log("Loading checklist for type:", type, "and stage:", stage);
+  const user_id = checklistStore.checklistData.userId;
+  console.log('type:', type, 'stage:', stage, 'userId:', user_id);
 
   const { data } = await axios.get(`http://localhost:8080/checklist`, {
-    params: { type, stage },
+    params: { type, stage, user_id },
   });
 
-  //   const params = new URLSearchParams({
-  //     type: encodeURIComponent(type),
-  //     stage: encodeURIComponent(stage),
-  //   });
-
-  //   const { data } = await axios.get(`/api/checklist?${params.toString()}`);
-  console.log("Checklist data:", data);
+  console.log('Checklist data:', data);
+  console.log('Checklist data:', data.checklist);
 
   // 데이터가 유효한지 확인
-  if (!data || !Array.isArray(data)) {
-    console.error("Invalid checklist data:", data);
+  if (!data || !Array.isArray(data.checklist)) {
+    console.error('Invalid checklist data:', data);
     return;
   }
 
-  checklist.value = data;
+  checklist.value = data.checklist;
+  console.log('Checklist loaded:', checklist.value);
 };
 
 onMounted(loadChecklist);
