@@ -31,20 +31,20 @@ const checklistStore = useChecklistStore();
 const checklist = ref([]);
 
 const loadChecklist = async () => {
-  //   const type = checklistStore.checklistData.value.type;
-  //   const stage = checklistStore.checklistData.value.stage;
-  const type = "매매";
-  const stage = "계약 전";
+  const type = checklistStore.checklistData.type;
+  const stage = checklistStore.checklistData.stage;
+  console.log("Loading checklist for type:", type, "and stage:", stage);
 
-  //   console.log("checklistStore:", checklistStore);
-  //   console.log("checklistData:", checklistStore.checklistData);
-  //   console.log("checklistData.value:", checklistStore.checklistData?.value);
-  //   console.log("Loading checklist for type:", type, "and stage:", stage);
-
-  const { data } = await axios.get("/api/checklist", {
+  const { data } = await axios.get(`http://localhost:8080/checklist`, {
     params: { type, stage },
   });
 
+  //   const params = new URLSearchParams({
+  //     type: encodeURIComponent(type),
+  //     stage: encodeURIComponent(stage),
+  //   });
+
+  //   const { data } = await axios.get(`/api/checklist?${params.toString()}`);
   console.log("Checklist data:", data);
 
   // 데이터가 유효한지 확인
@@ -59,12 +59,9 @@ const loadChecklist = async () => {
 onMounted(loadChecklist);
 
 //type, stage가 바뀌면 다시 불러오기
-// watch(
-//   () => [
-//     checklistStore.checklistData.value.type,
-//     checklistStore.checklistData.value.stage,
-//   ],
-//   loadChecklist
-// );
+watch(
+  () => [checklistStore.checklistData.type, checklistStore.checklistData.stage],
+  loadChecklist
+);
 </script>
 <style scoped></style>
