@@ -50,16 +50,19 @@ defineEmits(['click']);
   height: 100%;
   display: flex;
   align-items: center;
+  padding-top: 1px;    /* 텍스트가 중앙에 맞지 않아서 강제로 부여함 */
 }
 
 .btn-icon {
   width: 40px;
   height: 40px;
   flex-shrink: 0;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25))
+
 }
 
 .btn-lg-wrapper:hover {
-  outline: 1.5px solid var(--color-primary);
+  border : 1.5px solid var(--color-primary);
   /* border-color: var(--color-primary); */
 }
 </style>

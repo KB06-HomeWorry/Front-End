@@ -10,21 +10,22 @@
         text="오피스텔"
         icon="/src/assets/icons/home_officetel.png"
         @click="handleCategoryClick('오피스텔')"
+
       />
     </div>
     <div class="right-column">
       <BtnLgShort
-        text="원.투룸"
+        text="원·투룸"
         icon="/src/assets/icons/home_oneroom.png"
         @click="handleCategoryClick('원.투룸')"
       />
       <BtnLgShort
-        text="빌라.주택"
+        text="빌라·주택"
         icon="/src/assets/icons/home_villa.png"
         @click="handleCategoryClick('빌라.주택')"
       />
       <BtnLgShort
-        text="상가.사무실"
+        text="상가·사무실"
         icon="/src/assets/icons/home_store.png"
         @click="handleCategoryClick('상가.사무실')"
       />
@@ -32,7 +33,7 @@
     
     <div class="checklist-column">
       <BtnLg
-      text="전.월세 체크리스트"
+      text="전·월세 체크리스트"
       icon="/src/assets/icons/checklist_rent.png"
       @click="handleCategoryClick('전.월세 체크리스트')"
       />

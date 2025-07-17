@@ -15,7 +15,7 @@ import Footer from './components/layout/Footer.vue';
 
 <style scoped>
 .app-wrapper {
-  max-width: 390px;
+  max-width: 393px;
   width: 100%;
   margin: 0 auto;
   min-height: 100vh;

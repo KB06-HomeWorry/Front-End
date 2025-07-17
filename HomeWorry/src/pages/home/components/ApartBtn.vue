@@ -51,8 +51,8 @@ defineEmits(['click']);
 
 .btn-text {
   position: absolute;
-  left: 18px;
-  top: 4px;
+  left: 11px;
+  top: 3px;
   font-size: 20px;
   color: var(--color-primary);
   z-index: 1;
@@ -60,15 +60,18 @@ defineEmits(['click']);
 
 .btn-icon {
   position: absolute;
-  right: 16px;
+  right: 7px;
   bottom: 16px;
-  width: 44px;
-  height: 44px;
+  width: 45px;
+  height: auto;
   z-index: 1;
+  transform: scaleX(-1);
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.25))
+
 }
 
 .btn-lgshort-wrapper:hover {
-  outline: 1.5px solid var(--color-primary);
+  border : 1.5px solid var(--color-primary);
   /* border-color: var(--color-primary); */
 }
 </style>
