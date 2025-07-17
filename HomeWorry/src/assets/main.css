@@ -20,8 +20,10 @@ body {
   --color-white: #ffffff;
   --color-primary: #111f5c;
   --color-secondary: #ffbfcb;
+  --color-secondarylight: #ffe3e8;
   --color-light: #d9d9d9;
   --color-mediumgray: #bdbdbd;
+  --color-lightgray: #f4f4f4;
   --transition: all 0.3s ease;
 }
 

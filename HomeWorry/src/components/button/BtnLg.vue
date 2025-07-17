@@ -31,11 +31,10 @@ defineEmits(['click']);
   height: 73px;
   text-align: center;
   padding: 0;
-  line-height: 73px;
   background-color: #ffffff;
   border: 1px solid var(--color-primary);
   color: var(--color-black);
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition);
 }
 
 .btn-content {
