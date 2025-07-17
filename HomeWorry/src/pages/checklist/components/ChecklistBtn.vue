@@ -28,29 +28,29 @@
 
 <script setup>
 import BtnSm from '@/components/button/BtnSm.vue';
+import { useChecklistStep } from '@/composables/useChecklistStep';
 
 const props = defineProps({
-  currentStep: {
-    type: Number,
-    required: true,
-  },
-  maxStep: {
-    type: Number,
-    required: true,
-  },
+  currentStep: Number,
+  maxStep: Number,
 });
-
 const emit = defineEmits(['update:currentStep']);
+
+const { steps, setStageByIndex } = useChecklistStep();
 
 const goPrev = () => {
   if (props.currentStep > 1) {
-    emit('update:currentStep', props.currentStep - 1);
+    const newStep = props.currentStep - 1;
+    setStageByIndex(newStep - 1);
+    emit('update:currentStep', newStep);
   }
 };
 
 const goNext = () => {
   if (props.currentStep < props.maxStep) {
-    emit('update:currentStep', props.currentStep + 1);
+    const newStep = props.currentStep + 1;
+    setStageByIndex(newStep - 1);
+    emit('update:currentStep', newStep);
   }
 };
 

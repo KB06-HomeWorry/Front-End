@@ -23,6 +23,9 @@
 </template>
 
 <script setup>
+import { defineProps, defineEmits } from 'vue';
+import { useChecklistStep } from '@/composables/useChecklistStep';
+
 const props = defineProps({
   currentStep: {
     type: Number,
@@ -30,47 +33,15 @@ const props = defineProps({
   },
 });
 
-import { useChecklistStore } from '@/stores/checklist';
-import { ref, onMounted } from 'vue';
-import { watch } from 'vue';
-
 const emit = defineEmits(['update:currentStep']);
 
-const checklistStore = useChecklistStore();
-const salesSteps = ['계약 전', '중도금 납부', '잔금 및 소유권 이전', '입주 후'];
-const rentSteps = ['계약 전', '중도금 납부', '잔금 및 입주', '입주 후'];
-const steps = ref([]);
-
-let selectedStage = '';
-
-onMounted(() => {
-  checkType();
-});
-
-function checkType() {
-  if (checklistStore.checklistData.type === '매매') {
-    steps.value = salesSteps;
-  } else if (checklistStore.checklistData.type === '전/월세') {
-    steps.value = rentSteps;
-  } else {
-    console.error('Unknown checklist type:', checklistStore.checklistData.type);
-  }
-}
+const { steps, setStageByIndex } = useChecklistStep();
 
 function handleStepClick(stepNumber, stepName) {
   emit('update:currentStep', stepNumber);
-
-  selectedStage = stepName;
-  checklistStore.checklistData.stage = stepName;
-  console.log('선택된 stage:', selectedStage);
+  setStageByIndex(stepNumber - 1);
+  console.log('선택된 stage:', stepName);
 }
-
-watch(
-  () => [checklistStore.checklistData.type],
-  () => {
-    window.location.reload();
-  }
-);
 </script>
 
 <style scoped>
@@ -104,11 +75,7 @@ watch(
   transition: var(--transition);
 }
 
-.circle.active {
-  background-color: var(--color-secondarylight);
-  color: var(--color-primary);
-}
-
+.circle.active,
 .circle.completed {
   background-color: var(--color-secondarylight);
   color: var(--color-primary);
