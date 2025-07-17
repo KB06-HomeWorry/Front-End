@@ -66,12 +66,11 @@ defineEmits(['click']);
   height: auto;
   z-index: 1;
   transform: scaleX(-1);
-  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.25))
-
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.25));
 }
 
 .btn-lgshort-wrapper:hover {
-  border : 1.5px solid var(--color-primary);
+  border: 1.5px solid var(--color-primary);
   /* border-color: var(--color-primary); */
 }
 </style>

@@ -65,7 +65,7 @@ function handleStepClick(stepNumber, stepName) {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background-color: var(--color-lightgray);
+  background-color: var(--color-lightgray2);
   color: var(--color-light);
   display: flex;
   align-items: center;
@@ -87,7 +87,7 @@ function handleStepClick(stepNumber, stepName) {
   left: 50%;
   width: 100%;
   height: 6px;
-  background-color: var(--color-lightgray);
+  background-color: var(--color-lightgray2);
   z-index: 0;
   transition: var(--transition);
 }
