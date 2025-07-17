@@ -27,15 +27,15 @@ defineEmits(['click']);
 <style scoped>
 .btn-lg-wrapper {
   border-radius: 12px;
-  width: 359px;
-  height: 73px;
+  width: 360px;
+  height: 74px;
   text-align: center;
   padding: 0;
   line-height: 73px;
   background-color: #ffffff;
   border: 1px solid var(--color-lightgray);
   color: var(--color-primary);
-  transition: all 0.2s ease-in-out;
+  transition: all 0.1s ease-in-out;
 }
 
 .btn-content {
@@ -59,6 +59,7 @@ defineEmits(['click']);
 }
 
 .btn-lg-wrapper:hover {
-  border-color: var(--color-primary);
+  outline: 1.5px solid var(--color-primary);
+  /* border-color: var(--color-primary); */
 }
 </style>
