@@ -1,13 +1,13 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
-export const useChecklistStore = defineStore('checklist', () => {
-  console.log('useChecklistStore called');
+export const useChecklistStore = defineStore("checklist", () => {
+  //console.log("useChecklistStore called");
   const checklistData = ref({
-    type: '매매',
-    stage: '계약 전',
+    type: "매매",
+    stage: "계약 전",
     userId: 1,
   });
-  console.log('checklistData initialized:', checklistData.value);
+  console.log("checklistData initialized:", checklistData.value);
   return { checklistData };
 });

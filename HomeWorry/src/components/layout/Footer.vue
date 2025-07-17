@@ -7,6 +7,7 @@
         :to="tab.to"
         class="tab-item bodyLight12px"
         active-class="active"
+        @click="onTabClick()"
       >
         <img
           :src="route.path === tab.to ? tab.iconDark : tab.iconLight"
@@ -15,56 +16,61 @@
         />
         <span class="tab-label">{{ tab.label }}</span>
       </RouterLink>
-
     </nav>
   </footer>
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router';
-import homeLight from '@/assets/icons/nav_home_light.png';
-import homeDark from '@/assets/icons/nav_home_dark.png';
-import mapLight from '@/assets/icons/nav_map_light.png';
-import mapDark from '@/assets/icons/nav_map_dark.png';
-import analysisLight from '@/assets/icons/nav_analysis_light.png';
-import analysisDark from '@/assets/icons/nav_analysis_dark.png';
-import myLight from '@/assets/icons/nav_my_light.png';
-import myDark from '@/assets/icons/nav_my_dark.png';
+import { useRoute } from "vue-router";
+import homeLight from "@/assets/icons/nav_home_light.png";
+import homeDark from "@/assets/icons/nav_home_dark.png";
+import mapLight from "@/assets/icons/nav_map_light.png";
+import mapDark from "@/assets/icons/nav_map_dark.png";
+import analysisLight from "@/assets/icons/nav_analysis_light.png";
+import analysisDark from "@/assets/icons/nav_analysis_dark.png";
+import myLight from "@/assets/icons/nav_my_light.png";
+import myDark from "@/assets/icons/nav_my_dark.png";
+import { useChecklistStore } from "@/stores/checklist";
+const checklistStore = useChecklistStore();
 
 const route = useRoute();
 
 const tabs = [
   {
-    name: 'home',
-    label: '홈',
+    name: "home",
+    label: "홈",
     iconLight: homeLight,
     iconDark: homeDark,
-    to: '/',
+    to: "/",
   },
   {
-    name: 'map',
-    label: '지도',
+    name: "map",
+    label: "지도",
     iconLight: mapLight,
     iconDark: mapDark,
-    to: '/map',
+    to: "/map",
   },
   {
-    name: 'analysis',
-    label: '분석',
+    name: "analysis",
+    label: "분석",
     iconLight: analysisLight,
     iconDark: analysisDark,
-    to: '/analysis',
+    to: "/analysis",
   },
   {
-    name: 'my',
-    label: '마이페이지',
+    name: "my",
+    label: "마이페이지",
     iconLight: myLight,
     iconDark: myDark,
-    to: '/my',
+    to: "/my",
   },
 ];
-</script>
 
+function onTabClick() {
+  console.log("탭 클릭됨:", checklistStore.checklistData.stage);
+  checklistStore.checklistData.stage = "계약 전";
+}
+</script>
 
 <style scoped>
 .footer {
@@ -87,7 +93,7 @@ const tabs = [
 }
 
 .tab-item {
-  flex:1;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -105,5 +111,4 @@ const tabs = [
 .tab-item.active {
   color: var(--color-primary);
 }
-
 </style>
