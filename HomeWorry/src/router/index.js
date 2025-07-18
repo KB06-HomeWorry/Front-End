@@ -5,6 +5,7 @@ import analysisRoutes from "./analysis";
 import myRoutes from "./my";
 import checklistRoutes from "./checklist";
 import notfoundRoutes from "./notfound";
+import dangerResults from "./dangerResult";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,7 @@ const router = createRouter({
     ...mapRoutes,
     ...analysisRoutes,
     ...checklistRoutes,
+    ...dangerResults,
     ...myRoutes,
     ...notfoundRoutes,
   ],
