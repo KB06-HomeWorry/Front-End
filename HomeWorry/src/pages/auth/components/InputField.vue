@@ -39,13 +39,13 @@ const emit = defineEmits(['update:modelValue']);
 
 <style scoped>
 .input-field {
-  margin-bottom: 16px;
   width: 100%;
 }
 
 .input-label {
-  margin-bottom: 11px;
+  margin-bottom: 5px;
   display: block;
+  color: var(--color-primary);
 }
 
 .input-box {
@@ -54,7 +54,7 @@ const emit = defineEmits(['update:modelValue']);
   border-radius: 12px;
   border: 1px solid var(--color-light);
   padding: 0 16px;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
   box-sizing: border-box;
   background: var(--color-white);
   transition: border 0.2s;
@@ -69,18 +69,19 @@ const emit = defineEmits(['update:modelValue']);
   color: var(--color-mediumgray);
 }
 
-/* 설명 및 에러 */
+/* 설명 */
 .input-desc {
   letter-spacing: -0.03em;
   color: var(--color-mediumgray);
   margin-bottom: 4px;
 }
 
+/* 에러 */
 .input-error {
   color: #BF0000;
   font-weight: 700;
   margin-bottom: 4px;
-  min-height: 18px;          /* (줄바꿈 없는 1줄 기준) */
+  min-height: 18px; 
   line-height: 1.5;
   opacity: 0;
   transition: opacity 0.2s;
