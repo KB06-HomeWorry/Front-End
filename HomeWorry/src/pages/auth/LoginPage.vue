@@ -43,7 +43,7 @@ async function onLogin() {
     return
   }
   try {
-    const response = await axios.post('/api/auth/signin', {
+    const response = await axios.post('/api/auth/login', {
       username: username.value,
       password: password.value,
     })
