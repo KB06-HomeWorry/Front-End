@@ -22,11 +22,23 @@ export default [
       hideFooter: true     // Footer 숨김
     },
   },
-
-  // {
-  //   path: '/auth/find-password',
-  //   name: 'find-password',
-  //   component: () => import('../pages/auth/FindPasswordPage.vue'),
-  // },
+  {
+    path: '/auth/reset-password',
+    name: 'reset-password',
+    component: () => import('../pages/auth/ResetPasswordPage.vue'),
+    meta: {
+      hideHeader: true,    // Header 숨김
+      hideFooter: true     // Footer 숨김
+    },
+  },
+    {
+    path: '/auth/reset-password/sent',
+    name: 'reset-password-sent',
+    component: () => import('../pages/auth/ResetPasswordSentPage.vue'),
+    meta: {
+      hideHeader: true,    // Header 숨김
+      hideFooter: true     // Footer 숨김
+    },
+  },
 
   ];
