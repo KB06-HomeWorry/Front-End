@@ -58,7 +58,7 @@
       />
 
       <!-- 버튼 하단 고정 -->
-      <BtnMed class="submit-btn" type="submit" text="회원가입 완료" @click="onSubmit"/>
+      <BtnMed class="submit-btn" type="submit" text="회원가입 완료"/>
     </form>
   </div>
 </template>
@@ -150,7 +150,7 @@ async function onSubmit() {
 
 
     alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
-    router.push('/login');
+    router.push('/auth/login');
 
   } catch (error) {
     console.error('회원가입 실패:', error);
