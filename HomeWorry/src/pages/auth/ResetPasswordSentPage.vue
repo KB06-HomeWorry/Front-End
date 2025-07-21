@@ -44,7 +44,7 @@ import BtnTiny from '@/components/button/BtnTiny.vue'
 
 const router = useRouter()
 const route = useRoute()
-const token = ref(route.query.token || '')
+const email = ref(route.query.email || '')
 
 const resendLoading = ref(false)
 const resendError = ref('')
@@ -58,22 +58,22 @@ async function onResend() {
   resendError.value = ''
   resendSuccess.value = ''
   if (resendLoading.value) return
-  if (!token.value) {
-    resendError.value = '❌ 토큰 정보가 없습니다.'
+  if (!email.value) {
+    resendError.value = '❌ 이메일 정보가 없습니다.'
     return
   }
   resendLoading.value = true
   try {
-    await axios.post('http://localhost:8080/api/member/resend-reset-email', {
-      token: token.value
-    })
-    resendSuccess.value = '📧 이메일이 재전송되었습니다!'
+    await axios.get(`http://localhost:8080/api/member/resetpassword/${email.value}`)
+    resendSuccess.value = '📧 이메일이 전송되었습니다!'
   } catch (err) {
-    resendError.value = err.response?.data?.message || '이메일 재전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
+    resendError.value = err.response?.data?.message || '이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
   } finally {
     resendLoading.value = false
   }
 }
+
+onResend();
 </script>
 
 <style scoped>
