@@ -10,9 +10,9 @@
             <p class="desc-sub bodyLight12px">
                 * 메일이 도착하지 않으면 스팸함을 확인해주세요.
             </p>
-              <BtnTiny text="이메일 재전송" class="resend-btn bodyMedium12px" @click="onResend"/>
-
-            
+              <BtnTiny text="이메일 재전송" class="resend-btn bodyMedium12px" @click="onResend" :disabled="resendLoading"/>
+              <div v-if="resendError" class="form-error bodyMedium12px">{{ resendError }}</div>
+              <div v-if="resendSuccess" class="form-success bodyMedium12px">{{ resendSuccess }}</div>
         </div>
 
       <div class="plane-row-between">
@@ -35,14 +35,44 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
 import AuthTitle from '@/pages/auth/components/AuthTitle.vue'
 import BtnMed from '@/components/button/BtnMed.vue'
 import BtnTiny from '@/components/button/BtnTiny.vue'
 
 const router = useRouter()
+const route = useRoute()
+const token = ref(route.query.token || '')
+
+const resendLoading = ref(false)
+const resendError = ref('')
+const resendSuccess = ref('')
+
 function goToLogin() {
-  router.replace('/auth/login') // replace로 history 초기화
+  router.replace('/auth/login')
+}
+
+async function onResend() {
+  resendError.value = ''
+  resendSuccess.value = ''
+  if (resendLoading.value) return
+  if (!token.value) {
+    resendError.value = '❌ 토큰 정보가 없습니다.'
+    return
+  }
+  resendLoading.value = true
+  try {
+    await axios.post('http://localhost:8080/api/member/resend-reset-email', {
+      token: token.value
+    })
+    resendSuccess.value = '📧 이메일이 재전송되었습니다!'
+  } catch (err) {
+    resendError.value = err.response?.data?.message || '이메일 재전송에 실패했습니다. 잠시 후 다시 시도해주세요.'
+  } finally {
+    resendLoading.value = false
+  }
 }
 </script>
 
@@ -101,5 +131,15 @@ function goToLogin() {
   margin-top: 0.5rem;
   cursor: pointer;
   padding: 0;
+}
+
+.form-error{
+  color: #BF0000;
+  margin-top: 3px;
+}
+
+.form-success{
+  color: var(--color-primary);
+  margin-top: 3px;
 }
 </style>
