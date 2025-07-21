@@ -27,24 +27,24 @@
 </template>
 
 <script setup>
-import BtnSm from "@/components/button/BtnSm.vue";
-import { useRouter } from "vue-router";
-import { useChecklistStep } from "@/composables/useChecklistStep";
+import { useRouter } from 'vue-router';
+import { useChecklistStep } from '@/composables/useChecklistStep';
+import BtnSm from '@/components/button/BtnSm.vue';
 
 const props = defineProps({
   currentStep: Number,
   maxStep: Number,
 });
-const emit = defineEmits(["update:currentStep"]);
-const router = useRouter();
 
-const { steps, setStageByIndex } = useChecklistStep();
+const { setStageByIndex } = useChecklistStep();
+const emit = defineEmits(['update:currentStep', 'save']);
+const router = useRouter();
 
 const goPrev = () => {
   if (props.currentStep > 1) {
     const newStep = props.currentStep - 1;
     setStageByIndex(newStep - 1);
-    emit("update:currentStep", newStep);
+    emit('update:currentStep', newStep);
   }
 };
 
@@ -52,13 +52,13 @@ const goNext = () => {
   if (props.currentStep < props.maxStep) {
     const newStep = props.currentStep + 1;
     setStageByIndex(newStep - 1);
-    emit("update:currentStep", newStep);
+    emit('update:currentStep', newStep);
   }
 };
 
 const save = () => {
-  console.log("저장하기(현재 단계:", props.currentStep, ")");
-  router.push("/dangerResult");
+  emit('save');
+  router.push('/dangerResult');
 };
 </script>
 
