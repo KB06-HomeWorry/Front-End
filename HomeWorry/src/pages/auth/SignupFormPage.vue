@@ -57,7 +57,6 @@
         :maxlength="13"
       />
 
-      <!-- 버튼 하단 고정 -->
       <BtnMed class="submit-btn" type="submit" text="회원가입 완료" :disabled="loading"/>
     </form>
   </div>
@@ -99,10 +98,9 @@ async function checkEmailDuplicate() {
   }
   emailError.value = '';
   try {
-    const res = await axios.get('http://localhost:8080/api/member/check-email', {
-      params: { email: val }
-    });
-    if (res.data.duplicate) {
+    const res = await axios.get(`http://localhost:8080/api/member/checkusername/${val}`);
+    
+    if (res.data) {
       emailError.value = '이미 사용 중인 이메일입니다.';
     } else {
       emailError.value = '';
@@ -150,6 +148,7 @@ async function onSubmit() {
       password: password.value,
       username: username.value,
       phone: phone.value.replace(/-/g, ''), // 하이픈 제거 후 전송
+      userType: '중개사',
     };
 
     // 백엔드의 회원가입 API 엔드포인트로 POST 요청
