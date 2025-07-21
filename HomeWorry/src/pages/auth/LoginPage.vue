@@ -21,7 +21,7 @@
     </form>
     <div class="login-links">
       <button class="link-btn" @click="onSignup">회원가입</button>
-      <button class="link-btn" @click="onFindPw">비밀번호 찾기</button>
+      <button class="link-btn" @click="onResetPw">비밀번호 찾기</button>
     </div>
   </div>
 </template>
@@ -63,8 +63,8 @@ async function onLogin() {
 function onSignup() {
   router.push('/auth/signup-agreement')
 }
-function onFindPw() {
-  router.push('/auth/find-password')
+function onResetPw() {
+  router.push('/auth/reset-password')
 }
 </script>
 
