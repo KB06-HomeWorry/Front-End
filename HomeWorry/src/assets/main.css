@@ -46,6 +46,12 @@ body {
   font-family: 'GmarketSansBold', sans-serif;
 }
 
+.titleBold12px {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'GmarketSansBold', sans-serif;
+}
+
 .bodyMedium24px {
   font-size: 1.5rem;
   font-weight: 500;
