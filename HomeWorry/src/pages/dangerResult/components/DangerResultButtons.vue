@@ -11,17 +11,22 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-import BtnMed from "@/components/button/BtnMed.vue";
+import { useRouter } from 'vue-router';
+import { useChecklistStore } from '@/stores/checklist';
+import BtnMed from '@/components/button/BtnMed.vue';
+
 const router = useRouter();
+const checklistStore = useChecklistStore();
 
 const handleClick = (color) => {
   console.log(`Button clicked with color: ${color}`);
 };
 
 const checklistAgain = () => {
-  console.log("점검 다시하기 버튼 클릭");
-  router.push("/checklist");
+  checklistStore.checklistData.stage = '계약 전';
+
+  console.log('점검 다시하기 버튼 클릭');
+  router.push('/checklist');
 };
 </script>
 

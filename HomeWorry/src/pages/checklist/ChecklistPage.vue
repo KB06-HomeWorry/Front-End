@@ -1,4 +1,5 @@
 <template>
+  <br />
   <ChecklistNavBar v-model:currentStep="currentStep" />
   <br />
   <ChecklistQuestion />
