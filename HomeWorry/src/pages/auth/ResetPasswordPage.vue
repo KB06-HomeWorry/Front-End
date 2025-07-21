@@ -22,7 +22,7 @@
        <div class="form-error" v-html="formError" bodyMedium16px></div>
 
       <!-- 버튼 하단 고정 -->
-      <BtnMed class="submit-btn" type="submit" text="확인" @click="onSubmit"/>
+      <BtnMed class="submit-btn" type="submit" text="확인" @click="onSubmit" :disabled="loading"/>
     </form>
   </div>
 </template>
@@ -40,35 +40,49 @@ const router = useRouter()
 const email = ref('')
 const username = ref('')
 const formError = ref('')
+const loading = ref(false)
 
 // 이름-이메일 일치 확인
 async function onSubmit() {
+  if (loading.value) return;
   formError.value=''
+  loading.value=true
 
   if (!username.value.trim() || !email.value.trim()){
     formError.value='이름과 이메일을 모두 입력해주세요.'
+    loading.value=false
     return
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email.value)){
     formError.value = '올바른 이메일 주소를 입력해주세요.'
+    loading.value=false
     return
   }
 
+
+  // 백엔드 api에 맞춰서 수정 요망
 try {
     const res = await axios.post('http://localhost:8080/api/member/check-username-email', {
       username: username.value.trim(),
       email: email.value.trim()
     })
 
-    if (res.data.match){
-      router.push('/auth/reset-password/sent')
-    } else {
+    if (res.data.match && res.data.resetToken){
+      router.push({
+        path: '/auth/reset-password/sent',
+        query: {token: res.data.resetToken}
+      })
+    }  else if (!res.data.match){
       formError.value='일치하는 회원 정보가 없습니다.'
+    } else {
+      formError.value = '토큰 발급에 실패했습니다. 잠시 후 다시 시도해주세요.'
     }
   } catch (err){
     formError.value = err.response?.data?.message || '서버 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요.'
+  } finally {
+    loading.value = false
   }
 }
 </script>

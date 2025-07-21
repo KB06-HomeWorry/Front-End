@@ -58,7 +58,7 @@
       />
 
       <!-- 버튼 하단 고정 -->
-      <BtnMed class="submit-btn" type="submit" text="회원가입 완료"/>
+      <BtnMed class="submit-btn" type="submit" text="회원가입 완료" :disabled="loading"/>
     </form>
   </div>
 </template>
@@ -82,6 +82,9 @@ const phone = ref('')
 
 const emailError = ref('');
 const passwordError = ref('')
+const formError = ref('')
+
+const loading = ref(false)
 
 async function checkEmailDuplicate() {
   const val = email.value.trim();
@@ -125,6 +128,10 @@ watch(phone, (newValue) => {
 });
 
 async function onSubmit() {
+  if(loading.value) return;
+  loading.value = true;
+  formError.value='';
+
   // 유효성 검사
   if (!email.value || !password.value || !username.value || !phone.value) {
     alert('모든 정보를 입력해주세요.');
@@ -156,6 +163,8 @@ async function onSubmit() {
     console.error('회원가입 실패:', error);
     const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
     alert(errorMessage);
+  } finally {
+    loading.value=false;
   }
 }
 </script>
