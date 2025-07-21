@@ -46,7 +46,7 @@ const formError = ref('')
 const loading = ref(false)
 
 // 토큰부분!
-// const token = route.query.token || route.params.token || ''
+const token = route.query.token || route.params.token || ''
 
 async function onSubmit() {
   if (loading.value) return
@@ -81,10 +81,9 @@ async function onSubmit() {
 
   // --- API 요청 ---
   try {
-    await axios.post('http://localhost:8080/api/member/change-password', {
+    await axios.post('http://localhost:8080/api/member/resetpassword', {
       password: password.value,
-    // 토큰 부분!!
-    //   token
+      token: token
     })
     alert('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.')
     router.replace('/auth/login')
