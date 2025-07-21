@@ -68,6 +68,7 @@ const save = () => {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   margin: 28px;
+  gap: 16px; /* 버튼 간격 */
 }
 
 .left {

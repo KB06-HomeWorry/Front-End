@@ -1,14 +1,13 @@
 <template>
-  <div>
-    문제
+  <div class="checklist-container">
     <ul>
       <li
         v-for="(item, index) in checklist"
         :key="item.checklistId"
         style="margin-bottom: 16px"
       >
-        <div id="checklist-content">
-          <div id="checklist-box">
+        <div class="checklist-content">
+          <div class="checklist-box">
             <input
               type="checkbox"
               :checked="getChecked(index)"
@@ -17,9 +16,8 @@
             />
             <label :for="'checklist-' + item.checklistId"> </label>
           </div>
-          <div id="checklist-question">{{ item.content }}</div>
+          <div class="checklist-question">{{ item.content }}</div>
         </div>
-
         <div>{{ item.effectiveness }}</div>
       </li>
     </ul>
@@ -80,4 +78,73 @@ watch(
   loadChecklist
 );
 </script>
-<style scoped></style>
+
+<style scoped>
+.checklist-container {
+  max-width: 600px;
+  margin-left: 5px;
+}
+
+.checklist-content {
+  display: flex;
+  align-items: center;
+}
+
+.checklist-box {
+  display: flex;
+  align-items: center;
+}
+
+.checklist-box input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--color-lightgray2);
+  transform: scale(1.15);
+  margin: 0;
+  cursor: pointer;
+  transition: accent-color 0.2s;
+}
+
+/* ✔️ hover, focus 상태에도 동일하게 유지 */
+.checklist-box input[type="checkbox"]:hover,
+.checklist-box input[type="checkbox"]:focus {
+  accent-color: var(--color-secondarylight);
+}
+
+.checklist-box input[type="checkbox"]:checked {
+  accent-color: var(--color-secondarylight);
+}
+
+/* checked+hover도 동일하게 */
+.checklist-box input[type="checkbox"]:checked:hover,
+.checklist-box input[type="checkbox"]:checked:focus {
+  accent-color: var(--color-secondarylight);
+}
+
+/* checked+hover도 동일하게 */
+.checklist-box input[type="checkbox"]:checked:hover,
+.checklist-box input[type="checkbox"]:checked:focus {
+  accent-color: var(--color-secondarylight);
+}
+
+.checklist-box label {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+}
+
+.checklist-question {
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  margin: 0;
+}
+
+li > div:last-child {
+  font-size: 14px;
+  color: #555;
+  margin-left: 45px;
+  margin-right: 10px;
+  margin-top: 7px;
+}
+</style>
