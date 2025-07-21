@@ -22,7 +22,7 @@
        <div class="form-error" v-html="formError" bodyMedium16px></div>
 
       <!-- 버튼 하단 고정 -->
-      <BtnMed class="submit-btn" type="submit" text="확인" @click="onSubmit" :disabled="loading"/>
+      <BtnMed class="submit-btn" type="submit" text="확인" :disabled="loading"/>
     </form>
   </div>
 </template>
@@ -64,20 +64,19 @@ async function onSubmit() {
 
   // 백엔드 api에 맞춰서 수정 요망
 try {
-    const res = await axios.post('http://localhost:8080/api/member/check-username-email', {
-      username: username.value.trim(),
-      email: email.value.trim()
-    })
+    const res = await axios.get('http://localhost:8080/api/member/checkNameAndEmail', {
+      params: {
+        email: email.value.trim(),
+        name: username.value.trim()
+    }})
 
-    if (res.data.match && res.data.resetToken){
+    if (res.data){
       router.push({
         path: '/auth/reset-password/sent',
-        query: {token: res.data.resetToken}
+        query: {email: email.value.trim()}
       })
-    }  else if (!res.data.match){
+    }  else {
       formError.value='일치하는 회원 정보가 없습니다.'
-    } else {
-      formError.value = '토큰 발급에 실패했습니다. 잠시 후 다시 시도해주세요.'
     }
   } catch (err){
     formError.value = err.response?.data?.message || '서버 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요.'

@@ -41,21 +41,21 @@ export default [
     },
   },
 
-  {
-  path: '/auth/change-password',
-  name: 'change-password',
-  component: () => import('../pages/auth/ChangePasswordPage.vue'),
-  meta: { hideHeader: true, hideFooter: true }
-}
-// 토큰부분!!
 //   {
-//   path: '/auth/change-password/:token',
+//   path: '/auth/change-password',
 //   name: 'change-password',
 //   component: () => import('../pages/auth/ChangePasswordPage.vue'),
-//   meta: {
-//     hideHeader: true,    // Header 숨김
-//     hideFooter: true     // Footer 숨김
-//   },
-// },
+//   meta: { hideHeader: true, hideFooter: true }
+// }
+// 토큰부분!!
+  {
+  path: '/auth/change-password/:token',
+  name: 'change-password',
+  component: () => import('../pages/auth/ChangePasswordPage.vue'),
+  meta: {
+    hideHeader: true,    // Header 숨김
+    hideFooter: true     // Footer 숨김
+  },
+},
 
   ];
