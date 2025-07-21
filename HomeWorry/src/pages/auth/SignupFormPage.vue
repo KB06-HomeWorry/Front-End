@@ -162,8 +162,9 @@ async function onSubmit() {
 
 <style scoped>
 .signup-form {
-  margin: 1.5rem 2rem;
+  margin: 1.5rem 0;      
   box-sizing: border-box;
+  padding: 0 1rem;   
 }
 
 .input-box-pw {
@@ -182,11 +183,10 @@ async function onSubmit() {
 }
 
 .submit-btn {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 90px;
-  z-index: 100;
-  width: 330px;
+  width: 100%;
+  left: auto;
+  transform: none;
+  bottom: auto;
+  z-index: auto;
 }
 </style>
