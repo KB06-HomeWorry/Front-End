@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import { useDangerResultStore } from "@/stores/dangerResult";
+import { useDangerResultStore } from '@/stores/dangerResult';
 const dangerResultStore = useDangerResultStore();
 </script>
 

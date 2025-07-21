@@ -11,20 +11,21 @@
       :currentStep="currentStep"
       :maxStep="4"
       @update:currentStep="(val) => (currentStep = val)"
+      @save="handleSaveRequested"
     />
   </div>
 </template>
 
 <script setup>
-import ChecklistNavBar from "./components/ChecklistNavBar.vue";
-import ChecklistQuestion from "./components/ChecklistQuestion.vue";
-import ChecklistBtn from "./components/ChecklistBtn.vue";
+import ChecklistNavBar from './components/ChecklistNavBar.vue';
+import ChecklistQuestion from './components/ChecklistQuestion.vue';
+import ChecklistBtn from './components/ChecklistBtn.vue';
 
-import { useRoute } from "vue-router";
-import axios from "axios";
-import { ref, onMounted, watch } from "vue";
-import { useChecklistStore } from "@/stores/checklist";
-import { useChecklistStep } from "@/composables/useChecklistStep";
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import { ref, onMounted, watch } from 'vue';
+import { useChecklistStore } from '@/stores/checklist';
+import { useChecklistStep } from '@/composables/useChecklistStep';
 
 const route = useRoute();
 const checklistStore = useChecklistStore();
@@ -38,7 +39,7 @@ onMounted(() => {
     checklistStore.checklistData.type = type;
     checklistStore.checklistData.stage = stage;
     checklistStore.checklistData.userId = parseInt(userId);
-    console.log("스토어 초기화 완료:", checklistStore.checklistData);
+    console.log('스토어 초기화 완료:', checklistStore.checklistData);
   }
 });
 
@@ -56,14 +57,14 @@ async function handleSaveRequested() {
       answer: item.checked || false,
     }));
 
-    console.log("저장할 데이터:", answerDTOList);
+    console.log('저장할 데이터:', answerDTOList);
 
-    await axios.post("http://localhost:8080/checklist/answers", answerDTOList);
+    alert('저장 성공!');
 
-    alert("저장 성공!");
+    await axios.post('http://localhost:8080/checklist/answers', answerDTOList);
   } catch (error) {
-    console.error("저장 실패:", error);
-    alert("저장에 실패했습니다.");
+    console.error('저장 실패:', error);
+    alert('저장에 실패했습니다.');
   }
 }
 </script>

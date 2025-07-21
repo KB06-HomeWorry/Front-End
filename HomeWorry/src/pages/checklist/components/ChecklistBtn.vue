@@ -30,6 +30,9 @@
 import { useRouter } from 'vue-router';
 import { useChecklistStep } from '@/composables/useChecklistStep';
 import BtnSm from '@/components/button/BtnSm.vue';
+import { useChecklistStore } from '@/stores/checklist';
+
+const checklistStore = useChecklistStore();
 
 const props = defineProps({
   currentStep: Number,
@@ -58,7 +61,19 @@ const goNext = () => {
 
 const save = () => {
   emit('save');
-  router.push('/dangerResult');
+
+  const type = checklistStore.checklistData.type;
+  const stage = checklistStore.checklistData.stage;
+  const user_id = checklistStore.checklistData.userId;
+
+  router.push({
+    path: '/dangerResult',
+    query: {
+      type,
+      stage,
+      user_id,
+    },
+  });
 };
 </script>
 
