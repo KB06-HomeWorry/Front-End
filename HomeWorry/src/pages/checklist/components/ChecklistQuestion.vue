@@ -3,19 +3,19 @@
     문제
     <ul>
       <li
-        v-for="(item, index) in checklist"
-        :key="item.checklistId"
+        v-for="item in checklist"
+        :key="item.questionId"
         style="margin-bottom: 16px"
       >
         <div id="checklist-content">
           <div id="checklist-box">
             <input
               type="checkbox"
-              :checked="getChecked(index)"
+              :checked="getChecked(item)"
               @change="onCheckChange($event, item)"
-              :id="'checklist-' + item.checklistId"
+              :id="'checklist-' + item.questionId"
             />
-            <label :for="'checklist-' + item.checklistId"> </label>
+            <label :for="'checklist-' + item.questionId"> </label>
           </div>
           <div id="checklist-question">{{ item.content }}</div>
         </div>
@@ -27,57 +27,84 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import axios from "axios";
-import { useChecklistStore } from "@/stores/checklist";
+import { ref, onMounted, watch } from 'vue';
+import axios from 'axios';
+import { useChecklistStore } from '@/stores/checklist';
+
 const checklistStore = useChecklistStore();
 
 const checklist = ref([]);
 const answerlist = ref([]);
 
 const loadChecklist = async () => {
-  const type = checklistStore.checklistData.type;
-  const stage = checklistStore.checklistData.stage;
-  const user_id = checklistStore.checklistData.userId;
-  console.log("type:", type, "stage:", stage, "userId:", user_id);
+  const { type, stage, userId } = checklistStore.checklistData;
 
-  const { data } = await axios.get(`http://localhost:8080/checklist`, {
-    params: { type, stage, user_id },
-  });
+  try {
+    const response = await axios.get('http://localhost:8080/checklist', {
+      params: { type, stage, user_id: userId },
+    });
 
-  console.log(" data:", data);
-  console.log("answerlist data:", data.answers);
-  console.log("Checklist data:", data.checklist);
+    const data = response.data;
 
-  // 데이터가 유효한지 확인
-  if (!data || !Array.isArray(data.checklist)) {
-    console.error("Invalid checklist data:", data);
-    return;
+    console.log('API 응답 전체:', data);
+    if (!data || !Array.isArray(data.checklist)) {
+      console.error('Invalid checklist data:', data);
+      checklist.value = [];
+      answerlist.value = [];
+      return;
+    }
+
+    checklist.value = data.checklist;
+    answerlist.value = data.answers || [];
+
+    checklist.value = data.checklist.map((item) => {
+      const answer = data.answers?.find(
+        (ans) => ans.questionId === item.checklistId
+      );
+      return {
+        ...item,
+        questionId: item.checklistId,
+        checked: answer ? Boolean(answer.answer) : false,
+      };
+    });
+
+    checklistStore.checklist = checklist.value;
+  } catch (error) {
+    console.error('Checklist load error:', error);
+    checklist.value = [];
+    answerlist.value = [];
   }
-
-  checklist.value = data.checklist;
-  answerlist.value = data.answers;
-  console.log("Checklist loaded:", checklist.value);
-  console.log(answerlist.value[0]);
 };
 
-function getChecked(questionId) {
-  // answerlist에서 questionId에 해당하는 답변을 찾고, 그 answer 값이 true면 체크
-  const found = answerlist.value[questionId].answer;
-  return Boolean(found);
+function getChecked(item) {
+  return item.checked || false;
 }
 
 function onCheckChange(event, item) {
-  // item에 checked 속성이 없다면 동적으로 추가
-  item.checked = event.target.checked;
+  const checked = event.target.checked;
+  item.checked = checked;
+
+  const answerObj = answerlist.value.find(
+    (answer) => answer.questionId === item.questionId
+  );
+
+  if (answerObj) {
+    answerObj.answer = checked;
+  } else {
+    answerlist.value.push({
+      questionId: item.questionId,
+      userId: checklistStore.checklistData.userId,
+      answer: checked,
+    });
+  }
 }
 
 onMounted(loadChecklist);
 
-//type, stage가 바뀌면 다시 불러오기
 watch(
   () => [checklistStore.checklistData.type, checklistStore.checklistData.stage],
   loadChecklist
 );
 </script>
+
 <style scoped></style>
