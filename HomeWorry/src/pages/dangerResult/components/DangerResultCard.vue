@@ -1,5 +1,10 @@
-<template>삼각 김밥 ㅎㅇ</template>
+<template>
+  <h2>{{ dangerResultStore.dangerResultData.grade }}</h2>
+</template>
 
-<script setup></script>
+<script setup>
+import { useDangerResultStore } from "@/stores/dangerResult";
+const dangerResultStore = useDangerResultStore();
+</script>
 
 <style scoped></style>
