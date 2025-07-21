@@ -3,12 +3,19 @@
     <AuthTitle title="회원정보 입력" />
     <form class="signup-form" @submit.prevent="onSubmit">
       <!-- 이메일 -->
-      <InputField
+      <InputEmail
+        v-model="email"
+        label="이메일을 입력해주세요."
+        :error="emailError"
+        @check="checkEmailDuplicate"
+      />
+      <!-- 이메일 -->
+      <!-- <InputField
         label="이메일을 입력해주세요."
         placeholder="이메일 주소를 입력하세요."
         type="email"
         v-model="email"
-      />
+      /> -->
 
       <!-- 비밀번호/비밀번호 확인 -->
       <InputField
@@ -58,9 +65,14 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 import AuthTitle from '@/pages/auth/components/AuthTitle.vue'
 import InputField from '@/pages/auth/components/InputField.vue'
 import BtnMed from '@/components/button/BtnMed.vue'
+import InputEmail from '@/pages/auth/components/InputEmail.vue'
+
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
@@ -68,7 +80,35 @@ const passwordCheck = ref('')
 const username = ref('')
 const phone = ref('')
 
+const emailError = ref('');
 const passwordError = ref('')
+
+async function checkEmailDuplicate() {
+  const val = email.value.trim();
+  if (!val) {
+    emailError.value = '이메일을 입력해주세요.';
+    return;
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(val)) {
+    emailError.value = '올바른 이메일 형식이 아닙니다.';
+    return;
+  }
+  emailError.value = '';
+  try {
+    const res = await axios.get('http://localhost:8080/api/member/check-email', {
+      params: { email: val }
+    });
+    if (res.data.duplicate) {
+      emailError.value = '이미 사용 중인 이메일입니다.';
+    } else {
+      emailError.value = '';
+      alert('사용 가능한 이메일입니다!');
+    }
+  } catch {
+    emailError.value = '중복 확인 중 오류가 발생했습니다.';
+  }
+}
 
 // 사용자가 입력한 값에서 숫자만 추출한 뒤, 숫자 개수에 맞게 하이픈 자동으로 들어가도록 하였음
 watch(phone, (newValue) => {
@@ -81,31 +121,48 @@ watch(phone, (newValue) => {
   } else {
     formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
   }
-  
-  // 입력되는 값으로 업데이트하며 표시하여줌
   phone.value = formatted;
 });
 
-function onSubmit() {
-  if (!password.value || !passwordCheck.value) {
-    passwordError.value = '비밀번호를 모두 입력해주세요.'
-    return
+async function onSubmit() {
+  // 유효성 검사
+  if (!email.value || !password.value || !username.value || !phone.value) {
+    alert('모든 정보를 입력해주세요.');
+    return;
   }
   if (password.value !== passwordCheck.value) {
-    passwordError.value = '비밀번호가 일치하지 않습니다.'
-    return
+    passwordError.value = '비밀번호가 일치하지 않습니다.';
+    return;
   }
-  passwordError.value = ''
-  const fullPhone = `${phone1.value}-${phone2.value}-${phone3.value}`;
-  alert(`회원가입 성공!\n이메일: ${email.value}\n연락처: ${fullPhone}`)
+  passwordError.value = ''; 
 
-  // 가입처리 로직 추가 예정!
+  // --- API 요청 ---
+  try {
+    const userData = {
+      email: email.value,
+      password: password.value,
+      username: username.value,
+      phone: phone.value.replace(/-/g, ''), // 하이픈 제거 후 전송
+    };
+
+    // 백엔드의 회원가입 API 엔드포인트로 POST 요청
+    await axios.post('http://localhost:8080/api/member', userData);
+
+
+    alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
+    router.push('/login');
+
+  } catch (error) {
+    console.error('회원가입 실패:', error);
+    const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+    alert(errorMessage);
+  }
 }
 </script>
 
 <style scoped>
 .signup-form {
-  margin: 2rem;
+  margin: 1.5rem 2rem;
   box-sizing: border-box;
 }
 
