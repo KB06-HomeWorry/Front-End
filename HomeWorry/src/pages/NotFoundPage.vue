@@ -29,10 +29,14 @@
       <BtnSm text="저장하기" @click="handleClick('기본')" />
       <BtnMedSlim text="동일했습니다" @click="handleClick('기본')" />
       <BtnSmSlim text="친절했어요" @click="handleClick('기본')" />
+      <BtnTiny text="로그인/회원가입" @click="handleClick('기본')" />
+
 
       <!-- 흰 배경 버튼 테스트 -->
       <BtnMed text="흰색 버튼" color="#ffffff" @click="handleClick('흰색')" />
       <BtnSm text="저장하기" color="#ffffff" @click="handleClick('흰색')" />
+
+
     </div>
   </div>
 </template>
@@ -44,6 +48,7 @@ import BtnMed from '@/components/button/BtnMed.vue';
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
 import BtnSm from '@/components/button/BtnSm.vue';
 import BtnSmSlim from '@/components/button/BtnSmSlim.vue';
+import BtnTiny from '@/components/button/BtnTiny.vue';
 
 import checklistIcon from '@/assets/icons/checklist_1.png';
 
