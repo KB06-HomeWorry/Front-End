@@ -3,6 +3,10 @@ export default [
     path: '/auth/login',
     name: 'login',
     component: () => import('../pages/auth/LoginPage.vue'),
+      meta: {
+      hideHeader: true,    // Header 숨김
+      hideFooter: true     // Footer 숨김
+    },
   },
   {
     path: '/auth/signup-agreement',
