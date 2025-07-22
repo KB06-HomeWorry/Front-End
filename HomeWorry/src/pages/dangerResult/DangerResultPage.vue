@@ -5,11 +5,12 @@
     <div class="section-wrapper">
       <DangerCard />
     </div>
-    <div class="content titleBold20px">분석 내용</div>
-    <br />
     <div class="bodyLight12px">
-      * 본 분석 결과는 참고용이며, 실제 계약 판단은 별도의 확인이 필요합니다.
+      * 본 분석 결과는 참고용이며, 실제 계약 판단은 개인의 책임입니다.
     </div>
+    <br />
+    <br />
+    <div class="content titleBold20px">분석 내용</div>
     <br />
     <div class="section-wrapper">
       <DangerSummery />
