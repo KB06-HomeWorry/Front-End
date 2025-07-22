@@ -33,12 +33,13 @@ const loadDangerResult = async () => {
 
     console.log("서버 응답:", data);
 
-    dangerResultStore.setImageUrl(data.imageUrl);
-    dangerResultStore.setDescription(data.description);
-    dangerResultStore.setGrade(data.grade);
-    dangerResultStore.setMessage(data.message);
-
-    console.log("저장된 결과:", dangerResultStore.dangerResultData);
+    dangerResultStore.setDangerResult(
+      data.grade,
+      data.message,
+      data.descriptionTitleList,
+      data.descriptionContentList,
+      data.imageUrl
+    );
   } catch (error) {
     console.error("데이터 로딩 중 오류 발생:", error);
   }

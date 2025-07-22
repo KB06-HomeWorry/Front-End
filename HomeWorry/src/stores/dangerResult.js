@@ -3,49 +3,35 @@ import { ref } from "vue";
 import { reactive } from "vue";
 
 export const useDangerResultStore = defineStore("dangerResult", () => {
-  const dangerResultData = reactive({
-    grade: "Low",
-    message: "위험 낮음",
-    description: "입주 후 특별한 위험 신호가 없습니다.",
-    imageUrl: "",
-  });
-
   const grade = ref("Low");
   const message = ref("위험 낮음");
-  const description = ref("입주 후 특별한 위험 신호가 없습니다.");
+  const descriptionTitleList = ref([""]);
+  const descriptionContentList = ref([""]);
   const imageUrl = ref("");
 
-  function setDangerResult(grade, message, description, imageUrl) {
-    dangerResultData.grade = grade;
-    dangerResultData.message = message;
-    dangerResultData.description = description;
-    dangerResultData.imageUrl = imageUrl;
-  }
+  function setDangerResult(
+    newgrade,
+    newmessage,
+    newdescriptionTitle,
+    newdescriptionContent,
+    newimageUrl
+  ) {
+    // console.log(newdescriptionContent);
 
-  function setImageUrl(url) {
-    imageUrl.value = url;
-  }
-
-  function setDescription(desc) {
-    description.value = desc;
-  }
-  function setGrade(newGrade) {
-    grade.value = newGrade;
-  }
-  function setMessage(newMessage) {
-    message.value = newMessage;
+    // 상태 업데이트
+    grade.value = newgrade;
+    message.value = newmessage;
+    descriptionTitleList.value = newdescriptionTitle;
+    descriptionContentList.value = newdescriptionContent;
+    imageUrl.value = newimageUrl;
   }
 
   return {
     grade,
     message,
-    description,
+    descriptionTitleList,
+    descriptionContentList,
     imageUrl,
-    dangerResultData,
     setDangerResult,
-    setImageUrl,
-    setDescription,
-    setGrade,
-    setMessage,
   };
 });
