@@ -16,17 +16,28 @@ import { useChecklistStore } from '@/stores/checklist';
 import BtnMed from '@/components/button/BtnMed.vue';
 
 const router = useRouter();
+
 const checklistStore = useChecklistStore();
+const type = checklistStore.checklistData.type;
+checklistStore.checklistData.stage = '계약 전';
+const stage = '계약 전';
+const userId = checklistStore.checklistData.userId;
 
 const handleClick = (color) => {
   console.log(`Button clicked with color: ${color}`);
 };
 
 const checklistAgain = () => {
-  checklistStore.checklistData.stage = '계약 전';
-
   console.log('점검 다시하기 버튼 클릭');
-  router.push('/checklist');
+
+  router.push({
+    path: '/checklist',
+    query: {
+      type,
+      stage,
+      userId,
+    },
+  });
 };
 </script>
 
