@@ -4,11 +4,12 @@
     <div class="profile-box">
       <img class="profile-img" :src="user.profileImg" alt="프로필" />
       <div class="profile-info">
-        <div class="profile-name titleBold20px">
-              <span class="emoji"></span>
-{{ user.name }}</div>
-        <div class="profile-email bodyMedium14px"><span class="emoji">📧</span>{{ user.email }}</div>
-        <div class="profile-phone bodyMedium14px"><span class="emoji">📞</span>{{ user.phone }}</div>
+        <div class="profile-name titleBold20px">{{ user.name }}</div>
+        <div class="profile-email bodyMedium14px">
+          <span class="emoji">📧</span>{{ user.email }}</div>
+        <div class="profile-phone bodyMedium14px">
+          <span class="emoji">📞</span>{{ formatPhone(user.phone) }}
+        </div>
       </div>
     </div>
 
@@ -16,7 +17,7 @@
       <MyMenu
         v-for="menu in menuList"
         :key="menu.label"
-        :icon="menu.icon"
+        :icon="typeof menu.icon === 'function' ? menu.icon() : menu.icon"
         :label="menu.label"
         :isDelete="menu.isDelete"
         @click="menu.onClick"
@@ -24,6 +25,12 @@
         @mouseleave="menu.isDelete && onDeleteMouseLeave()"
       />
     </div>
+
+    <CurrentPwModal
+      :visible="showPwModal"
+      @close="showPwModal = false"
+      @success="onPwModalSuccess"
+    />
   </div>
 </template>
 
@@ -31,6 +38,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import noticeIcon from '@/assets/icons/my_notice.png'
 import privacyIcon from '@/assets/icons/my_privacy.png'
@@ -69,17 +77,23 @@ const onDeleteMouseEnter = () => { isDeleteHover.value = true }
 const onDeleteMouseLeave = () => { isDeleteHover.value = false }
 
 const router = useRouter();
+const loading = ref(false)
+const showPwModal = ref(false)
 
 const goToNotice = () => router.push('/notice')
-const goToPrivacy = () => router.push('/privacy')
-const goToChangePw = () => router.push('/auth/change-password')
+const goToPrivacy = () => router.push('/my/privacy')
 
-const onDeleteClick = async () => {
-  const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.');
-  if (!ok) return;
+// 회원탈퇴 처리
+const handleDeleteClick = async () => {
+  if (loading.value) return
+  loading.value = true
+  const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.')
+  if (!ok) {
+    loading.value = false
+    return
+  }
 
   try {
-    // 백엔드에 맞춰 API 수정 필요
     await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
     alert('회원탈퇴가 완료되었습니다.');
     // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
@@ -88,21 +102,48 @@ const onDeleteClick = async () => {
     alert(
       err.response?.data?.message ||
       '회원탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.'
-    );
+    )
+  } finally {
+    loading.value = false
   }
-};
+}
 
+// 메뉴 클릭 핸들러 수정
+const handleChangePwClick = () => {
+  showPwModal.value = true
+}
+
+// 모달에서 인증 성공시 콜백
+function onPwModalSuccess(token) {
+  // 토큰 받아서 change-password로 이동 (token 쿼리로 전달)
+  router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
+}
+
+// 메뉴 구성
 const menuList = computed(() => [
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
-  { icon: changepwIcon, label: '비밀번호 변경', onClick: goToChangePw },
+  { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
   {
     icon: isDeleteHover.value ? deleteDark : deleteLight,
     label: '회원탈퇴',
-    onClick: onDeleteClick,
+    onClick: handleDeleteClick,
     isDelete: true
   }
-])
+]);
+
+// 연락처 하이픈 포맷팅 추가
+function formatPhone(phone) {
+  if (!phone) return '';
+  const numbers = phone.replace(/[^0-9]/g, '');
+  if (numbers.length === 11) {
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+  } else if (numbers.length === 10) {
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
+  } else {
+    return phone;
+  }
+}
 </script>
 
 <style scoped>
@@ -110,14 +151,14 @@ const menuList = computed(() => [
   display: flex;
   align-items: center;
   padding: 32px 0 24px 0;
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: 1px solid var(--color-light);
 }
 
 .profile-img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  background: #d6d6d6;
+  background: var(--color-primary);
   object-fit: cover;
   margin-left: 2rem;
   margin-right: 1.2rem;
