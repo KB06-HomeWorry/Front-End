@@ -1,9 +1,11 @@
 <template>
-  <h2>{{ dangerResultStore.grade }}</h2>
+  <div class="titleBold20px">
+    {{ dangerResultStore.grade }}
+  </div>
 </template>
 
 <script setup>
-import { useDangerResultStore } from "@/stores/dangerResult";
+import { useDangerResultStore } from '@/stores/dangerResult';
 const dangerResultStore = useDangerResultStore();
 </script>
 
