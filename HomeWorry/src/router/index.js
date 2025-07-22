@@ -5,6 +5,7 @@ import mapRoutes from "./map";
 import analysisRoutes from "./analysis";
 import myRoutes from "./my";
 import checklistRoutes from "./checklist";
+import agencyRoutes from "./agency";
 import notfoundRoutes from "./notfound";
 
 const router = createRouter({
@@ -20,6 +21,7 @@ const router = createRouter({
     ...analysisRoutes,
     ...checklistRoutes,
     ...myRoutes,
+    ...agencyRoutes,
     ...notfoundRoutes,
   ],
 });

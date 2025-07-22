@@ -80,6 +80,12 @@ body {
   font-family: 'GmarketSansMedium', sans-serif;
 }
 
+.bodyMedium10px {
+  font-size: 0.625rem;
+  font-weight: 500;
+  font-family: 'GmarketSansMedium', sans-serif;
+}
+
 .bodyLight16px {
   font-size: 1rem;
   font-weight: 300;
