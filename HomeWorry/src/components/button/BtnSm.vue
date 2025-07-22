@@ -5,7 +5,15 @@
     :style="{ backgroundColor: isWhiteBg ? '#ffffff' : 'var(--color-primary)' }"
     @click="$emit('click')"
   >
-    {{ text }}
+    <template v-if="iconPosition === 'left'">
+      <img src="@/assets/icons/back.png" class="icon icon-left" />
+    </template>
+
+    <span class="text">{{ text }}</span>
+
+    <template v-if="iconPosition === 'right'">
+      <img src="@/assets/icons/back.png" class="icon icon-right flip" />
+    </template>
   </button>
 </template>
 
@@ -20,6 +28,10 @@ const props = defineProps({
   text: {
     type: String,
     required: true,
+  },
+  iconPosition: {
+    type: String,
+    default: '',
   },
 });
 
@@ -36,16 +48,39 @@ const isWhiteBg = computed(() => {
   border-radius: 12px;
   width: 105px;
   height: 50px;
-  text-align: center;
   padding: 0;
-  line-height: 50px;
   border: none;
   color: var(--color-white);
-  transition: all 0.2s ease-in-out;
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .white-bg {
   color: var(--color-primary);
   border: 1px solid var(--color-primary);
+}
+
+.icon {
+  width: 25px;
+  height: 25px;
+}
+
+.icon-left {
+  margin-left: -8px;
+}
+
+.icon-right {
+  margin-right: -8px;
+}
+
+.flip {
+  transform: scaleX(-1);
+}
+
+.text {
+  position: relative;
+  top: 1px;
 }
 </style>

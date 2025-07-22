@@ -31,7 +31,6 @@ defineEmits(['click']);
   height: 74px;
   text-align: center;
   padding: 0;
-  line-height: 73px;
   background-color: #ffffff;
   border: 1px solid var(--color-lightgray);
   color: var(--color-primary);
@@ -58,11 +57,9 @@ defineEmits(['click']);
   height: 40px;
   flex-shrink: 0;
     filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25))
-
 }
 
 .btn-lg-wrapper:hover {
   border : 1.5px solid var(--color-primary);
-  /* border-color: var(--color-primary); */
 }
 </style>

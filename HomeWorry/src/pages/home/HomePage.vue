@@ -10,7 +10,6 @@
         text="오피스텔"
         icon="/src/assets/icons/home_officetel.png"
         @click="handleCategoryClick('오피스텔')"
-
       />
     </div>
     <div class="right-column">
@@ -30,17 +29,17 @@
         @click="handleCategoryClick('상가.사무실')"
       />
     </div>
-    
+
     <div class="checklist-column">
       <BtnLg
-      text="전·월세 체크리스트"
-      icon="/src/assets/icons/checklist_rent.png"
-      @click="handleCategoryClick('전.월세 체크리스트')"
+        text="전·월세 체크리스트"
+        icon="/src/assets/icons/checklist_rent.png"
+        @click="handleCategoryClick('전.월세 체크리스트')"
       />
       <BtnLg
-      text="매매 체크리스트"
-      icon="/src/assets/icons/checklist_sale.png"
-      @click="handleCategoryClick('매매 체크리스트')"
+        text="매매 체크리스트"
+        icon="/src/assets/icons/checklist_sale.png"
+        @click="handleCategoryClick('매매 체크리스트')"
       />
     </div>
 
@@ -58,9 +57,22 @@ import BtnLgShort from '@/components/button/BtnLgShort.vue';
 import BtnLg from '@/components/button/BtnLg.vue';
 import BtnTiny from '@/components/button/BtnTiny.vue'
 
-const router = useRouter()
+const router = useRouter();
 const handleApartmentClick = () => {};
-const handleCategoryClick = (category) => {};
+const handleCategoryClick = (category) => {
+  if (category === '전.월세 체크리스트' || category === '매매 체크리스트') {
+    const mappedType = category === '전.월세 체크리스트' ? '전/월세' : '매매';
+
+    console.log(mappedType);
+    const query = {
+      type: mappedType,
+      stage: '계약 전',
+      userId: 1,
+    };
+
+    router.push({ path: '/checklist', query });
+  }
+};
 
 function goToLogin() {
   router.replace('/auth/login')
