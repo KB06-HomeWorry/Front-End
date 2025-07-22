@@ -27,8 +27,8 @@
       <BtnMed class="login-btn" type="submit" text="로그인" />
     </form>
     <div class="login-links bodyMedium16px">
-      <button class="link-btn " @click="onSignup">회원가입하기</button>
-      <button class="link-btn" @click="onResetPw">비밀번호찾기</button>
+      <button class="link-btn bodyMedium14px" @click="onSignup">회원가입하기</button>
+      <button class="link-btn bodyMedium14px" @click="onResetPw">비밀번호찾기</button>
     </div>
   </div>
 </template>
