@@ -27,10 +27,9 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import { useChecklistStep } from '@/composables/useChecklistStep';
-import BtnSm from '@/components/button/BtnSm.vue';
-import { useChecklistStore } from '@/stores/checklist';
+import { useChecklistStep } from "@/composables/useChecklistStep";
+import BtnSm from "@/components/button/BtnSm.vue";
+import { useChecklistStore } from "@/stores/checklist";
 
 const checklistStore = useChecklistStore();
 
@@ -40,14 +39,13 @@ const props = defineProps({
 });
 
 const { setStageByIndex } = useChecklistStep();
-const emit = defineEmits(['update:currentStep', 'save']);
-const router = useRouter();
+const emit = defineEmits(["update:currentStep", "save"]);
 
 const goPrev = () => {
   if (props.currentStep > 1) {
     const newStep = props.currentStep - 1;
     setStageByIndex(newStep - 1);
-    emit('update:currentStep', newStep);
+    emit("update:currentStep", newStep);
   }
 };
 
@@ -55,25 +53,12 @@ const goNext = () => {
   if (props.currentStep < props.maxStep) {
     const newStep = props.currentStep + 1;
     setStageByIndex(newStep - 1);
-    emit('update:currentStep', newStep);
+    emit("update:currentStep", newStep);
   }
 };
 
 const save = () => {
-  emit('save');
-
-  const type = checklistStore.checklistData.type;
-  const stage = checklistStore.checklistData.stage;
-  const user_id = checklistStore.checklistData.userId;
-
-  router.push({
-    path: '/dangerResult',
-    query: {
-      type,
-      stage,
-      user_id,
-    },
-  });
+  emit("save");
 };
 </script>
 
@@ -83,7 +68,7 @@ const save = () => {
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   margin: 28px;
-  gap: 16px; /* 버튼 간격 */
+  gap: 16px;
 }
 
 .left {

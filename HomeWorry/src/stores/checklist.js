@@ -1,13 +1,78 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import axios from 'axios';
 
-export const useChecklistStore = defineStore("checklist", () => {
-  //console.log("useChecklistStore called");
+export const useChecklistStore = defineStore('checklist', () => {
   const checklistData = ref({
-    type: "매매",
-    stage: "계약 전",
+    type: '매매',
+    stage: '계약 전',
     userId: 1,
   });
-  console.log("checklistData initialized:", checklistData.value);
-  return { checklistData };
+
+  const checklist = ref([]);
+  const answerList = ref([]);
+
+  const loadChecklist = async () => {
+    const { type, stage, userId } = checklistData.value;
+
+    try {
+      const response = await axios.get('http://localhost:8080/checklist', {
+        params: { type, stage, user_id: userId },
+      });
+
+      const data = response.data;
+
+      if (!data || !Array.isArray(data.checklist)) {
+        console.error('Invalid checklist data:', data);
+        checklist.value = [];
+        answerList.value = [];
+        return;
+      }
+
+      checklist.value = data.checklist.map((item) => {
+        const answer = data.answers?.find(
+          (ans) => ans.questionId === item.checklistId
+        );
+        return {
+          ...item,
+          questionId: item.checklistId,
+          checked: answer ? Boolean(answer.answer) : false,
+        };
+      });
+
+      answerList.value = data.answers || [];
+    } catch (error) {
+      console.error('Checklist load error:', error);
+      checklist.value = [];
+      answerList.value = [];
+    }
+  };
+
+  const resetChecklist = async () => {
+    checklist.value.forEach((item) => {
+      item.checked = false;
+    });
+
+    answerList.value.forEach((answer) => {
+      answer.answer = false;
+    });
+
+    try {
+      await axios.post(
+        'http://localhost:8080/checklist/answers',
+        answerList.value
+      );
+      // console.log('서버에 초기화된 답변 저장 완료');
+    } catch (error) {
+      console.error('초기화된 답변 저장 실패:', error);
+    }
+  };
+
+  return {
+    checklistData,
+    checklist,
+    answerList,
+    loadChecklist,
+    resetChecklist,
+  };
 });

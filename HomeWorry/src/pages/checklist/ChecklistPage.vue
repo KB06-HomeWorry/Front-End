@@ -3,10 +3,8 @@
   <ChecklistNavBar v-model:currentStep="currentStep" />
   <br />
   <ChecklistQuestion />
-  <br />
-  <br />
-  <br />
-  <br />
+  <br /><br /><br /><br />
+
   <div class="fixed-footer-btn">
     <ChecklistBtn
       :currentStep="currentStep"
@@ -18,15 +16,18 @@
 </template>
 
 <script setup>
-import ChecklistNavBar from './components/ChecklistNavBar.vue';
-import ChecklistQuestion from './components/ChecklistQuestion.vue';
-import ChecklistBtn from './components/ChecklistBtn.vue';
+import ChecklistNavBar from "./components/ChecklistNavBar.vue";
+import ChecklistQuestion from "./components/ChecklistQuestion.vue";
+import ChecklistBtn from "./components/ChecklistBtn.vue";
 
-import { useRoute } from 'vue-router';
-import axios from 'axios';
-import { ref, onMounted, watch } from 'vue';
-import { useChecklistStore } from '@/stores/checklist';
-import { useChecklistStep } from '@/composables/useChecklistStep';
+import { useRoute } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import axios from "axios";
+
+import { useChecklistStore } from "@/stores/checklist";
+import { useChecklistStep } from "@/composables/useChecklistStep";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const route = useRoute();
 const checklistStore = useChecklistStore();
@@ -34,14 +35,16 @@ const { setStageByIndex } = useChecklistStep();
 
 const currentStep = ref(1);
 
-onMounted(() => {
+onMounted(async () => {
   const { type, stage, userId } = route.query;
   if (type && stage && userId) {
     checklistStore.checklistData.type = type;
     checklistStore.checklistData.stage = stage;
     checklistStore.checklistData.userId = parseInt(userId);
-    console.log('스토어 초기화 완료:', checklistStore.checklistData);
+    console.log("스토어 초기화 완료:", checklistStore.checklistData);
   }
+
+  await checklistStore.loadChecklist();
 });
 
 watch(currentStep, (newStep) => {
@@ -54,18 +57,31 @@ async function handleSaveRequested() {
 
     const answerDTOList = checklistStore.checklist.map((item) => ({
       questionId: item.questionId,
-      userId: userId,
+      userId,
       answer: item.checked || false,
     }));
 
-    console.log('저장할 데이터:', answerDTOList);
+    console.log("저장할 데이터:", answerDTOList);
 
-    alert('저장 성공!');
+    alert("저장 성공!");
 
-    await axios.post('http://localhost:8080/checklist/answers', answerDTOList);
+    await axios.post("http://localhost:8080/checklist/answers", answerDTOList);
+
+    const type = checklistStore.checklistData.type;
+    const stage = checklistStore.checklistData.stage;
+    const user_id = checklistStore.checklistData.userId;
+
+    router.push({
+      path: "/dangerResult",
+      query: {
+        type,
+        stage,
+        user_id,
+      },
+    });
   } catch (error) {
-    console.error('저장 실패:', error);
-    alert('저장에 실패했습니다.');
+    console.error("저장 실패:", error);
+    alert("저장에 실패했습니다.");
   }
 }
 </script>
@@ -75,7 +91,7 @@ async function handleSaveRequested() {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px; /* 푸터 높이만큼 띄우기 */
+  bottom: 40px;
   z-index: 100;
   padding: 12px 0 18px 0;
   display: flex;

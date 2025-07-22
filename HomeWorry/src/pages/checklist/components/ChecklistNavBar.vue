@@ -23,8 +23,8 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
-import { useChecklistStep } from "@/composables/useChecklistStep";
+import { defineProps, defineEmits } from 'vue';
+import { useChecklistStep } from '@/composables/useChecklistStep';
 
 const props = defineProps({
   currentStep: {
@@ -33,14 +33,14 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:currentStep"]);
+const emit = defineEmits(['update:currentStep']);
 
 const { steps, setStageByIndex } = useChecklistStep();
 
 function handleStepClick(stepNumber, stepName) {
-  emit("update:currentStep", stepNumber);
+  emit('update:currentStep', stepNumber);
   setStageByIndex(stepNumber - 1);
-  console.log("선택된 stage:", stepName);
+  // console.log("선택된 stage:", stepName);
 }
 </script>
 

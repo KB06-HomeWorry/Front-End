@@ -2,7 +2,7 @@
   <div class="checklist-container">
     <ul>
       <li
-        v-for="item in checklist"
+        v-for="item in checklistStore.checklist"
         :key="item.questionId"
         style="margin-bottom: 16px"
       >
@@ -10,11 +10,11 @@
           <div class="checklist-box">
             <input
               type="checkbox"
-              :checked="getChecked(item)"
+              :checked="item.checked"
               @change="onCheckChange($event, item)"
               :id="'checklist-' + item.questionId"
             />
-            <label :for="'checklist-' + item.questionId"> </label>
+            <label :for="'checklist-' + item.questionId"></label>
           </div>
           <div class="checklist-question">{{ item.content }}</div>
         </div>
@@ -25,71 +25,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import axios from 'axios';
+import { onMounted, watch } from 'vue';
 import { useChecklistStore } from '@/stores/checklist';
 
 const checklistStore = useChecklistStore();
-
-const checklist = ref([]);
-const answerlist = ref([]);
-
-const loadChecklist = async () => {
-  const { type, stage, userId } = checklistStore.checklistData;
-
-  try {
-    const response = await axios.get('http://localhost:8080/checklist', {
-      params: { type, stage, user_id: userId },
-    });
-
-    const data = response.data;
-
-    console.log('API 응답 전체:', data);
-    if (!data || !Array.isArray(data.checklist)) {
-      console.error('Invalid checklist data:', data);
-      checklist.value = [];
-      answerlist.value = [];
-      return;
-    }
-
-    checklist.value = data.checklist;
-    answerlist.value = data.answers || [];
-
-    checklist.value = data.checklist.map((item) => {
-      const answer = data.answers?.find(
-        (ans) => ans.questionId === item.checklistId
-      );
-      return {
-        ...item,
-        questionId: item.checklistId,
-        checked: answer ? Boolean(answer.answer) : false,
-      };
-    });
-
-    checklistStore.checklist = checklist.value;
-  } catch (error) {
-    console.error('Checklist load error:', error);
-    checklist.value = [];
-    answerlist.value = [];
-  }
-};
-
-function getChecked(item) {
-  return item.checked || false;
-}
 
 function onCheckChange(event, item) {
   const checked = event.target.checked;
   item.checked = checked;
 
-  const answerObj = answerlist.value.find(
-    (answer) => answer.questionId === item.questionId
+  const existing = checklistStore.answerList.find(
+    (ans) => ans.questionId === item.questionId
   );
 
-  if (answerObj) {
-    answerObj.answer = checked;
+  if (existing) {
+    existing.answer = checked;
   } else {
-    answerlist.value.push({
+    checklistStore.answerList.push({
       questionId: item.questionId,
       userId: checklistStore.checklistData.userId,
       answer: checked,
@@ -97,11 +49,13 @@ function onCheckChange(event, item) {
   }
 }
 
-onMounted(loadChecklist);
+onMounted(() => {
+  checklistStore.loadChecklist();
+});
 
 watch(
   () => [checklistStore.checklistData.type, checklistStore.checklistData.stage],
-  loadChecklist
+  () => checklistStore.loadChecklist()
 );
 </script>
 
@@ -131,7 +85,6 @@ watch(
   transition: accent-color 0.2s;
 }
 
-/* ✔️ hover, focus 상태에도 동일하게 유지 */
 .checklist-box input[type='checkbox']:hover,
 .checklist-box input[type='checkbox']:focus {
   accent-color: var(--color-secondarylight);
@@ -141,7 +94,6 @@ watch(
   accent-color: var(--color-secondarylight);
 }
 
-/* checked+hover도 동일하게 */
 .checklist-box input[type='checkbox']:checked:hover,
 .checklist-box input[type='checkbox']:checked:focus {
   accent-color: var(--color-secondarylight);
