@@ -16,15 +16,18 @@
 <script setup>
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
+import { useChecklistStore } from '@/stores/checklist';
 
 const route = useRoute();
+const checklistStore = useChecklistStore();
 
 const showChecklistTitle = computed(() => route.path.startsWith('/checklist'));
 const type = computed(() => route.query.type || '');
 const stage = computed(() => route.query.stage || '');
 
 const handleReset = () => {
-  console.log('초기화 버튼 클릭됨');
+  checklistStore.resetChecklist();
+  alert('체크리스트가 초기화되었습니다.');
 };
 </script>
 

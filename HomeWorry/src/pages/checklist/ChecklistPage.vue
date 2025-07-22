@@ -3,10 +3,8 @@
   <ChecklistNavBar v-model:currentStep="currentStep" />
   <br />
   <ChecklistQuestion />
-  <br />
-  <br />
-  <br />
-  <br />
+  <br /><br /><br /><br />
+
   <div class="fixed-footer-btn">
     <ChecklistBtn
       :currentStep="currentStep"
@@ -23,8 +21,9 @@ import ChecklistQuestion from './components/ChecklistQuestion.vue';
 import ChecklistBtn from './components/ChecklistBtn.vue';
 
 import { useRoute } from 'vue-router';
-import axios from 'axios';
 import { ref, onMounted, watch } from 'vue';
+import axios from 'axios';
+
 import { useChecklistStore } from '@/stores/checklist';
 import { useChecklistStep } from '@/composables/useChecklistStep';
 
@@ -34,7 +33,7 @@ const { setStageByIndex } = useChecklistStep();
 
 const currentStep = ref(1);
 
-onMounted(() => {
+onMounted(async () => {
   const { type, stage, userId } = route.query;
   if (type && stage && userId) {
     checklistStore.checklistData.type = type;
@@ -42,6 +41,8 @@ onMounted(() => {
     checklistStore.checklistData.userId = parseInt(userId);
     console.log('스토어 초기화 완료:', checklistStore.checklistData);
   }
+
+  await checklistStore.loadChecklist();
 });
 
 watch(currentStep, (newStep) => {
@@ -54,7 +55,7 @@ async function handleSaveRequested() {
 
     const answerDTOList = checklistStore.checklist.map((item) => ({
       questionId: item.questionId,
-      userId: userId,
+      userId,
       answer: item.checked || false,
     }));
 
@@ -75,7 +76,7 @@ async function handleSaveRequested() {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px; /* 푸터 높이만큼 띄우기 */
+  bottom: 40px;
   z-index: 100;
   padding: 12px 0 18px 0;
   display: flex;
