@@ -85,6 +85,9 @@ async function onSubmit() {
       password: password.value,
       token: token
     })
+  // --- 로그아웃 처리 ---
+  localStorage.removeItem('user-token')
+  delete axios.defaults.headers.common['Authorization']
     alert('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.')
     router.replace('/auth/login')
   } catch (err) {

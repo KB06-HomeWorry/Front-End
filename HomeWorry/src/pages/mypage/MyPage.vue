@@ -5,7 +5,8 @@
       <img class="profile-img" :src="user.profileImg" alt="프로필" />
       <div class="profile-info">
         <div class="profile-name titleBold20px">{{ user.name }}</div>
-        <div class="profile-email bodyMedium14px"><span class="emoji">📧</span>{{ user.email }}</div>
+        <div class="profile-email bodyMedium14px">
+          <span class="emoji">📧</span>{{ user.email }}</div>
         <div class="profile-phone bodyMedium14px">
           <span class="emoji">📞</span>{{ formatPhone(user.phone) }}
         </div>
@@ -24,6 +25,12 @@
         @mouseleave="menu.isDelete && onDeleteMouseLeave()"
       />
     </div>
+
+    <CurrentPwModal
+      :visible="showPwModal"
+      @close="showPwModal = false"
+      @success="onPwModalSuccess"
+    />
   </div>
 </template>
 
@@ -31,6 +38,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import noticeIcon from '@/assets/icons/my_notice.png'
 import privacyIcon from '@/assets/icons/my_privacy.png'
@@ -69,10 +77,10 @@ const onDeleteMouseLeave = () => { isDeleteHover.value = false }
 
 const router = useRouter();
 const loading = ref(false)
+const showPwModal = ref(false)
 
 const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/my/privacy')
-const goToChangePw = () => router.push('/auth/change-password')
 
 // 회원탈퇴 처리
 const handleDeleteClick = async () => {
@@ -98,10 +106,22 @@ const handleDeleteClick = async () => {
   }
 }
 
+// 메뉴 클릭 핸들러 수정
+const handleChangePwClick = () => {
+  showPwModal.value = true
+}
+
+// 모달에서 인증 성공시 콜백
+function onPwModalSuccess(token) {
+  // 토큰 받아서 change-password로 이동 (token 쿼리로 전달)
+  router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
+}
+
+// 메뉴 구성
 const menuList = computed(() => [
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
-  { icon: changepwIcon, label: '비밀번호 변경', onClick: goToChangePw },
+  { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
   {
     icon: isDeleteHover.value ? deleteDark : deleteLight,
     label: '회원탈퇴',
