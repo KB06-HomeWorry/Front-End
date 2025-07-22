@@ -1,5 +1,5 @@
 <template>
-  <div class="mypage-list-item" @click="$emit('click')">
+  <div class="mypage-list-item" @click.stop="$emit('click')">
     <img :src="icon" alt="" class="item-icon" />
     <span class="item-label bodyMedium16px" :class="{ 'delete-label':isDelete}">{{ label }}</span>
     <div class="item-divider"></div>
