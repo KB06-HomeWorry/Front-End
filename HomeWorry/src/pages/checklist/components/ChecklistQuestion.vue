@@ -16,9 +16,11 @@
             />
             <label :for="'checklist-' + item.questionId"></label>
           </div>
-          <div class="checklist-question">{{ item.content }}</div>
+          <div class="checklist-question bodyMedium16px">
+            {{ item.content }}
+          </div>
         </div>
-        <div>{{ item.effectiveness }}</div>
+        <div class="bodyLight12px">{{ item.effectiveness }}</div>
       </li>
     </ul>
   </div>
@@ -103,20 +105,12 @@ watch(
   width: 22px;
   height: 22px;
   display: inline-block;
-}
-
-.checklist-question {
-  font-size: 17px;
-  font-weight: 500;
-  line-height: 1.35;
-  margin: 0;
+  margin-left: -12px;
 }
 
 li > div:last-child {
-  font-size: 14px;
-  color: #555;
-  margin-left: 45px;
+  margin-left: 32px;
   margin-right: 10px;
-  margin-top: 7px;
+  margin-top: 2px;
 }
 </style>
