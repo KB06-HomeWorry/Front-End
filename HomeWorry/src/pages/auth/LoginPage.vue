@@ -1,8 +1,14 @@
 <template>
   <div class="login-page">
-    <h2 class="login-title">로그인</h2>
+    <img
+      class="login-logo-img"
+      src="@/assets/icons/login_logo.png"
+      alt="로그인 로고"
+    />
+    <!-- <h2 class="login-title titleBold32px">로그인</h2> -->
 
     <form @submit.prevent="onLogin" class="login-form">
+      <!-- 이메일 -->
       <InputSimple
         v-model="username"
         type="text"
@@ -10,6 +16,7 @@
         autocomplete="username"
       />
 
+      <!-- 비밀번호 -->
       <InputSimple
         v-model="password"
         type="password"
@@ -19,9 +26,9 @@
 
       <BtnMed class="login-btn" type="submit" text="로그인" />
     </form>
-    <div class="login-links">
-      <button class="link-btn" @click="onSignup">회원가입</button>
-      <button class="link-btn" @click="onResetPw">비밀번호 찾기</button>
+    <div class="login-links bodyMedium16px">
+      <button class="link-btn bodyMedium14px" @click="onSignup">회원가입하기</button>
+      <button class="link-btn bodyMedium14px" @click="onResetPw">비밀번호찾기</button>
     </div>
   </div>
 </template>
@@ -70,38 +77,47 @@ function onResetPw() {
 
 <style scoped>
 .login-page {
-  max-width: 360px;
-  margin: 80px auto 0;
-  padding: 1rem;
+  margin: 2rem;
 }
+
+.login-logo-img {
+  display: block;
+  width: 180px;    
+  height: 180px;
+  object-fit: cover;
+  margin: 6rem auto 2.5rem auto;
+}
+/* 
 .login-title {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 32px;
+  color: var(--color-primary);
+  margin: 32px;
   text-align: center;
-}
+} */
+
 .login-form {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
+
 .login-btn {
   width: 100%;
   height: 50px;
   border-radius: 12px;
-  /* margin-top: 16px; */
 }
+
 .login-links {
   display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 52px;
 }
+
 .link-btn {
-  border: none;
-  background: none;
-  color: #3464eb;
-  font-size: 15px;
+  color: var(--color-mediumgray);
   cursor: pointer;
   padding: 0 4px;
   text-decoration: underline;
+  text-underline-offset: 3px;
 }
 </style>

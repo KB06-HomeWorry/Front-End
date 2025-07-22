@@ -43,16 +43,28 @@
       @click="handleCategoryClick('매매 체크리스트')"
       />
     </div>
+
+    <BtnTiny
+    text="로그인/회원가입"
+    @click="goToLogin"
+    />
   </section>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
 import ApartBtn from '@/pages/home/components/ApartBtn.vue';
 import BtnLgShort from '@/components/button/BtnLgShort.vue';
 import BtnLg from '@/components/button/BtnLg.vue';
+import BtnTiny from '@/components/button/BtnTiny.vue'
 
+const router = useRouter()
 const handleApartmentClick = () => {};
 const handleCategoryClick = (category) => {};
+
+function goToLogin() {
+  router.replace('/auth/login')
+}
 </script>
 
 <style scoped>
