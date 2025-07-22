@@ -15,16 +15,16 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-import { useChecklistStore } from "@/stores/checklist";
-import BtnMed from "@/components/button/BtnMed.vue";
+import { useRouter } from 'vue-router';
+import { useChecklistStore } from '@/stores/checklist';
+import BtnMed from '@/components/button/BtnMed.vue';
 
 const router = useRouter();
 
 const checklistStore = useChecklistStore();
 const type = checklistStore.checklistData.type;
-checklistStore.checklistData.stage = "계약 전";
-const stage = "계약 전";
+checklistStore.checklistData.stage = '계약 전';
+const stage = '계약 전';
 const userId = checklistStore.checklistData.userId;
 
 const handleClick = (action) => {
@@ -43,10 +43,10 @@ const handleClick = (action) => {
 };
 
 const checklistAgain = () => {
-  console.log("점검 다시하기 버튼 클릭");
+  console.log('점검 다시하기 버튼 클릭');
 
   router.push({
-    path: "/checklist",
+    path: '/checklist',
     query: {
       type,
       stage,
@@ -61,7 +61,6 @@ const checklistAgain = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  margin: 28px 0;
+  gap: 12px;
 }
 </style>
