@@ -125,6 +125,33 @@ watch(phone, (newValue) => {
   phone.value = formatted;
 });
 
+// 비밀번호 2종류 이상 조합 검사 함수
+function isPasswordValid(pw) {
+  let types = 0;
+  if (/[A-Za-z]/.test(pw)) types++;
+  if (/\d/.test(pw)) types++;
+  if (/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(pw)) types++;
+  return pw.length >= 8 && types >= 2;
+}
+
+// 비밀번호/확인 실시간 에러 처리
+watch([password, passwordCheck], ([pw, pwCheck]) => {
+  if (!pw) {
+    passwordError.value = '';
+    return;
+  }
+  if (!isPasswordValid(pw)) {
+    passwordError.value = '비밀번호는 영문, 숫자, 특수문자 중 2종류 이상을 조합해 8자 이상이어야 합니다.';
+    return;
+  }
+  if (pwCheck && pw !== pwCheck) {
+    passwordError.value = '비밀번호가 일치하지 않습니다.';
+    return;
+  }
+  passwordError.value = '';
+});
+
+
 async function onSubmit() {
   if(loading.value) return;
   loading.value = true;
@@ -137,6 +164,11 @@ async function onSubmit() {
   }
   if (password.value !== passwordCheck.value) {
     passwordError.value = '비밀번호가 일치하지 않습니다.';
+    return;
+  }
+  if (!isPasswordValid(password.value)) {
+    passwordError.value = '비밀번호는 영문, 숫자, 특수문자 중 2종류 이상을 조합해 8자 이상이어야 합니다.';
+    loading.value = false;
     return;
   }
   passwordError.value = ''; 
@@ -157,7 +189,6 @@ async function onSubmit() {
 
     alert('회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.');
     router.push('/auth/login');
-
   } catch (error) {
     console.error('회원가입 실패:', error);
     const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
@@ -170,7 +201,7 @@ async function onSubmit() {
 
 <style scoped>
 .signup-form {
-  margin: 1.5rem 0;      
+  margin: 1.5rem 1rem;      
   box-sizing: border-box;
   padding: 0 1rem;   
 }
