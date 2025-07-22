@@ -12,18 +12,18 @@
       </div>
     </div>
 
-  <div class="mypage-menu-list">
-    <MyMenu
-      v-for="menu in menuList"
-      :key="menu.label"
-      :icon="menu.icon"
-      :label="menu.label"
-      :isDelete="menu.isDelete"
-      @click="menu.onClick"
-      @mouseenter="menu.isDelete && onDeleteMouseEnter()"
-      @mouseleave="menu.isDelete && onDeleteMouseLeave()"
-    />
-  </div>
+    <div class="mypage-menu-list">
+      <MyMenu
+        v-for="menu in menuList"
+        :key="menu.label"
+        :icon="menu.icon"
+        :label="menu.label"
+        :isDelete="menu.isDelete"
+        @click="menu.onClick"
+        @mouseenter="menu.isDelete && onDeleteMouseEnter()"
+        @mouseleave="menu.isDelete && onDeleteMouseLeave()"
+      />
+    </div>
   </div>
 </template>
 
@@ -72,9 +72,26 @@ const router = useRouter();
 const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/privacy')
 const goToChangePw = () => router.push('/auth/change-password')
-const onDeleteClick = () => {
-  alert('회원탈퇴 기능 실행!');
-}
+
+const onDeleteClick = async () => {
+  const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.');
+  if (!ok) return;
+
+  try {
+    // 백엔드에 맞춰 API 수정 필요
+    await axios.post('http://localhost:8080/api/member/withdraw', {
+      // 필요시 로그인 유저 식별 id도 같이 전송?
+    });
+    alert('회원탈퇴가 완료되었습니다.');
+    // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
+    router.replace('/auth/login');
+  } catch (err) {
+    alert(
+      err.response?.data?.message ||
+      '회원탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.'
+    );
+  }
+};
 
 const menuList = computed(() => [
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
@@ -84,12 +101,9 @@ const menuList = computed(() => [
     icon: isDeleteHover.value ? deleteDark : deleteLight,
     label: '회원탈퇴',
     onClick: onDeleteClick,
-    isDelete: true,
-    isDisabled: true
+    isDelete: true
   }
 ])
-
-
 </script>
 
 <style scoped>
