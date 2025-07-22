@@ -45,12 +45,13 @@ const user = ref({
   email: '',
   phone: ''
 })
+
+const token = localStorage.getItem('user-token');
+
 onMounted(async () => {
   try {
-    // const res = await axios.get('http://localhost:8080/api/users')
-    // const users = res.data.data
-    const res = await axios.get('http://localhost:3000/users')
-    const data = res.data[0]
+    const res = await axios.get(`http://localhost:8080/api/member/getprofile/${token}`)
+    const data = res.data
     user.value = {
       ...user.value,
       name: data.name,
@@ -79,9 +80,7 @@ const onDeleteClick = async () => {
 
   try {
     // 백엔드에 맞춰 API 수정 필요
-    await axios.post('http://localhost:8080/api/member/withdraw', {
-      // 필요시 로그인 유저 식별 id도 같이 전송?
-    });
+    await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
     alert('회원탈퇴가 완료되었습니다.');
     // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
     router.replace('/auth/login');
