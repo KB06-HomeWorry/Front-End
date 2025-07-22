@@ -1,5 +1,5 @@
 <template>
-  <span class="hashtag-badge bodyMedium10px">
+  <span class="hashtag-badge bodyMedium12px">
     <slot />
   </span>
 </template>
@@ -12,7 +12,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 18px;
+  height: 20px;
   padding: 2px 10px 0 10px;
   background: #E9E9E9;
   border-radius: 12px;
