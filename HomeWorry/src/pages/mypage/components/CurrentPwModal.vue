@@ -33,6 +33,8 @@ const currentPw = ref('')
 const error = ref('')
 const router = useRouter()
 
+const usertoken = localStorage.getItem('user-token');
+
 watch(() => props.visible, (val) => {
   if (val) {
     currentPw.value = ''
@@ -47,13 +49,14 @@ async function submit() {
   }
   try {
     const res = await axios.post('http://localhost:8080/api/member/verify-password', {
-      currentPassword: currentPw.value
+      password: currentPw.value,
+      token: usertoken
     })
-    const token = res.data.token
+    const token = res.data
     if (!token) throw new Error('토큰 발급에 실패했습니다.')
     emit('success', token)
     close()
-    router.push(`/auth/reset-password/${encodeURIComponent(token)}`)
+    router.push(`/auth/change-password/${encodeURIComponent(token)}`)
   } catch (e) {
     error.value =
       e.response?.data?.message || e.message || '비밀번호가 틀렸습니다.'
