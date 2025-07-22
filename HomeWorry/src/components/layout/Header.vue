@@ -26,8 +26,16 @@ const type = computed(() => route.query.type || '');
 const stage = computed(() => route.query.stage || '');
 
 const handleReset = () => {
-  checklistStore.resetChecklist();
-  alert('체크리스트가 초기화되었습니다.');
+  const stage = checklistStore.checklistData.stage;
+
+  const confirmed = confirm(
+    `${stage} 단계 체크리스트를 초기화하시겠어요?\n지금까지의 답변이 모두 삭제됩니다.`
+  );
+
+  if (confirmed) {
+    checklistStore.resetChecklist();
+    alert(`${stage} 단계 체크리스트가 초기화되었어요.😊\n다시 시작해볼까요?`);
+  }
 };
 </script>
 
