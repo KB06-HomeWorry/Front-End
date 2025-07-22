@@ -28,6 +28,12 @@ body {
   --transition: all 0.3s ease;
 }
 
+.titleBold32px {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: 'GmarketSansBold', sans-serif;
+}
+
 .titleBold24px {
   font-size: 1.5rem;
   font-weight: 700;
@@ -70,6 +76,12 @@ body {
   font-family: 'GmarketSansMedium', sans-serif;
 }
 
+.bodyMedium14px {
+  font-size: 0.875rem;
+  font-weight: 00;
+  font-family: 'GmarketSansMedium', sans-serif;
+}
+
 .bodyMedium12px {
   font-size: 0.75rem;
   font-weight: 500;
@@ -81,6 +93,12 @@ body {
   font-size: 0.68rem;
   font-weight: 500;
   font-family: 'GmarketSansMedium', sans-serif;
+}
+
+.bodyLight16px {
+  font-size: 1rem;
+  font-weight: 300;
+  font-family: 'GmarketSansLight', sans-serif;
 }
 
 .bodyLight12px {
