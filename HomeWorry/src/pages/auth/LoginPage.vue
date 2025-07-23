@@ -37,7 +37,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import InputSimple from './components/InputSimple.vue'
+import InputSimple from '../../components/input/InputSimple.vue'
 import BtnMed from '@/components/button/BtnMed.vue'
 
 const router = useRouter()
