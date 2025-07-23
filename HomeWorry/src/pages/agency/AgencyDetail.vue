@@ -71,7 +71,7 @@ onMounted(async () => {
   }
 })
 
-const agencyId = agency.value.id // 추후 사용 예정, 현재는 데이터 불러온 후 할당됨
+// const agencyId = agency.value.id
 
 const goToListingPage = () => {
   // 추후 백엔드 연동 시 사용
@@ -173,8 +173,8 @@ const goToReviewPage = () => {
 
 .agency-description {
   margin-top: 12px;
-  border-top: 0.1px solid var(--color-mediumgray);
-  border-bottom: 0.1px solid var(--color-mediumgray);
+  border-top: 1px solid var(--color-mediumgray);
+  border-bottom: 1px solid var(--color-mediumgray);
   padding: 12px 10px;
   min-height: 80px;
   /* background: var(--color-lightgray2); */
