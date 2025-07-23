@@ -20,6 +20,13 @@
         />
       </div>
     </div>
+    <BtnMedSlim
+      v-if="completedAnswersCount === questions.length"
+      :text="'후기 작성 완료하기'"
+      :disabled="!canSubmit"
+      @click="submitReview"
+      style="margin: 12px 2rem 12px 2rem; width: calc(100% - 4rem);"
+    />
   </div>
 </template>
 
@@ -28,8 +35,10 @@ import { ref, computed, nextTick } from 'vue'
 import ProgressBar from '@/pages/agency/components/ProgressBar.vue'
 import ReviewQuestion from '@/pages/agency/components/ReviewQuestion.vue'
 import ProgressAvatar from '@/assets/icons/progress-avatar.png'
+import BtnMedSlim from '@/components/button/BtnMedSlim.vue'
 
 const avatar = ProgressAvatar
+const canSubmit = computed(() => answers.value.every(ans => ans !== null))
 
 const questions = [
   {
@@ -113,6 +122,7 @@ function onSelect(idx, answerIdx) {
   display: flex;
   flex-direction: column;
   background: #fff;
+  margin-top: 16px;
 }
 
 .progress-bar-container {
