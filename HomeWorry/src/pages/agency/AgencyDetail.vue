@@ -95,9 +95,12 @@ onMounted(async () => {
 
 .agency-info-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing:0;
   border: 0.1px solid var(--color-mediumgray);
   margin-top: 12px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .agency-info-table td {
@@ -115,6 +118,23 @@ onMounted(async () => {
 
 .agency-info-table tr:last-child td {
   border-bottom: none;
+}
+
+/* 첫 행 왼쪽 */
+.agency-info-table tr:first-child td:first-child {
+  border-top-left-radius: 12px;
+}
+/* 첫 행 오른쪽 */
+.agency-info-table tr:first-child td:last-child {
+  border-top-right-radius: 12px;
+}
+/* 마지막 행 왼쪽 */
+.agency-info-table tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+/* 마지막 행 오른쪽 */
+.agency-info-table tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
 }
 
 .bodyMedium12px .bodyLight12px { 
