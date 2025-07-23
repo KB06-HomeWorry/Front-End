@@ -30,18 +30,26 @@
       </tbody>
     </table>
     <div class="agency-description">
-      <div class="desc-title bodyMedium16px">중개사무소 소개</div>
-      <div class="desc-content">{{ agency.description || "등록된 소개글이 없습니다." }}</div>
+      <div class="desc-content bodyLight12px">{{ agency.description || "등록된 소개글이 없습니다." }}</div>
+    </div>
+    <div class="agency-btn-row">
+      <BtnAgency text="보유 매물 보러가기" color="#fff" @click="goToListingPage" />
+      <BtnAgency text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import Hashtag from '@/pages/agency/components/HashTag.vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+import Hashtag from '@/pages/agency/components/HashTag.vue'
+import BtnAgency from './components/BtnAgency.vue'
+
+const router = useRouter()
 
 // API에서 받아올 agency 정보
+// 추후 설계된 DB에 맞춰서 수정 필요
 const agency = ref({
   officeName: '',
   profileUrl: '',
@@ -53,8 +61,8 @@ const agency = ref({
   description:'',
 })
 
+// 추후 백엔드 엔드포인트에 맞춰서 수정 필요
 onMounted(async () => {
-  // json-server를 통해 GET 예시 (id=1 사용)
   try {
     const res = await axios.get('http://localhost:3001/agencies/1')
     agency.value = res.data
@@ -62,11 +70,25 @@ onMounted(async () => {
     alert('중개사무소 정보를 불러오지 못했습니다.')
   }
 })
+
+const agencyId = agency.value.id // 추후 사용 예정, 현재는 데이터 불러온 후 할당됨
+
+const goToListingPage = () => {
+  // 추후 백엔드 연동 시 사용
+  // router.push(`/agency/${agencyId}/listings`)
+  router.push('/agency/listings')
+}
+
+const goToReviewPage = () => {
+  // 추후 백엔드 연동 시 사용
+  // router.push(`/agency/${agencyId}/review`)
+  router.push('/agency/review-write')
+}
 </script>
 
 <style scoped>
 .agency-profile-wrap {
-  margin: 2rem;
+  margin: 1.5rem 2rem;
 }
 
 .profile-row {
@@ -78,8 +100,8 @@ onMounted(async () => {
 .profile-img {
   width: 100px;
   height: 100px;
+  border: 1px solid var(--color-mediumgray);
   border-radius: 50%;
-  background: var(--color-light);
   object-fit: cover;
   margin-right: 12px;
 }
@@ -98,7 +120,7 @@ onMounted(async () => {
   border-collapse: separate;
   border-spacing:0;
   border: 0.1px solid var(--color-mediumgray);
-  margin-top: 12px;
+  margin-top: 16px;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -151,23 +173,23 @@ onMounted(async () => {
 
 .agency-description {
   margin-top: 12px;
-  border-radius: 12px;
-  border: 0.1px solid var(--color-mediumgray);
-  padding: 20px 18px 18px 18px;
+  border-top: 0.1px solid var(--color-mediumgray);
+  border-bottom: 0.1px solid var(--color-mediumgray);
+  padding: 12px 10px;
   min-height: 80px;
-}
-
-.desc-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 8px;
-  letter-spacing: -0.03em;
+  /* background: var(--color-lightgray2); */
 }
 
 .desc-content {
-  font-size: 15px;
   line-height: 1.6;
   white-space: pre-line;
+}
+
+.agency-btn-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;   /* 중앙정렬 */
+  align-items: center;
 }
 </style>
