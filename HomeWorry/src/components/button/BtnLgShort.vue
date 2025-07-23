@@ -65,6 +65,5 @@ defineEmits(['click']);
 
 .btn-lgshort-wrapper:hover {
   border : 1.5px solid var(--color-primary);
-  /* border-color: var(--color-primary); */
 }
 </style>

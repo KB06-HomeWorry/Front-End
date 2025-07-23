@@ -20,9 +20,11 @@ body {
   --color-white: #ffffff;
   --color-primary: #111f5c;
   --color-secondary: #ffbfcb;
+  --color-secondarylight: #ffe3e8;
   --color-lightgray: #d4d4d4;
   --color-light: #d9d9d9;
   --color-mediumgray: #bdbdbd;
+  --color-lightgray2: #f4f4f4;
   --transition: all 0.3s ease;
 }
 
@@ -46,6 +48,12 @@ body {
 
 .titleBold16px {
   font-size: 1rem;
+  font-weight: 700;
+  font-family: 'GmarketSansBold', sans-serif;
+}
+
+.titleBold12px {
+  font-size: 0.75rem;
   font-weight: 700;
   font-family: 'GmarketSansBold', sans-serif;
 }
@@ -81,7 +89,8 @@ body {
 }
 
 .bodyMedium10px {
-  font-size: 0.625rem;
+  /* 사실 10.88 이라는 것임!!! (°ロ°) ! */
+  font-size: 0.68rem;
   font-weight: 500;
   font-family: 'GmarketSansMedium', sans-serif;
 }
