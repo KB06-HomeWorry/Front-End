@@ -5,16 +5,28 @@
         {{ showChecklistTitle ? `${type} 계약 체크리스트` : '집걱정단' }}
       </h1>
     </div>
+
+    <!-- 초기화 버튼: /checklist일 때만 -->
     <div class="right" v-if="showChecklistTitle">
       <button
-        class="reset-btn titleBold12px"
+        class="action-btn titleBold12px"
         @click="isConfirmModalVisible = true"
       >
         초기화
       </button>
     </div>
 
-    <!-- 초기화 확인용 커스텀 모달 -->
+    <!-- 설명 버튼: /analysis일 때만 -->
+    <div class="right" v-if="isAnalysisPage">
+      <button
+        class="action-btn titleBold12px"
+        @click="isInfoModalVisible = true"
+      >
+        설명
+      </button>
+    </div>
+
+    <!-- 초기화 확인용 모달 -->
     <CustomModal
       v-model="isConfirmModalVisible"
       :message="`현재 단계 체크리스트를 초기화할까요? 지금까지의 답변이 모두 삭제됩니다.`"
@@ -23,12 +35,20 @@
       @confirm="resetChecklist"
     />
 
-    <!-- 알림용 모달 -->
+    <!-- 초기화 알림용 모달 -->
     <CustomModal
       v-model="isAlertModalVisible"
       :message="`체크리스트가 초기화되었어요.😊\n다시 시작해볼까요?`"
       confirmText="확인"
       @confirm="isAlertModalVisible = false"
+    />
+
+    <!-- 설명용 모달 -->
+    <CustomModal
+      v-model="isInfoModalVisible"
+      :message="`상단 단계 버튼을 눌러 원하는 항목으로 바로 이동할 수 있어요🧭`"
+      confirmText="확인"
+      @confirm="isInfoModalVisible = false"
     />
   </header>
 </template>
@@ -53,6 +73,9 @@ const resetChecklist = () => {
   isConfirmModalVisible.value = false;
   isAlertModalVisible.value = true;
 };
+
+const isInfoModalVisible = ref(false);
+const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
 </script>
 
 <style scoped>
@@ -81,7 +104,7 @@ const resetChecklist = () => {
   text-overflow: ellipsis;
 }
 
-.reset-btn {
+.action-btn {
   border-radius: 12px;
   width: 58px;
   height: 24px;
