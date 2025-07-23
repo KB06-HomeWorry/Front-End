@@ -51,11 +51,11 @@ const router = useRouter()
 // API에서 받아올 agency 정보
 // 추후 설계된 DB에 맞춰서 수정 필요
 const agency = ref({
-  officeName: '',
+  office_name: '',
   profileUrl: '',
   hashtags: [],
-  ceo: '',
-  registrationNo: '',
+  agent_name: '',
+  license_number: '',
   address: '',
   phone: '',
   description:'',
@@ -64,14 +64,14 @@ const agency = ref({
 // 추후 백엔드 엔드포인트에 맞춰서 수정 필요
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:3001/agencies/1')
+    const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
     agency.value = res.data
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')
   }
 })
 
-// const agencyId = agency.value.id
+// const office_id = agency.value.id
 
 const goToListingPage = () => {
   // 추후 백엔드 연동 시 사용
