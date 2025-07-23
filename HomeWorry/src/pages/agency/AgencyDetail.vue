@@ -3,7 +3,7 @@
     <div class="profile-row">
       <img :src="agency.profileUrl" alt="프로필" class="profile-img" />
       <div class="profile-info">
-        <div class="agency-name titleBold16px">{{ agency.officeName }}</div>
+        <div class="agency-name titleBold16px">{{ agency.office_name }}</div>
         <div class="hashtags">
           <Hashtag v-for="tag in agency.hashtags" :key="tag">{{ tag }}</Hashtag>
         </div>
@@ -13,11 +13,11 @@
         <tbody>
       <tr>
         <td class="bodyMedium12px">대표</td>
-        <td class="bodyLight12px">{{ agency.ceo }}</td>
+        <td class="bodyLight12px">{{ agency.agent_name }}</td>
       </tr>
       <tr>
         <td class="bodyMedium12px">등록번호</td>
-        <td class="bodyLight12px">{{ agency.registrationNo }}</td>
+        <td class="bodyLight12px">{{ agency.license_number }}</td>
       </tr>
       <tr>
         <td class="bodyMedium12px">주소</td>
@@ -42,11 +42,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import Hashtag from '@/pages/agency/components/HashTag.vue'
 import BtnAgency from './components/BtnAgency.vue'
 
 const router = useRouter()
+const route = useRoute()
+
+const office_id = route.query.agencyId || route.params.agencyId || ''
 
 // API에서 받아올 agency 정보
 // 추후 설계된 DB에 맞춰서 수정 필요
@@ -65,7 +68,14 @@ const agency = ref({
 onMounted(async () => {
   try {
     const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
-    agency.value = res.data
+    agency.value = {
+      ...agency.value,
+      office_name: res.data.officeName,
+      agent_name: res.data.agentName,
+      license_number: res.data.agentNumber,
+      address: res.data.address,
+      phone: res.data.phone
+    }
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')
   }
