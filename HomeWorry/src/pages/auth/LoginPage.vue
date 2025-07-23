@@ -27,51 +27,65 @@
       <BtnMed class="login-btn" type="submit" text="로그인" />
     </form>
     <div class="login-links bodyMedium16px">
-      <button class="link-btn bodyMedium14px" @click="onSignup">회원가입하기</button>
-      <button class="link-btn bodyMedium14px" @click="onResetPw">비밀번호찾기</button>
+      <button class="link-btn bodyMedium14px" @click="onSignup">
+        회원가입하기
+      </button>
+      <button class="link-btn bodyMedium14px" @click="onResetPw">
+        비밀번호찾기
+      </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import axios from 'axios'
-import InputSimple from './components/InputSimple.vue'
-import BtnMed from '@/components/button/BtnMed.vue'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import InputSimple from "./components/InputSimple.vue";
+import BtnMed from "@/components/button/BtnMed.vue";
+import { useChecklistStore } from "@/stores/checklist";
 
-const router = useRouter()
-const username = ref('')
-const password = ref('')
+const router = useRouter();
+const username = ref("");
+const password = ref("");
+const checklistStore = useChecklistStore();
 
 async function onLogin() {
   if (!username.value || !password.value) {
-    alert('아이디와 비밀번호를 모두 입력해주세요.')
-    return
+    alert("아이디와 비밀번호를 모두 입력해주세요.");
+    return;
   }
   try {
-    const response = await axios.post('/api/auth/login', {
+    const response = await axios.post("/api/auth/login", {
       username: username.value,
       password: password.value,
-    })
-    const token = response.data.token
+    });
+
+    const token = response.data.token;
     if (token) {
-      localStorage.setItem('user-token', token)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      localStorage.setItem("user-token", token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
     }
-    alert('로그인에 성공했습니다!')
-    router.push('/') 
+
+    console.log("로그인 성공:", response.data);
+    checklistStore.checklistData.userId = response.data.user.userId;
+    console.log("사용자 ID:", checklistStore.checklistData.userId);
+
+    alert("로그인에 성공했습니다!");
+    router.push("/");
   } catch (error) {
-    const errorMessage = error.response?.data?.message || '로그인에 실패했습니다. 아이디나 비밀번호를 확인해주세요.'
-    alert(errorMessage)
+    const errorMessage =
+      error.response?.data?.message ||
+      "로그인에 실패했습니다. 아이디나 비밀번호를 확인해주세요.";
+    alert(errorMessage);
   }
 }
 
 function onSignup() {
-  router.push('/auth/signup-agreement')
+  router.push("/auth/signup-agreement");
 }
 function onResetPw() {
-  router.push('/auth/reset-password')
+  router.push("/auth/reset-password");
 }
 </script>
 
@@ -82,7 +96,7 @@ function onResetPw() {
 
 .login-logo-img {
   display: block;
-  width: 180px;    
+  width: 180px;
   height: 180px;
   object-fit: cover;
   margin: 6rem auto 2.5rem auto;
