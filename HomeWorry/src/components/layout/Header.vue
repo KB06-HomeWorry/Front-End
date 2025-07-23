@@ -6,36 +6,52 @@
       </h1>
     </div>
     <div class="right" v-if="showChecklistTitle">
-      <button class="reset-btn titleBold12px" @click="handleReset">
+      <button
+        class="reset-btn titleBold12px"
+        @click="isConfirmModalVisible = true"
+      >
         초기화
       </button>
     </div>
+
+    <!-- 초기화 확인용 커스텀 모달 -->
+    <CustomModal
+      v-model="isConfirmModalVisible"
+      :message="`현재 단계 체크리스트를 초기화할까요? 지금까지의 답변이 모두 삭제됩니다.`"
+      confirmText="초기화"
+      cancelText="취소"
+      @confirm="resetChecklist"
+    />
+
+    <!-- 알림용 모달 -->
+    <CustomModal
+      v-model="isAlertModalVisible"
+      :message="`체크리스트가 초기화되었어요.😊\n다시 시작해볼까요?`"
+      confirmText="확인"
+      @confirm="isAlertModalVisible = false"
+    />
   </header>
 </template>
 
 <script setup>
+import { ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
-import { computed } from 'vue';
 import { useChecklistStore } from '@/stores/checklist';
+import CustomModal from '@/components/modal/CustomModal.vue';
 
 const route = useRoute();
 const checklistStore = useChecklistStore();
 
 const showChecklistTitle = computed(() => route.path.startsWith('/checklist'));
 const type = computed(() => route.query.type || '');
-const stage = computed(() => route.query.stage || '');
 
-const handleReset = () => {
-  const stage = checklistStore.checklistData.stage;
+const isConfirmModalVisible = ref(false);
+const isAlertModalVisible = ref(false);
 
-  const confirmed = confirm(
-    `${stage} 단계 체크리스트를 초기화하시겠어요?\n지금까지의 답변이 모두 삭제됩니다.`
-  );
-
-  if (confirmed) {
-    checklistStore.resetChecklist();
-    alert(`${stage} 단계 체크리스트가 초기화되었어요.😊\n다시 시작해볼까요?`);
-  }
+const resetChecklist = () => {
+  checklistStore.resetChecklist();
+  isConfirmModalVisible.value = false;
+  isAlertModalVisible.value = true;
 };
 </script>
 
