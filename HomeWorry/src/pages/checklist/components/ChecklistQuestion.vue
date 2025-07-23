@@ -20,7 +20,7 @@
             {{ item.content }}
           </div>
         </div>
-        <div class="bodyLight12px">{{ item.effectiveness }}</div>
+        <div class="bodyLight12px">•{{ item.effectiveness }}</div>
       </li>
     </ul>
   </div>

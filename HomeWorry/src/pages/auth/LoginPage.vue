@@ -38,55 +38,55 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
-import InputSimple from "./components/InputSimple.vue";
-import BtnMed from "@/components/button/BtnMed.vue";
-import { useChecklistStore } from "@/stores/checklist";
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import InputSimple from '@/components/input/InputSimple.vue';
+import BtnMed from '@/components/button/BtnMed.vue';
+import { useChecklistStore } from '@/stores/checklist';
 
 const router = useRouter();
-const username = ref("");
-const password = ref("");
+const username = ref('');
+const password = ref('');
 const checklistStore = useChecklistStore();
 
 async function onLogin() {
   if (!username.value || !password.value) {
-    alert("아이디와 비밀번호를 모두 입력해주세요.");
+    alert('아이디와 비밀번호를 모두 입력해주세요.');
     return;
   }
   try {
-    const response = await axios.post("/api/auth/login", {
+    const response = await axios.post('/api/auth/login', {
       username: username.value,
       password: password.value,
     });
 
     const token = response.data.token;
     if (token) {
-      localStorage.setItem("user-token", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      localStorage.setItem('user-token', token);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     }
 
-    console.log("로그인 성공:", response.data);
+    console.log('로그인 성공:', response.data);
     checklistStore.checklistData.userId = response.data.user.userId;
-    console.log("사용자 ID:", checklistStore.checklistData.userId);
+    console.log('사용자 ID:', checklistStore.checklistData.userId);
 
-    alert("로그인에 성공했습니다!");
-    router.push("/");
+    alert('로그인에 성공했습니다!');
+    router.push('/');
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
-      "로그인에 실패했습니다. 아이디나 비밀번호를 확인해주세요.";
+      '로그인에 실패했습니다. 아이디나 비밀번호를 확인해주세요.';
     alert(errorMessage);
   }
 }
 
 function onSignup() {
-  router.push("/auth/signup-agreement");
+  router.push('/auth/signup-agreement');
 }
 
 function onResetPw() {
-  router.push("/auth/reset-password");
+  router.push('/auth/reset-password');
 }
 </script>
 

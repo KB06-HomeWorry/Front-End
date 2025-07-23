@@ -8,6 +8,8 @@
       @update:currentStep="handleStepChange"
       @stageChange="handleStageChange"
     />
+    <br />
+    <br />
     <StepIncident v-if="currentStep === 1" />
     <StepBuildingHistory v-else-if="currentStep === 2" />
     <StepAgentTrust v-else-if="currentStep === 3" />
@@ -26,7 +28,7 @@ import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
 
 import { useAnalysisStep } from '@/composables/useAnalysisStep';
 
-const { steps, currentStage, setStageByIndex } = useAnalysisStep();
+const { steps, setStageByIndex } = useAnalysisStep();
 
 const currentStep = ref(1);
 
