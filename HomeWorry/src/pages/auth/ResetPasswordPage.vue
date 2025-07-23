@@ -32,7 +32,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import AuthTitle from '@/pages/auth/components/AuthTitle.vue'
-import InputField from '@/pages/auth/components/InputField.vue'
+import InputField from '@/components/input/InputField.vue'
 import BtnMed from '@/components/button/BtnMed.vue'
 
 const router = useRouter()
