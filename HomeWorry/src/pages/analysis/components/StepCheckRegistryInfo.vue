@@ -67,6 +67,7 @@ const answers = reactive({
   address: {
     addressMatch: '',
     structureMatch: '',
+    issueDateMatch: '',
   },
   ownership: {
     ownerMatch: '',
