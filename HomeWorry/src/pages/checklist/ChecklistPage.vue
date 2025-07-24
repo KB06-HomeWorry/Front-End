@@ -1,6 +1,11 @@
 <template>
   <br />
-  <ChecklistNavBar v-model:currentStep="currentStep" />
+  <StepNavigationBar
+    :steps="steps"
+    :currentStep="currentStep"
+    @update:currentStep="(val) => (currentStep = val)"
+    @stageChange="handleStageChange"
+  />
   <br />
   <ChecklistQuestion />
   <br /><br /><br /><br />
@@ -23,7 +28,7 @@
 </template>
 
 <script setup>
-import ChecklistNavBar from './components/ChecklistNavBar.vue';
+import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
 import ChecklistQuestion from './components/ChecklistQuestion.vue';
 import ChecklistBtn from './components/ChecklistBtn.vue';
 import CustomModal from '@/components/modal/CustomModal.vue';
@@ -38,7 +43,7 @@ import { useChecklistStep } from '@/composables/useChecklistStep';
 const router = useRouter();
 const route = useRoute();
 const checklistStore = useChecklistStore();
-const { setStageByIndex } = useChecklistStep();
+const { steps, setStageByIndex } = useChecklistStep();
 
 const currentStep = ref(1);
 const showModal = ref(false);
@@ -58,6 +63,10 @@ onMounted(async () => {
 watch(currentStep, (newStep) => {
   setStageByIndex(newStep - 1);
 });
+
+function handleStageChange(index, stepName) {
+  setStageByIndex(index);
+}
 
 async function handleSaveRequested() {
   try {

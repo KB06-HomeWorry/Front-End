@@ -3,7 +3,7 @@
     <label class="input-label bodyMedium20px">{{ label }}</label>
     <slot>
       <input
-        class="input-box bodyMedium16px"
+        class="input-box bodyLight16px"
         :type="type"
         :placeholder="placeholder"
         :value="modelValue"
@@ -73,15 +73,15 @@ const emit = defineEmits(['update:modelValue']);
 .input-desc {
   letter-spacing: -0.03em;
   color: var(--color-mediumgray);
-  margin-bottom: 4px;
+  margin: 4px 0;
 }
 
 /* 에러 */
 .input-error {
-  color: #BF0000;
+  color: #bf0000;
   font-weight: 700;
   margin-bottom: 4px;
-  min-height: 18px; 
+  min-height: 18px;
   line-height: 1.5;
   opacity: 0;
   transition: opacity 0.2s;
