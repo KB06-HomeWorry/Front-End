@@ -79,13 +79,16 @@ function startAnalysis() {
 </script>
 
 <style scoped>
+.analysis-page {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
+}
+
 .fixed-footer-btn {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
   z-index: 100;
-  padding: 12px 0 46px 0;
   display: flex;
   justify-content: center;
 }
