@@ -147,6 +147,11 @@ function formatPhone(phone) {
 </script>
 
 <style scoped>
+.mypage-container{
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .profile-box {
   display: flex;
   align-items: center;

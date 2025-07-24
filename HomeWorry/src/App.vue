@@ -33,8 +33,8 @@ const hideFooter = computed(() => !!route.meta.hideFooter)
 }
 
 .main-content {
-  padding-top: 60px;
   flex: 1;
+  padding-top: 60px;
   padding-bottom: 70px;
 }
 </style>
