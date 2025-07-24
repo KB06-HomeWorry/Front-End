@@ -33,10 +33,13 @@ import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
 import StepButton from '@/components/button/BtnMed.vue';
 
 import { useAnalysisStep } from '@/composables/useAnalysisStep';
+import { useAnalysisStore } from '@/stores/analysis.js';
 
 const { steps, setStageByIndex } = useAnalysisStep();
 
 const currentStep = ref(1);
+
+const analysisStore = useAnalysisStore();
 
 function handleStepChange(stepNumber) {
   currentStep.value = stepNumber;
@@ -64,8 +67,14 @@ function handleButtonClick() {
 }
 
 function startAnalysis() {
-  // TODO: 분석 시작 로직 구현
-  console.log('분석을 시작합니다.');
+  console.log('분석 시작하기 버튼 클릭!\n✅ 저장된 값 확인:');
+  console.log(
+    '등기부등본 체크리스트 개수:',
+    analysisStore.registerCertifiedCount
+  );
+  console.log('매물 주소:', analysisStore.houseAddress);
+  console.log('중개사 정보:', analysisStore.middleAgent);
+  console.log('리스크 분석 정보:', analysisStore.sthRisk);
 }
 </script>
 
