@@ -6,17 +6,21 @@
         v-for="option in options"
         :key="option.value"
         type="button"
-        class="btn-smslim-wrapper bodyMedium16px"
+        class="btn-smslim"
+        :class="{
+          'selected bodyMedium16px': modelValue.includes(option.value),
+          'unselected bodyLight16px': !modelValue.includes(option.value),
+        }"
         :style="{
           backgroundColor: modelValue.includes(option.value)
-            ? 'var(--color-primary)'
+            ? 'var(--color-secondarylight)'
             : 'var(--color-white)',
           color: modelValue.includes(option.value)
-            ? 'var(--color-white)'
-            : 'var(--color-primary)',
+            ? 'var(--color-primary)'
+            : 'var(--color-light)',
           border: modelValue.includes(option.value)
             ? 'none'
-            : '1px solid var(--color-primary)',
+            : '1px solid var(--color-light)',
         }"
         @click="toggle(option.value)"
       >
@@ -71,13 +75,12 @@ function toggle(value) {
   justify-content: center;
 }
 
-.btn-smslim-wrapper {
+.btn-smslim {
   border-radius: 12px;
   width: 105px;
   height: 35px;
   text-align: center;
   padding: 0;
   border: none;
-  transition: var(--transition);
 }
 </style>
