@@ -1,17 +1,18 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export const analysisStore = defineStore("analysis", () => {
+export const useAnalysisStore = defineStore('analysis', () => {
   const registerCertifiedCount = ref(0);
-  const houseAddress = ref("");
+  const houseAddress = ref('');
   const middleAgent = ref({
-    address: "",
-    registerNumber: "",
+    address: '',
+    registerNumber: '',
   });
   const sthRisk = ref({
-    type: "",
-    price: 0,
+    type: '',
+    price: '',
     optionCount: 0,
+    selectedOptions: [],
   });
 
   return {
