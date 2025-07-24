@@ -1,6 +1,6 @@
 <template>
   <button
-    class="btn-med-wrapper bodyMedium14px"
+    class="btn-med-wrapper bodyMedium12px"
     :class="{ 'white-bg': isWhiteBg }"
     :style="{ backgroundColor: isWhiteBg ? '#ffffff' : 'var(--color-primary)' }"
     @click="$emit('click')"
@@ -34,7 +34,7 @@ const isWhiteBg = computed(() => {
 <style scoped>
 .btn-med-wrapper {
   border-radius: 12px;
-  width: 160px;
+  width: 161px;
   height: 35px;
   text-align: center;
   padding: 0;
@@ -46,6 +46,10 @@ const isWhiteBg = computed(() => {
 
 .white-bg {
   color: var(--color-primary);
-  border: 1px solid var(--color-primary);
+  border: 0.5px solid var(--color-mediumgray);
+}
+
+.white-bg:hover {
+  border: 1.2px solid var(--color-primary);
 }
 </style>

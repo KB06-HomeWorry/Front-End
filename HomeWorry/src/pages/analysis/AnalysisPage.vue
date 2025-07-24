@@ -10,12 +10,11 @@
     />
     <br />
 
-    <StepIncident v-if="currentStep === 1" />
+    <StepCheckRegistryInfo v-if="currentStep === 1" />
     <StepBuildingHistory v-else-if="currentStep === 2" />
     <StepAgentTrust v-else-if="currentStep === 3" />
     <StepRiskAnalysis v-else-if="currentStep === 4" />
 
-    <!-- 하단 버튼 영역 -->
     <div class="fixed-footer-btn">
       <StepButton :text="buttonText" @click="handleButtonClick" />
     </div>
@@ -26,7 +25,7 @@
 import { ref, computed } from 'vue';
 import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
 
-import StepIncident from './components/StepIncident.vue';
+import StepCheckRegistryInfo from './components/StepCheckRegistryInfo.vue';
 import StepBuildingHistory from './components/StepBuildingHistory.vue';
 import StepAgentTrust from './components/StepAgentTrust.vue';
 import StepRiskAnalysis from './components/StepRiskAnalysis.vue';

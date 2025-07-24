@@ -5,10 +5,11 @@
       class="input-box bodyLight16px"
       v-model="internalValue"
       :disabled="disabled"
-      :multiple="multiple"
-      :size="computedSize"
+      :class="{ 'is-placeholder': isPlaceholderSelected }"
     >
-      <option v-if="!multiple" disabled value="">{{ placeholder }}</option>
+      <option disabled value="">
+        {{ placeholder }}
+      </option>
       <option
         v-for="option in options"
         :key="option.value ?? option.label"
@@ -30,8 +31,8 @@ const props = defineProps({
   label: String,
   placeholder: String,
   modelValue: {
-    type: [String, Array],
-    default: () => [],
+    type: String,
+    default: '',
   },
   options: {
     type: Array,
@@ -39,47 +40,30 @@ const props = defineProps({
   },
   desc: String,
   disabled: Boolean,
-  multiple: Boolean,
 });
+
 const emit = defineEmits(['update:modelValue']);
 
-const internalValue = ref(
-  props.multiple ? [...props.modelValue] : props.modelValue
-);
+const internalValue = ref(props.modelValue);
 
-const computedSize = computed(() => {
-  if (!props.multiple) return 1;
-  return Math.min(props.options.length, 3);
+const isPlaceholderSelected = computed(() => {
+  return internalValue.value === '' || internalValue.value === null;
 });
 
 watch(
   () => props.modelValue,
   (newVal) => {
-    const isEqual = props.multiple
-      ? JSON.stringify(newVal) === JSON.stringify(internalValue.value)
-      : newVal === internalValue.value;
-
-    if (!isEqual) {
-      internalValue.value = props.multiple ? [...newVal] : newVal;
+    if (newVal !== internalValue.value) {
+      internalValue.value = newVal;
     }
-  },
-  { deep: true }
+  }
 );
 
-watch(
-  internalValue,
-  (val) => {
-    const isEqual = props.multiple
-      ? JSON.stringify(val) === JSON.stringify(props.modelValue)
-      : val === props.modelValue;
-
-    if (!isEqual) {
-      emit('update:modelValue', val);
-      console.log('[최종 선택 옵션]', val);
-    }
-  },
-  { deep: true }
-);
+watch(internalValue, (val) => {
+  if (val !== props.modelValue) {
+    emit('update:modelValue', val);
+  }
+});
 </script>
 
 <style scoped>
@@ -95,7 +79,6 @@ watch(
 
 .input-box {
   width: 100%;
-  height: auto;
   min-height: 50px;
   border-radius: 12px;
   border: 1px solid var(--color-light);
@@ -110,6 +93,10 @@ watch(
 .input-box:focus {
   border-color: var(--color-primary);
   outline: none;
+}
+
+.input-box.is-placeholder {
+  color: var(--color-mediumgray);
 }
 
 .input-desc {
