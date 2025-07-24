@@ -61,6 +61,9 @@ import ProgressAvatar from '@/assets/icons/progress-avatar.png'
 import BtnMedGray from '@/pages/agency/components/BtnMedGray.vue'
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue'
 import ReviewText from '@/pages/agency/components/ReviewText.vue'
+import { useTrustScore } from '@/pages/agency/composables/useTrustScore.js'
+
+const { calculateTrustScore } = useTrustScore();
 
 const avatar = ProgressAvatar
 const reviewType = ref(null) // null | 'consultation' | 'transaction'
@@ -126,7 +129,6 @@ const allQuestions = [
     ]
   }
 ];
-
 
 // 리뷰타입(거래/상담)에 따라 질문 목록 결정
 const activeQuestions = computed(() => {
@@ -220,11 +222,19 @@ function onSelect(idx, answerIdx) {
  * 후기 작성 완료(버튼 클릭)
  */
 function submitReview() {
-  console.log('최종 제출', {
-    answers: answers.value,
-    comment: additionalComment.value
-  })
-  // 서버 전송 등 추가로 구현
+  // ++ 분리된 함수를 호출하여 데이터 생성
+  const reviewData = calculateTrustScore(
+    answers.value, 
+    reviewType.value, 
+    additionalComment.value
+  );
+  
+  console.log('--- 최종 제출 데이터 ---');
+  console.log(reviewData);
+
+  // 서버로 reviewData 객체를 전송하는 API 호출
+    testResult.value = reviewData; 
+
 }
 </script>
 
@@ -261,7 +271,7 @@ function submitReview() {
   position: fixed;
   left: 0;
   right: 0;
-  top: 40px; /* 헤더 높이만큼 내리기! (header 없으면 0) */
+  top: 40px;
   z-index: 100;
   background: #fff;
   padding: 18px 2rem 8px 2rem;
@@ -270,13 +280,9 @@ function submitReview() {
 }
 
 .write-review {
-  /* flex: 1 1 0;
-  min-height: 0;*/
   overflow-y: auto;
   margin: 0 2rem;
   padding-top: 64px;
-  /* /* scrollbar-width: none;
-  -ms-overflow-style: none; */
 } 
 .write-review::-webkit-scrollbar { display: none; }
 

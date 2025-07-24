@@ -62,7 +62,6 @@ function onInput(e) {
   border: 1px solid var(--color-mediumgray);
   resize: none;
   padding: 10px;
-  font-size: 15px;
   background: #fff;
   box-sizing: border-box;
   margin-bottom: 6px;
