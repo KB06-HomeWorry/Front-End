@@ -34,9 +34,6 @@ const hideFooter = computed(() => !!route.meta.hideFooter)
 
 .main-content {
   flex: 1;
-  /* display와 min-height 후기 작성 페이지 레이아웃과 연관되어있음  */
-  display: flex;
-  min-height: 0;
   padding-top: 60px;
   padding-bottom: 70px;
 }

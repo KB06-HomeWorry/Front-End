@@ -30,6 +30,7 @@ const props = defineProps({
   overflow: visible;
   margin-bottom: 24px;
   position: relative;
+  margin-top: 12px;
 }
 
 .progress-bar-fill {
