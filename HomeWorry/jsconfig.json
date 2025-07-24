@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "target": "esnext",
+    "module": "esnext",
+    "allowJs": true,
+    "checkJs": false
   },
-  "exclude": ["node_modules", "dist"]
+  "vueCompilerOptions": {
+    "globalTypesPath": "./node_modules/vue"
+  },
+  "exclude": ["node_modules"]
 }

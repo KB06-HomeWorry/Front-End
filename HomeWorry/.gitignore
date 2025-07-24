@@ -31,3 +31,4 @@ coverage
 
 db.json
 *.json-server*
+*.env
