@@ -36,11 +36,11 @@ function select(idx) {
 
 <style scoped>
 .review-question-wrap {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .question-title {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .question-title-flex {
@@ -48,6 +48,7 @@ function select(idx) {
   align-items: flex-start;
   gap: 8px;
 }
+
 .q-number {
   flex-shrink: 0;
   min-width: 22px;
@@ -55,6 +56,7 @@ function select(idx) {
   text-align: right;
   line-height: 1.6;
 }
+
 .q-text {
   flex: 1;
   line-height: 1.6;

@@ -43,10 +43,19 @@ function handleClick() {
   margin-bottom: 4px;
   box-sizing: border-box;
   outline: none;
+  cursor: pointer;
+}
+
+.choice-box:hover {
+  border: 1.2px solid var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(17, 31, 92, 0.1);
 }
 
 .choice-box.selected {
   border: 1px solid var(--color-primary);
+  background: rgba(17, 31, 92, 0.1);
+
 }
 
 .choice-left {
@@ -62,6 +71,7 @@ function handleClick() {
   width: 100%;
   letter-spacing: -0.03em;
   text-align: center;
+  color: var(--color-primary);
 }
 
 .good .choice-label  { color: var(--color-primary); }
