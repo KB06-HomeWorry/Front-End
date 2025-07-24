@@ -19,18 +19,31 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import InputField from '@/components/input/InputField.vue';
 import { openPostcode } from '@/composables/usePostcode.js';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
 
-const agencyAddress = ref('');
-const agencyLicenseNumber = ref('');
+const analysisStore = useAnalysisStore();
+const { middleAgent } = storeToRefs(analysisStore);
+
+const agencyAddress = ref(middleAgent.value.address);
+const agencyLicenseNumber = ref(middleAgent.value.registerNumber);
 
 function handleOpenPostcode() {
   openPostcode((data) => {
     agencyAddress.value = data.address;
   });
 }
+
+watch(agencyAddress, (val) => {
+  analysisStore.middleAgent.address = val;
+});
+
+watch(agencyLicenseNumber, (val) => {
+  analysisStore.middleAgent.registerNumber = val;
+});
 </script>
 
 <style scoped>
