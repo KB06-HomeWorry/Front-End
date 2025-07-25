@@ -1,7 +1,7 @@
 <template>
   <div class="review-textarea-wrap">
     <div class="q-text bodyMedium14px">
-      ▷ 추가로 남기고 싶은 말 (선택, {{ maxlength }}자 이내)
+      ▷ 추가로 남기고 싶은 말 (필수, {{ maxlength }}자 이내)
     </div>
 
     <textarea
@@ -32,7 +32,7 @@ const props = defineProps({
   maxlength:  { type: Number, default: 300 },
   minlength:  { type: Number, default: 10 },
   rows:       { type: Number, default: 4 },
-  placeholder: { type: String, default: "자유롭게 후기를 남겨주세요" }
+  placeholder: { type: String, default: "자유롭게 후기를 남겨주세요. (최소 10자)" }
 })
 const emit = defineEmits(['update:modelValue'])
 function onInput(e) {
@@ -47,7 +47,7 @@ function onInput(e) {
 
 /* 타이틀 라벨 */
 .q-text {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: block;
   line-height: 1.6;
   word-break: keep-all;
