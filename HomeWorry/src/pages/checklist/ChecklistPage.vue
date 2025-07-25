@@ -28,17 +28,17 @@
 </template>
 
 <script setup>
-import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
-import ChecklistQuestion from './components/ChecklistQuestion.vue';
-import ChecklistBtn from './components/ChecklistBtn.vue';
-import CustomModal from '@/components/modal/CustomModal.vue';
+import StepNavigationBar from "@/components/navigation/StepNavigationBar.vue";
+import ChecklistQuestion from "./components/ChecklistQuestion.vue";
+import ChecklistBtn from "./components/ChecklistBtn.vue";
+import CustomModal from "@/components/modal/CustomModal.vue";
 
-import { useRoute, useRouter } from 'vue-router';
-import { ref, onMounted, watch } from 'vue';
-import axios from 'axios';
+import { useRoute, useRouter } from "vue-router";
+import { ref, onMounted, watch } from "vue";
+import axios from "axios";
 
-import { useChecklistStore } from '@/stores/checklist';
-import { useChecklistStep } from '@/composables/useChecklistStep';
+import { useChecklistStore } from "@/stores/checklist";
+import { useChecklistStep } from "@/composables/useChecklistStep";
 
 const router = useRouter();
 const route = useRoute();
@@ -54,7 +54,7 @@ onMounted(async () => {
     checklistStore.checklistData.type = type;
     checklistStore.checklistData.stage = stage;
     checklistStore.checklistData.userId = parseInt(userId);
-    console.log('스토어 초기화 완료:', checklistStore.checklistData);
+    console.log("스토어 초기화 완료:", checklistStore.checklistData);
   }
 
   await checklistStore.loadChecklist();
@@ -78,15 +78,15 @@ async function handleSaveRequested() {
       answer: item.checked || false,
     }));
 
-    console.log('저장할 데이터:', answerDTOList);
+    console.log("저장할 데이터:", answerDTOList);
 
-    await axios.post('http://localhost:8080/checklist/answers', answerDTOList);
+    await axios.post("http://localhost:8080/checklist/answers", answerDTOList);
 
     // 저장 성공 → 모달 표시
     showModal.value = true;
   } catch (error) {
-    console.error('저장 실패:', error);
-    alert('저장에 실패했습니다.');
+    console.error("저장 실패:", error);
+    alert("저장에 실패했습니다.");
   }
 }
 
@@ -94,7 +94,7 @@ async function handleSaveRequested() {
 function handleModalConfirm() {
   const { type, stage, userId } = checklistStore.checklistData;
   router.push({
-    path: '/dangerResult',
+    path: "/dangerResult",
     query: {
       type,
       stage,

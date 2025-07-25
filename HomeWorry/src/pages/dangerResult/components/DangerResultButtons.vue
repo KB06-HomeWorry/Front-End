@@ -35,7 +35,7 @@ const handleClick = (action) => {
   switch (action) {
     case "documentAnalysis":
       console.log("서류 분석 버튼 클릭됨");
-      // 여기에 서류 분석 관련 로직 추가
+      router.push("/analysis");
       break;
     case "aiContractAnalysis":
       console.log("AI 계약서 분석 버튼 클릭됨");
