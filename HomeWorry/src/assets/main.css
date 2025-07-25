@@ -89,6 +89,12 @@ body {
 }
 
 .bodyMedium10px {
+  font-size: 0.625em;
+  font-weight: 500;
+  font-family: 'GmarketSansMedium', sans-serif;
+}
+
+.bodyMedium10px2 {
   /* 사실 10.88 이라는 것임!!! (°ロ°) ! */
   font-size: 0.68rem;
   font-weight: 500;
@@ -103,6 +109,12 @@ body {
 
 .bodyLight12px {
   font-size: 0.75rem;
+  font-weight: 300;
+  font-family: 'GmarketSansLight', sans-serif;
+}
+
+.bodyLight8px {
+  font-size: 0.5rem;
   font-weight: 300;
   font-family: 'GmarketSansLight', sans-serif;
 }
