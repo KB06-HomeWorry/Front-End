@@ -12,16 +12,26 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import InputField from '@/components/input/InputField.vue';
 import { openPostcode } from '@/composables/usePostcode.js';
-const propertyAddress = ref('');
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
+
+const analysisStore = useAnalysisStore();
+const { houseAddress } = storeToRefs(analysisStore);
+
+const propertyAddress = ref(houseAddress.value);
 
 function handleOpenPostcode() {
   openPostcode((data) => {
     propertyAddress.value = data.address;
   });
 }
+
+watch(propertyAddress, (val) => {
+  analysisStore.houseAddress = val;
+});
 </script>
 
 <style scoped>

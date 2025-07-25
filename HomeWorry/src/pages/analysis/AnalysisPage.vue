@@ -10,12 +10,11 @@
     />
     <br />
 
-    <StepIncident v-if="currentStep === 1" />
+    <StepCheckRegistryInfo v-if="currentStep === 1" />
     <StepBuildingHistory v-else-if="currentStep === 2" />
     <StepAgentTrust v-else-if="currentStep === 3" />
     <StepRiskAnalysis v-else-if="currentStep === 4" />
 
-    <!-- 하단 버튼 영역 -->
     <div class="fixed-footer-btn">
       <StepButton :text="buttonText" @click="handleButtonClick" />
     </div>
@@ -26,7 +25,7 @@
 import { ref, computed } from 'vue';
 import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
 
-import StepIncident from './components/StepIncident.vue';
+import StepCheckRegistryInfo from './components/StepCheckRegistryInfo.vue';
 import StepBuildingHistory from './components/StepBuildingHistory.vue';
 import StepAgentTrust from './components/StepAgentTrust.vue';
 import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
@@ -34,10 +33,13 @@ import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
 import StepButton from '@/components/button/BtnMed.vue';
 
 import { useAnalysisStep } from '@/composables/useAnalysisStep';
+import { useAnalysisStore } from '@/stores/analysis.js';
 
 const { steps, setStageByIndex } = useAnalysisStep();
 
 const currentStep = ref(1);
+
+const analysisStore = useAnalysisStore();
 
 function handleStepChange(stepNumber) {
   currentStep.value = stepNumber;
@@ -65,19 +67,28 @@ function handleButtonClick() {
 }
 
 function startAnalysis() {
-  // TODO: 분석 시작 로직 구현
-  console.log('분석을 시작합니다.');
+  console.log('분석 시작하기 버튼 클릭!\n✅ 저장된 값 확인:');
+  console.log(
+    '등기부등본 체크리스트 개수:',
+    analysisStore.registerCertifiedCount
+  );
+  console.log('매물 주소:', analysisStore.houseAddress);
+  console.log('중개사 정보:', analysisStore.middleAgent);
+  console.log('리스크 분석 정보:', analysisStore.sthRisk);
 }
 </script>
 
 <style scoped>
+.analysis-page {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
+}
+
 .fixed-footer-btn {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
   z-index: 100;
-  padding: 12px 0 46px 0;
   display: flex;
   justify-content: center;
 }

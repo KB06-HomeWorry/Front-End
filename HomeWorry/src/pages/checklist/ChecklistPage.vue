@@ -109,9 +109,8 @@ function handleModalConfirm() {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 60px);
   z-index: 100;
-  padding: 12px 0 18px 0;
   display: flex;
   justify-content: center;
 }

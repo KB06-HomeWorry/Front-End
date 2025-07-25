@@ -7,20 +7,21 @@
         style="margin-bottom: 16px"
       >
         <div class="checklist-content">
-          <div class="checklist-box">
+          <label :for="'checklist-' + item.questionId" class="checklist-box">
             <input
               type="checkbox"
               :checked="item.checked"
               @change="onCheckChange($event, item)"
               :id="'checklist-' + item.questionId"
             />
-            <label :for="'checklist-' + item.questionId"></label>
-          </div>
-          <div class="checklist-question bodyMedium16px">
-            {{ item.content }}
-          </div>
+            <span class="checklist-question bodyMedium16px">
+              {{ item.content }}
+            </span>
+          </label>
         </div>
-        <div class="bodyLight12px">•{{ item.effectiveness }}</div>
+        <div class="effectiveness-text bodyLight12px">
+          •{{ item.effectiveness }}
+        </div>
       </li>
     </ul>
   </div>
@@ -75,6 +76,13 @@ watch(
 .checklist-box {
   display: flex;
   align-items: center;
+  cursor: pointer;
+  gap: 10px;
+}
+
+.effectiveness-text {
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .checklist-box input[type='checkbox'] {
@@ -88,24 +96,11 @@ watch(
 }
 
 .checklist-box input[type='checkbox']:hover,
-.checklist-box input[type='checkbox']:focus {
-  accent-color: var(--color-secondarylight);
-}
-
-.checklist-box input[type='checkbox']:checked {
-  accent-color: var(--color-secondarylight);
-}
-
+.checklist-box input[type='checkbox']:focus,
+.checklist-box input[type='checkbox']:checked,
 .checklist-box input[type='checkbox']:checked:hover,
 .checklist-box input[type='checkbox']:checked:focus {
   accent-color: var(--color-secondarylight);
-}
-
-.checklist-box label {
-  width: 22px;
-  height: 22px;
-  display: inline-block;
-  margin-left: -12px;
 }
 
 li > div:last-child {

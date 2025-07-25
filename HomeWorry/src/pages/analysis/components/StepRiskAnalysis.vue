@@ -14,25 +14,29 @@
       desc="•입력한 거래가를 기반으로 주변 시세와 비교해 과도한 고가 거래 또는 저가 거래 여부를 분석해 매물의 리스크 가능성을 판단할 수 있습니다."
       type="text"
     />
-    <InputSelect
+    <ToggleOptionGroup
       label="옵션"
       :options="optionList"
       v-model="selectedOptions"
-      placeholder="옵션을 선택해주세요."
       desc="•선택한 옵션이 평균적인 매물에 비해 지나치게 많거나 적을 경우, 허위 매물 가능성을 판단하는 데 참고할 수 있습니다."
-      :multiple="true"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import InputField from '@/components/input/InputField.vue';
 import InputSelect from '@/components/input/InputSelect.vue';
+import ToggleOptionGroup from '@/components/input/ToggleOptionGroup.vue';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
 
-const dealType = ref('');
-const dealPrice = ref('');
-const selectedOptions = ref([]);
+const analysisStore = useAnalysisStore();
+const { sthRisk } = storeToRefs(analysisStore);
+
+const dealType = ref(sthRisk.value.type);
+const dealPrice = ref(sthRisk.value.price);
+const selectedOptions = ref([...sthRisk.value.selectedOptions]);
 
 const dealPricePlaceholder = computed(() => {
   switch (dealType.value) {
@@ -58,13 +62,25 @@ const optionList = [
   { label: '세탁기', value: 'washer' },
   { label: '건조기', value: 'dryer' },
   { label: '냉장고', value: 'refrigerator' },
-  { label: '가스레인지', value: 'gas_stove' },
   { label: '책상', value: 'desk' },
   { label: '침대', value: 'bed' },
   { label: '옷장', value: 'closet' },
   { label: '신발장', value: 'shoe_rack' },
   { label: '기타', value: 'etc' },
 ];
+
+watch(dealType, (val) => {
+  analysisStore.sthRisk.type = val;
+});
+
+watch(dealPrice, (val) => {
+  analysisStore.sthRisk.price = val;
+});
+
+watch(selectedOptions, (val) => {
+  analysisStore.sthRisk.selectedOptions = val;
+  analysisStore.sthRisk.optionCount = val.length;
+});
 </script>
 
 <style scoped>

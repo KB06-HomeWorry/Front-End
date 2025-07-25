@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export const analysisStore = defineStore("analysis", () => {
+export const useAnalysisStore = defineStore("analysis", () => {
   const registerCertifiedCount = ref(0);
   const houseAddress = ref("");
   const middleAgent = ref({
@@ -10,8 +10,9 @@ export const analysisStore = defineStore("analysis", () => {
   });
   const sthRisk = ref({
     type: "",
-    price: 0,
+    price: "",
     optionCount: 0,
+    selectedOptions: [],
   });
 
   return {
