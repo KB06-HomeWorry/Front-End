@@ -28,23 +28,9 @@ import { useAnalysisStore } from '@/stores/analysis.js';
 import { storeToRefs } from 'pinia';
 
 const store = useAnalysisStore();
-const { registerCertifiedCount } = storeToRefs(store);
+const { registerCertifiedCount, checklistAnswers } = storeToRefs(store);
 
-const answers = reactive({
-  address: {
-    addressMatch: '',
-    structureMatch: '',
-    issueDateMatch: '',
-  },
-  ownership: {
-    ownerMatch: '',
-    restrictions: '',
-  },
-  collateral: {
-    mortgageInfo: '',
-    otherRights: '',
-  },
-});
+const answers = reactive(checklistAnswers.value);
 
 const addressQuestions = [
   {
@@ -100,6 +86,7 @@ watch(
       });
     });
     registerCertifiedCount.value = count;
+    checklistAnswers.value = JSON.parse(JSON.stringify(newVal));
   },
   { deep: true, immediate: true }
 );

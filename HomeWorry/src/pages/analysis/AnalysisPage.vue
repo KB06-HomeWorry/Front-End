@@ -72,6 +72,7 @@ function startAnalysis() {
     '등기부등본 체크리스트 개수:',
     analysisStore.registerCertifiedCount
   );
+  console.log('등기부등본 체크리스트 정보:', analysisStore.checklistAnswers);
   console.log('매물 주소:', analysisStore.houseAddress);
   console.log('중개사 정보:', analysisStore.middleAgent);
   console.log('리스크 분석 정보:', analysisStore.sthRisk);
