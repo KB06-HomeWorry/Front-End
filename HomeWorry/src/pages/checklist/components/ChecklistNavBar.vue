@@ -12,7 +12,7 @@
       >
         {{ index + 1 }}
       </button>
-      <div class="label bodyMedium10px">{{ step }}</div>
+      <div class="label bodyMedium10px2">{{ step }}</div>
       <div
         v-if="index !== steps.length - 1"
         class="line"
