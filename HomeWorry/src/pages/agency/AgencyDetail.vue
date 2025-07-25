@@ -36,6 +36,21 @@
       <BtnAgency text="보유 매물 보러가기" color="#fff" @click="goToListingPage" />
       <BtnAgency text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
     </div>
+        <AgencyReviewSummary :score-data="agencyScore" />
+    <!-- 💡 후기 리스트 출력 부분 추가 -->
+    <div class="review-list-wrap" v-if="reviews.length > 0">
+      <ReviewItem
+        v-for="(review, i) in reviews"
+        :key="review.id"
+        :index="i + 1"
+        :date="review.createdAt"
+        :content="review.comment"
+      />
+    </div>
+    <div v-else class="bodyLight12px" style="text-align:center;color:var(--color-mediumgray);margin:24px 0;">
+      아직 작성된 후기가 없습니다.
+    </div>
+
   </div>
 </template>
 
@@ -44,42 +59,74 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 import Hashtag from '@/pages/agency/components/HashTag.vue'
-import BtnAgency from './components/BtnAgency.vue'
+import BtnAgency from '@/pages/agency/components/BtnAgency.vue'
+import AgencyReviewSummary from '@/pages/agency/components/AgencyReviewSummary.vue'
+import ReviewItem from '@/pages/agency/components/ReviewBox.vue'
+import { calculateAgencyScore } from '@/pages/agency/composables/useAllTrustScore.js'
 
 const router = useRouter()
 const route = useRoute()
 
-const office_id = route.query.agencyId || route.params.agencyId || ''
+const office_id = route.query.agencyId || route.params.agencyId || '1'
 
 // API에서 받아올 agency 정보
-// 추후 설계된 DB에 맞춰서 수정 필요
-const agency = ref({
-  office_name: '',
-  profileUrl: '',
-  hashtags: [],
-  agent_name: '',
-  license_number: '',
-  address: '',
-  phone: '',
-  description:'',
-})
+// const agency = ref({
+//   office_name: '',
+//   profileUrl: '',
+//   hashtags: [],
+//   agent_name: '',
+//   license_number: '',
+//   address: '',
+//   phone: '',
+//   description:'',
+// })
 
-// 추후 백엔드 엔드포인트에 맞춰서 수정 필요
+// onMounted(async () => {
+//   try {
+//     // const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
+//     agency.value = {
+//       // ...agency.value,
+//       // office_name: res.data.officeName,
+//       // agent_name: res.data.agentName,
+//       // license_number: res.data.agentNumber,
+//       // address: res.data.address,
+//       // phone: res.data.phone
+//     }
+//   } catch (e) {
+//     alert('중개사무소 정보를 불러오지 못했습니다.')
+//   }
+// })
+
+const agency = ref({})
+const agencyScore = ref(null)
+const reviews = ref([])
+
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
-    agency.value = {
-      ...agency.value,
-      office_name: res.data.officeName,
-      agent_name: res.data.agentName,
-      license_number: res.data.agentNumber,
-      address: res.data.address,
-      phone: res.data.phone
+    const [agencyRes, reviewsRes] = await Promise.all([
+      axios.get(`http://localhost:3001/agencies/${office_id}`),
+      axios.get(`http://localhost:3001/reviews?agency_id=${office_id}`)
+    ]);
+
+    agency.value = agencyRes.data;
+    reviews.value = reviewsRes.data;
+
+    if (reviews.value && reviews.value.length > 0) {
+      agencyScore.value = calculateAgencyScore(reviews.value);
+    } else {
+      agencyScore.value = {
+        finalTrustScore: 0,
+        averageMetricScores: {
+          listing_accuracy_score: 0, cost_transparency_score: 0,
+          professionalism_score: 0, accountability_score: 0,
+        },
+      };
     }
   } catch (e) {
-    alert('중개사무소 정보를 불러오지 못했습니다.')
+    alert('중개사무소 정보를 불러오지 못했습니다.');
+    console.error(e);
   }
-})
+});
 
 // const office_id = agency.value.id
 
@@ -201,5 +248,10 @@ const goToReviewPage = () => {
   gap: 8px;
   justify-content: center;   /* 중앙정렬 */
   align-items: center;
+}
+
+.review-list-wrap {
+  margin-top: 28px;
+  margin-bottom: 10px;
 }
 </style>
