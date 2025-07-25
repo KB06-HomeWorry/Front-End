@@ -1,3 +1,53 @@
+<template>
+  <div style="width: 100%; height: 100vh">
+    <KakaoMap
+      :lat="lat"
+      :lng="lng"
+      :level="level"
+      @onLoadKakaoMap="onMapReady"
+      style="width: 100%; height: 100%"
+    >
+      <!-- Price Markers with Custom Overlays -->
+      <!--  :markerCluster="{ customOverlayProps: markers }"  -->
+      <template
+        v-if="level >= 4"
+        v-for="(dongMarker, index) in dongMarkers"
+        :key="index"
+      >
+        <KakaoMapCustomOverlay
+          :lat="dongMarker.lat"
+          :lng="dongMarker.lng"
+          :y-anchor="1.4"
+        >
+          <div class="custom-overlay">
+            {{ dongMarker.price }}
+            {{ dongMarker }}
+          </div>
+        </KakaoMapCustomOverlay>
+      </template>
+      <template
+        v-if="level < 4"
+        v-for="(marker, index) in markers"
+        :key="index"
+      >
+        <KakaoMapCustomOverlay
+          :lat="marker.lat"
+          :lng="marker.lng"
+          :y-anchor="1.4"
+        >
+          <div class="custom-overlay">
+            {{ marker.price }}
+          </div>
+        </KakaoMapCustomOverlay>
+      </template>
+    </KakaoMap>
+    <h1 class="dong-label bg-opacity-50" :class="randomBgClass">
+      📍 {{ currentDong }} ({{ mapCenter.lat.toFixed(4) }},
+      {{ mapCenter.lng.toFixed(4) }})
+      {{ level }}
+    </h1>
+  </div>
+</template>
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -172,57 +222,6 @@ const getRandomTailwindBgClass = () => {
   return tailwindBgColors[randomIndex];
 };
 </script>
-
-<template>
-  <div style="width: 100%; height: 100vh">
-    <KakaoMap
-      :lat="lat"
-      :lng="lng"
-      :level="level"
-      @onLoadKakaoMap="onMapReady"
-      style="width: 100%; height: 100%"
-    >
-      <!-- Price Markers with Custom Overlays -->
-      <!--  :markerCluster="{ customOverlayProps: markers }"  -->
-      <template
-        v-if="level >= 4"
-        v-for="(dongMarker, index) in dongMarkers"
-        :key="index"
-      >
-        <KakaoMapCustomOverlay
-          :lat="dongMarker.lat"
-          :lng="dongMarker.lng"
-          :y-anchor="1.4"
-        >
-          <div class="custom-overlay">
-            {{ dongMarker.price }}
-            {{ dongMarker }}
-          </div>
-        </KakaoMapCustomOverlay>
-      </template>
-      <template
-        v-if="level < 4"
-        v-for="(marker, index) in markers"
-        :key="index"
-      >
-        <KakaoMapCustomOverlay
-          :lat="marker.lat"
-          :lng="marker.lng"
-          :y-anchor="1.4"
-        >
-          <div class="custom-overlay">
-            {{ marker.price }}
-          </div>
-        </KakaoMapCustomOverlay>
-      </template>
-    </KakaoMap>
-    <h1 class="dong-label bg-opacity-50" :class="randomBgClass">
-      📍 {{ currentDong }} ({{ mapCenter.lat.toFixed(4) }},
-      {{ mapCenter.lng.toFixed(4) }})
-      {{ level }}
-    </h1>
-  </div>
-</template>
 
 <style>
 .custom-overlay {
