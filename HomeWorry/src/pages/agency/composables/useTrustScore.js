@@ -22,7 +22,7 @@ export function useTrustScore() {
       { code: 'Q1_ATTITUDE',   metric: 'professionalism_score' },   // 1번 질문 -> 전문성/태도
       { code: 'Q2_ACCURACY',   metric: 'listing_accuracy_score' },  // 2번 질문 -> 매물 신뢰도
       { code: 'Q3_SUGGESTION', metric: 'professionalism_score' },   // 3번 질문 -> 전문성/태도
-      { code: 'Q4_PRESSURE',   metric: 'professionalism_score' },   // 4번 질문 -> 전문성/태도
+      { code: 'Q4_PRESSURE',   metric: 'professionalism_score' },   // 4번 질문 -> 전문성/태도  
       { code: 'Q5_FEE_INFO',   metric: 'cost_transparency_score' }, // 5번 질문 -> 비용 투명성
       { code: 'Q6_CONTRACT',   metric: 'accountability_score' },    // 6번 질문 -> 책임감
       { code: 'Q7_ISSUE',      metric: 'accountability_score' },    // 7번 질문 -> 책임감
@@ -118,7 +118,7 @@ export function useTrustScore() {
       rawScore += metricScores[metric] * weight;
     }
     
-    // 3. 0-100점 변환을 위한 '이론적인 최소/최대 점수 범위' 계산
+    // 3-1. 0-100점 변환을 위한 '이론적인 최소/최대 점수 범위' 계산
     // 현재 후기 타입에서 나올 수 있는 가중 합산 점수의 이론적인 최소값과 최대값을 구합니다.
     let minRawScore = 0;
     let maxRawScore = 0;
@@ -132,12 +132,12 @@ export function useTrustScore() {
       maxRawScore += range.max * weight; // 최대 점수에 가중치를 곱해 누적
     }
     
-    // 4. 최종 점수 '정규화' (Normalization)
+    // 3-2. 최종 점수 정규화
     // 계산 공식: (현재값 - 최소값) / (최대값 - 최소값) * 100
     // 이 공식을 통해 어떤 범위의 점수든 0~100 사이의 값으로 변환할 수 있습니다.
     const normalizedScore = ((rawScore - minRawScore) / (maxRawScore - minRawScore)) * 100;
     
-    // 5. 최종 점수 0~100 사이로 '보정' (Clamping)
+    // 4. 최종 점수 0~100 사이로 보정하는 클램핑
     // 아주 드문 경우(e.g., minRawScore와 maxRawScore가 같을 때)에 0 미만 또는 100 초과 값이 나올 수 있으므로,
     // Math.max와 Math.min을 사용해 결과를 항상 0과 100 사이로 강제합니다.
     const finalTrustScore = Math.max(0, Math.min(100, Math.round(normalizedScore)));
@@ -153,7 +153,7 @@ export function useTrustScore() {
     };
   };
   
-  // 외부에서 `calculate` 함수를 `calculateTrustScore` 라는 이름으로 사용할 수 있도록 반환합니다.
+  // 외부에서 `calculate` 함수를 `calculateTrustScore` 라는 이름으로 사용할 수 있도록 반환
   return {
     calculateTrustScore: calculate
   };
