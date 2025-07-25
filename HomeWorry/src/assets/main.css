@@ -1,6 +1,6 @@
 @import './base.css';
 @import './fonts.css';
-
+@import 'tailwindcss';
 html,
 body {
   padding: 0;
