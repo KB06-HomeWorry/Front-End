@@ -6,7 +6,7 @@ export const analysisStore = defineStore("analysis", () => {
   const houseAddress = ref("");
   const middleAgent = ref({
     address: "",
-    registerNumber: "",
+    agentRegisterNumber: "",
   });
   const sthRisk = ref({
     type: "",
