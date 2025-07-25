@@ -1,6 +1,7 @@
 <template>
   <div class="button-group">
     <BtnMed
+      v-if="props.moveDefined === 0"
       text="서류 분석"
       color="#ffffff"
       @click="handleClick('documentAnalysis')"
@@ -20,19 +21,24 @@ import { useChecklistStore } from '@/stores/checklist';
 import BtnMed from '@/components/button/BtnMed.vue';
 
 const router = useRouter();
-
 const checklistStore = useChecklistStore();
+
 const type = checklistStore.checklistData.type;
 checklistStore.checklistData.stage = '계약 전';
 const stage = '계약 전';
 const userId = checklistStore.checklistData.userId;
 
+const props = defineProps({
+  moveDefined: Number, // 0: 체크리스트 분석, 1: 서류 분석
+});
+
 const handleClick = (action) => {
   switch (action) {
     case 'documentAnalysis':
       console.log('서류 분석 버튼 클릭됨');
-      // 여기에 서류 분석 관련 로직 추가
+      router.push('/analysis');
       break;
+
     case 'aiContractAnalysis':
       console.log('AI 계약서 분석 버튼 클릭됨');
       // 여기에 AI 계약서 분석 관련 로직 추가
@@ -44,15 +50,22 @@ const handleClick = (action) => {
 
 const checklistAgain = () => {
   console.log('점검 다시하기 버튼 클릭');
+  console.log(props.moveDefined);
 
-  router.push({
-    path: '/checklist',
-    query: {
-      type,
-      stage,
-      userId,
-    },
-  });
+  if (props.moveDefined == 0) {
+    console.log('체크리스트 분석으로 이동');
+    router.push({
+      path: '/checklist',
+      query: {
+        type,
+        stage,
+        userId,
+      },
+    });
+  } else if (props.moveDefined == 1) {
+    console.log('서류 분석으로 이동');
+    router.push('/analysis');
+  }
 };
 </script>
 
