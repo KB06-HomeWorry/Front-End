@@ -24,14 +24,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import InputField from '@/components/input/InputField.vue';
 import InputSelect from '@/components/input/InputSelect.vue';
 import ToggleOptionGroup from '@/components/input/ToggleOptionGroup.vue';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
 
-const dealType = ref('');
-const dealPrice = ref('');
-const selectedOptions = ref([]);
+const analysisStore = useAnalysisStore();
+const { sthRisk } = storeToRefs(analysisStore);
+
+const dealType = ref(sthRisk.value.type);
+const dealPrice = ref(sthRisk.value.price);
+const selectedOptions = ref([...sthRisk.value.selectedOptions]);
 
 const dealPricePlaceholder = computed(() => {
   switch (dealType.value) {
@@ -63,6 +68,19 @@ const optionList = [
   { label: '신발장', value: 'shoe_rack' },
   { label: '기타', value: 'etc' },
 ];
+
+watch(dealType, (val) => {
+  analysisStore.sthRisk.type = val;
+});
+
+watch(dealPrice, (val) => {
+  analysisStore.sthRisk.price = val;
+});
+
+watch(selectedOptions, (val) => {
+  analysisStore.sthRisk.selectedOptions = val;
+  analysisStore.sthRisk.optionCount = val.length;
+});
 </script>
 
 <style scoped>

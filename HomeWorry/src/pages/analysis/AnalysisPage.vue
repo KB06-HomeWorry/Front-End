@@ -22,21 +22,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
+import { ref, computed } from "vue";
+import axios from "axios";
+import StepNavigationBar from "@/components/navigation/StepNavigationBar.vue";
 
-import StepCheckRegistryInfo from './components/StepCheckRegistryInfo.vue';
-import StepBuildingHistory from './components/StepBuildingHistory.vue';
-import StepAgentTrust from './components/StepAgentTrust.vue';
-import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
+import StepCheckRegistryInfo from "./components/StepCheckRegistryInfo.vue";
+import StepBuildingHistory from "./components/StepBuildingHistory.vue";
+import StepAgentTrust from "./components/StepAgentTrust.vue";
+import StepRiskAnalysis from "./components/StepRiskAnalysis.vue";
 
-import StepButton from '@/components/button/BtnMed.vue';
+import StepButton from "@/components/button/BtnMed.vue";
 
-import { useAnalysisStep } from '@/composables/useAnalysisStep';
+import { useAnalysisStep } from "@/composables/useAnalysisStep";
+import { useAnalysisStore } from "@/stores/analysis.js";
+import { useDangerResultStore } from "@/stores/dangerResult";
+import { useRoute, useRouter } from "vue-router";
 
 const { steps, setStageByIndex } = useAnalysisStep();
 
 const currentStep = ref(1);
+const dangerResultStore = useDangerResultStore();
+const analysisStore = useAnalysisStore();
+const router = useRouter();
 
 function handleStepChange(stepNumber) {
   currentStep.value = stepNumber;
@@ -50,8 +57,8 @@ function handleStageChange(index, stepName) {
 
 const buttonText = computed(() => {
   return currentStep.value === steps.value.length
-    ? '분석 시작하기'
-    : '다음 단계 넘어가기';
+    ? "분석 시작하기"
+    : "다음 단계 넘어가기";
 });
 
 function handleButtonClick() {
@@ -63,20 +70,58 @@ function handleButtonClick() {
   }
 }
 
-function startAnalysis() {
-  // TODO: 분석 시작 로직 구현
-  console.log('분석을 시작합니다.');
+async function startAnalysis() {
+  console.log("분석 시작하기 버튼 클릭!\n✅ 저장된 값 확인:");
+  console.log(
+    "등기부등본 체크리스트 개수:",
+    analysisStore.registerCertifiedCount
+  );
+  console.log("매물 주소:", analysisStore.houseAddress);
+  console.log("중개사 정보:", analysisStore.middleAgent);
+  console.log("리스크 분석 정보:", analysisStore.sthRisk);
+
+  const documentData = {
+    registerCertifiedCount: analysisStore.registerCertifiedCount,
+    houseAddress: analysisStore.houseAddress,
+    middleAgent: analysisStore.middleAgent,
+    sthRisk: analysisStore.sthRisk,
+  };
+
+  // const { data } = await axios.post(
+  //   `http://localhost:8080/analysis`,
+  //   documentData
+  // );
+
+  // console.log("서버 응답:", data);
+
+  // dangerResultStore.setDangerResult(
+  //   data.grade,
+  //   data.message,
+  //   data.descriptionTitleList,
+  //   data.descriptionContentList,
+  //   data.imageUrl
+  // );
+
+  router.push({
+    path: "/dangerResult",
+    query: {
+      documentData,
+    },
+  });
 }
 </script>
 
 <style scoped>
+.analysis-page {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
+}
+
 .fixed-footer-btn {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 40px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
   z-index: 100;
-  padding: 12px 0 46px 0;
   display: flex;
   justify-content: center;
 }
