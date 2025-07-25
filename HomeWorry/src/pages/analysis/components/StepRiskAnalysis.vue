@@ -13,6 +13,7 @@
       v-model="dealPrice"
       desc="•입력한 거래가를 기반으로 주변 시세와 비교해 과도한 고가 거래 또는 저가 거래 여부를 분석해 매물의 리스크 가능성을 판단할 수 있습니다."
       type="text"
+      :error="priceError"
     />
     <ToggleOptionGroup
       label="옵션"
@@ -43,12 +44,19 @@ const dealPricePlaceholder = computed(() => {
     case '전세':
       return '예: 2억 5천';
     case '월세':
-      return '예: 보증금 1,000 / 월세 80';
+      return '예: 보증금 1000 월세 80';
     case '매매':
       return '예: 3억 5천';
     default:
       return '거래가를 입력해주세요.';
   }
+});
+
+const priceError = computed(() => {
+  if (!dealType.value && dealPrice.value.trim() !== '') {
+    return '거래 유형을 먼저 선택해주세요.';
+  }
+  return '';
 });
 
 const dealTypeOptions = [
@@ -71,6 +79,7 @@ const optionList = [
 
 watch(dealType, (val) => {
   analysisStore.sthRisk.type = val;
+  dealPrice.value = '';
 });
 
 watch(dealPrice, (val) => {
