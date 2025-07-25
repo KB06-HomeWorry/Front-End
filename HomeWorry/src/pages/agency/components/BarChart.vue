@@ -3,7 +3,7 @@
     <div class="chart-side"></div>
     <div class="chart-bars">
       <div
-        v-for="item in chartItems"
+        v-for="(item, i) in chartItems"
         :key="item.label"
         class="chart-item bodyMedium10px"
       >
@@ -11,7 +11,7 @@
         <div class="bar-wrapper">
           <div
             class="bar"
-            :style="{ width: item.width + '%' }"
+            :style="{ width: animatedWidths[i] + '%' }"
           ></div>
         </div>
         <span class="score bodyLight6px">{{ item.score.toFixed(1) }} / 5</span>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, watch, computed, onMounted, nextTick } from 'vue';
 
 const scoreRanges = {
   listing_accuracy_score: { min: -5, max: 3 },
@@ -71,6 +71,30 @@ const chartItems = computed(() => {
     },
   ];
 });
+
+// 애니메이션 0에서 목표 width로
+const animatedWidths = ref([0, 0, 0, 0]);
+
+function runBarAnimation() {
+  if (!chartItems.value.length || chartItems.value.length < 4) {
+    animatedWidths.value = [0, 0, 0, 0];
+    return;
+  }
+  animatedWidths.value = [0, 0, 0, 0];
+  nextTick(() => {
+    setTimeout(() => {
+      animatedWidths.value = chartItems.value.map(item => item.width);
+    }, 60);
+  });
+}
+
+onMounted(runBarAnimation);
+
+watch(
+  () => chartItems.value.map(item => item.width), 
+  runBarAnimation,
+  { immediate: true }
+);
 </script>
 
 <style scoped>
@@ -78,19 +102,15 @@ const chartItems = computed(() => {
   display: flex;
   width: 100%;
   gap: 0;
-}
-
-.chart-side {
-  flex-basis: 35%;
-  max-width: 35%;
+  align-items: flex-start;
 }
 
 .chart-bars {
-  flex-basis: 65%;
-  max-width: 65%;
+  flex-basis: 100%;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .chart-item {
@@ -102,6 +122,7 @@ const chartItems = computed(() => {
   width: 60px;
   color: var(--color-primary);
   flex-shrink: 0;
+  margin-right: 1px;
 }
 
 .bar-wrapper {
@@ -110,19 +131,19 @@ const chartItems = computed(() => {
   background-color: var(--color-lightgray2);
   border-radius: 6px;
   overflow: hidden;
-  margin: 0 8px;
+  margin: 0 8px 0 0;
 }
 
 .bar {
   height: 100%;
   border-radius: 6px;
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  transition: width 0.8s cubic-bezier(.4,0,.2,1);
   background-color: var(--color-primary);
 }
 
 .score {
   text-align: right;
   color: var(--color-primary);
-  letter-spacing: -0.08em;
+  letter-spacing: -0.05em;
 }
 </style>
