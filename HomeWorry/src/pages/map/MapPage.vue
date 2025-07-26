@@ -20,8 +20,12 @@
           :y-anchor="1.4"
         >
           <div class="custom-overlay">
+            <!-- {{ (dongMarker.dongName, dongMarker.price) }} -->
+            <span class="bg-red-500 text-white px-2 py-1 rounded">
+              {{ dongMarker.dongName }}
+            </span>
             {{ dongMarker.price }}
-            {{ dongMarker }}
+            <!-- {{ dongMarker }} -->
           </div>
         </KakaoMapCustomOverlay>
       </template>
@@ -61,7 +65,7 @@ const route = useRoute();
 const router = useRouter();
 
 const initialCenter = route.query.center?.split(',').map(Number) || [
-  37.5665, 126.978,
+  37.5435, 127.0812,
 ];
 const lat = ref(initialCenter[0]);
 const lng = ref(initialCenter[1]);
