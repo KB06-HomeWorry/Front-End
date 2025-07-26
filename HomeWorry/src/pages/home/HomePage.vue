@@ -44,6 +44,7 @@
     </div>
 
     <BtnTiny text="로그인/회원가입" @click="goToLogin" />
+    <BtnTiny text="중개사 - 1" @click="goToAgency1" />
   </section>
 </template>
 
@@ -75,6 +76,10 @@ const handleCategoryClick = (category) => {
 
 function goToLogin() {
   router.replace('/auth/login');
+}
+
+function goToAgency1() {
+  router.replace('/agencysample/1');
 }
 </script>
 
