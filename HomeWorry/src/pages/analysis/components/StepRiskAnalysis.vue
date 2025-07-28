@@ -97,6 +97,5 @@ watch(selectedOptions, (val) => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
 }
 </style>

@@ -71,7 +71,7 @@ function toggle(value) {
 .toggle-button-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   justify-content: center;
 }
 

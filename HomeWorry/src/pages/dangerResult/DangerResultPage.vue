@@ -22,16 +22,16 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from "vue";
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-import { useDangerResultStore } from "@/stores/dangerResult";
-import { useAnalysisStore } from "@/stores/analysis.js";
-import axios from "axios";
+import { onMounted, watch } from 'vue';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { useDangerResultStore } from '@/stores/dangerResult';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import axios from 'axios';
 
-import DangerCard from "./components/DangerResultCard.vue";
-import DangerSummery from "./components/DangerResultSummery.vue";
-import DangerButtons from "./components/DangerResultButtons.vue";
+import DangerCard from './components/DangerResultCard.vue';
+import DangerSummery from './components/DangerResultSummery.vue';
+import DangerButtons from './components/DangerResultButtons.vue';
 
 const dangerResultStore = useDangerResultStore();
 const analysisStore = useAnalysisStore();
@@ -46,7 +46,7 @@ const loadDangerResult = async () => {
       params: { type, stage, user_id },
     });
 
-    console.log("서버 응답:", data);
+    console.log('서버 응답:', data);
 
     dangerResultStore.setDangerResult(
       data.grade,
@@ -56,7 +56,7 @@ const loadDangerResult = async () => {
       data.imageUrl
     );
   } catch (error) {
-    console.error("데이터 로딩 중 오류 발생:", error);
+    console.error('데이터 로딩 중 오류 발생:', error);
   }
 };
 
@@ -73,7 +73,7 @@ const loadAnalysisResult = async () => {
     documentData
   );
 
-  console.log("서버 응답:", data);
+  console.log('서버 응답:', data);
 
   dangerResultStore.setDangerResult(
     data.grade,
@@ -86,11 +86,11 @@ const loadAnalysisResult = async () => {
 
 onMounted(() => {
   if (route.query.type && route.query.stage && route.query.user_id) {
-    console.log("체크리스트 분석 실행됨");
+    console.log('체크리스트 분석 실행됨');
     moveDefined.value = 0;
     loadDangerResult();
   } else {
-    console.log("서류 분석 실행");
+    console.log('서류 분석 실행');
     moveDefined.value = 1;
     loadAnalysisResult();
   }
@@ -112,7 +112,7 @@ watch(
 .result-page {
   display: flex;
   flex-direction: column;
-  padding: 32px 16px;
+  margin: 1rem 2rem 0;
 }
 
 .section-wrapper {

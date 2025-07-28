@@ -66,11 +66,6 @@ watch(
 </script>
 
 <style scoped>
-.incident-checklist {
-  max-width: 600px;
-  margin-left: 20px;
-}
-
 .checklist-content {
   display: flex;
   align-items: center;
@@ -85,6 +80,7 @@ watch(
 
 .checklist-box label {
   cursor: pointer;
+  letter-spacing: -0.03em;
 }
 
 .checklist-box input[type='checkbox'] {

@@ -1,19 +1,18 @@
 <template>
+  <br />
+  <StepNavigationBar
+    :steps="steps"
+    :currentStep="currentStep"
+    mode="analysis"
+    @update:currentStep="handleStepChange"
+    @stageChange="handleStageChange"
+  />
+  <br />
   <div class="analysis-page">
-    <br />
-    <StepNavigationBar
-      :steps="steps"
-      :currentStep="currentStep"
-      mode="analysis"
-      @update:currentStep="handleStepChange"
-      @stageChange="handleStageChange"
-    />
-    <br />
-
-    <StepCheckRegistryInfo v-if="currentStep === 1" />
-    <StepBuildingHistory v-else-if="currentStep === 2" />
-    <StepAgentTrust v-else-if="currentStep === 3" />
-    <StepRiskAnalysis v-else-if="currentStep === 4" />
+    <StepBuildingHistory v-if="currentStep === 1" />
+    <StepAgentTrust v-else-if="currentStep === 2" />
+    <StepRiskAnalysis v-else-if="currentStep === 3" />
+    <StepCheckRegistryInfo v-else-if="currentStep === 4" />
 
     <div class="fixed-footer-btn">
       <StepButton :text="buttonText" @click="handleButtonClick" />
@@ -104,13 +103,13 @@ function handleButtonClick() {
 
 async function startAnalysis() {
   console.log('분석 시작하기 버튼 클릭!\n✅ 저장된 값 확인:');
+  console.log('매물 주소:', analysisStore.houseAddress);
+  console.log('중개사 정보:', analysisStore.middleAgent);
+  console.log('리스크 분석 정보:', analysisStore.sthRisk);
   console.log(
     '등기부등본 체크리스트 개수:',
     analysisStore.registerCertifiedCount
   );
-  console.log('매물 주소:', analysisStore.houseAddress);
-  console.log('중개사 정보:', analysisStore.middleAgent);
-  console.log('리스크 분석 정보:', analysisStore.sthRisk);
 
   if (
     !analysisStore.sthRisk.type &&
@@ -161,6 +160,7 @@ async function startAnalysis() {
 <style scoped>
 .analysis-page {
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 90px);
+  margin: 0 2rem;
 }
 
 .fixed-footer-btn {

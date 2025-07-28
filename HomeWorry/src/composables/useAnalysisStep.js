@@ -2,10 +2,10 @@ import { ref, computed } from 'vue';
 
 export function useAnalysisStep() {
   const analysisSteps = [
-    '등기부등본 확인',
     '건축물 이력 확인',
     '중개인 신뢰도 검토',
     '매물 리스크 분석',
+    '등기부등본 확인',
   ];
 
   const steps = computed(() => analysisSteps);
