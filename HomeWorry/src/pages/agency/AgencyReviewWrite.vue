@@ -55,6 +55,7 @@
 
 <script setup>
 import { ref, computed, nextTick } from 'vue'
+import axios from 'axios'
 import ProgressBar from '@/pages/agency/components/ProgressBar.vue'
 import ReviewQuestion from '@/pages/agency/components/ReviewQuestion.vue'
 import ProgressAvatar from '@/assets/icons/progress-avatar.png'
@@ -62,8 +63,13 @@ import BtnMedGray from '@/pages/agency/components/BtnMedGray.vue'
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue'
 import ReviewText from '@/pages/agency/components/ReviewText.vue'
 import { useTrustScore } from '@/pages/agency/composables/useTrustScore.js'
+import { useRouter, useRoute } from 'vue-router'
 
 const { calculateTrustScore } = useTrustScore();
+const router = useRouter()
+const route = useRoute()
+const officeId = route.query.agencyId || route.params.agencyId || ''
+const userToken = localStorage.getItem('user-token');
 
 const avatar = ProgressAvatar
 const reviewType = ref(null) // null | 'consultation' | 'transaction'
@@ -221,20 +227,30 @@ function onSelect(idx, answerIdx) {
 /**
  * 후기 작성 완료(버튼 클릭)
  */
-function submitReview() {
+async function submitReview() {
   // ++ 분리된 함수를 호출하여 데이터 생성
   const reviewData = calculateTrustScore(
     answers.value, 
     reviewType.value, 
-    additionalComment.value
+    additionalComment.value,
+    officeId,
+    userToken
   );
   
   console.log('--- 최종 제출 데이터 ---');
   console.log(reviewData);
 
   // 서버로 reviewData 객체를 전송하는 API 호출
-    testResult.value = reviewData; 
+  try {
+    await axios.post('http://localhost:8080/api/agent/reviews', reviewData);
 
+    alert('리뷰가 등록되었습니다.');
+    router.push(`agency/${officeId}`);
+  } catch (error) {
+    console.error('리뷰 작성 실패:', error);
+    const errorMessage = error.response?.data?.message || '리뷰 등록 중 오류가 발생했습니다.';
+    alert(errorMessage);
+  }
 }
 </script>
 
