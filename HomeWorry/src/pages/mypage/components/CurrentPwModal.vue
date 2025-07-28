@@ -48,15 +48,12 @@ async function submit() {
     return
   }
   try {
-    const res = await axios.post('http://localhost:8080/api/member/verify-password', {
+    const res = await axios.post('http://localhost:8080/api/member/verify-password-check', {
       password: currentPw.value,
       token: usertoken
     })
-    const token = res.data
-    if (!token) throw new Error('토큰 발급에 실패했습니다.')
-    emit('success', token)
+    if (res.data) {emit('success')}
     close()
-    router.push(`/auth/change-password/${encodeURIComponent(token)}`)
   } catch (e) {
     error.value =
       e.response?.data?.message || e.message || '비밀번호가 틀렸습니다.'

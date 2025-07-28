@@ -16,15 +16,18 @@ import { computed } from 'vue'
 
 const props = defineProps({
   index: { type: Number, required: true },  // 익명1, 익명2 ... 표시용
-  date: { type: String, required: true },   // ISO 또는 'YYYY-MM-DD'
+  date: { type: Object, required: true },   // ISO 또는 'YYYY-MM-DD'
   content: { type: String, required: true }
 })
 
 // 날짜 포맷 (예: 2024-07-25 → 2024.07.25)
 const formattedDate = computed(() => {
   if (!props.date) return '';
-  const d = new Date(props.date);
-  return `${d.getFullYear()}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getDate().toString().padStart(2,'0')}`;
+
+  if (props.date[1] < 10) props.date[1] = "0" + props.date[1]
+  if (props.date[2] < 10) props.date[2] = "0" + props.date[2]
+
+  return `${props.date[0]}.${props.date[1]}.${props.date[2]}`
 })
 </script>
 

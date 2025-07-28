@@ -19,13 +19,13 @@ export function useTrustScore() {
      * 배열의 순서는 실제 질문 순서와 일치해야 합니다.
      */
     questionMapping: [
-      { code: 'Q1_ATTITUDE',   metric: 'professionalism_score' },   // 1번 질문 -> 전문성/태도
-      { code: 'Q2_ACCURACY',   metric: 'listing_accuracy_score' },  // 2번 질문 -> 매물 신뢰도
-      { code: 'Q3_SUGGESTION', metric: 'professionalism_score' },   // 3번 질문 -> 전문성/태도
-      { code: 'Q4_PRESSURE',   metric: 'professionalism_score' },   // 4번 질문 -> 전문성/태도  
-      { code: 'Q5_FEE_INFO',   metric: 'cost_transparency_score' }, // 5번 질문 -> 비용 투명성
-      { code: 'Q6_CONTRACT',   metric: 'accountability_score' },    // 6번 질문 -> 책임감
-      { code: 'Q7_ISSUE',      metric: 'accountability_score' },    // 7번 질문 -> 책임감
+      { code: 'Q1_ATTITUDE',   metric: 'professionalismScore' },   // 1번 질문 -> 전문성/태도
+      { code: 'Q2_ACCURACY',   metric: 'listingAccuracyScore' },  // 2번 질문 -> 매물 신뢰도
+      { code: 'Q3_SUGGESTION', metric: 'professionalismScore' },   // 3번 질문 -> 전문성/태도
+      { code: 'Q4_PRESSURE',   metric: 'professionalismScore' },   // 4번 질문 -> 전문성/태도  
+      { code: 'Q5_FEE_INFO',   metric: 'costTransparencyScore' }, // 5번 질문 -> 비용 투명성
+      { code: 'Q6_CONTRACT',   metric: 'accountabilityScore' },    // 6번 질문 -> 책임감
+      { code: 'Q7_ISSUE',      metric: 'accountabilityScore' },    // 7번 질문 -> 책임감
     ],
 
     /**
@@ -47,10 +47,10 @@ export function useTrustScore() {
      * 이 가중치는 최종 신뢰지수에서 각 지표가 차지하는 영향력을 결정합니다.
      */
     weights: {
-      listing_accuracy_score: 0.4,  // 40%
-      cost_transparency_score: 0.3, // 30%
-      accountability_score: 0.2,    // 20%
-      professionalism_score: 0.1,   // 10%
+      listingAccuracyScore: 0.4,  // 40%
+      costTransparencyScore: 0.3, // 30%
+      accountabilityScore: 0.2,    // 20%
+      professionalismScore: 0.1,   // 10%
     },
 
     /**
@@ -60,13 +60,13 @@ export function useTrustScore() {
      */
     scoreRanges: {
       // Q2 질문 하나만 해당. min: -5, max: +3
-      listing_accuracy_score: { min: -5, max: 3 },
+      listingAccuracyScore: { min: -5, max: 3 },
       // Q5 질문 하나만 해당. min: -5, max: +3
-      cost_transparency_score: { min: -5, max: 3 },
+      costTransparencyScore: { min: -5, max: 3 },
       // Q1, Q3, Q4 질문 합산. min: (-1 + -2 + -4) = -7, max: (+1 + +1 + +1) = 3
-      professionalism_score: { min: -7, max: 3 },
+      professionalismScore: { min: -7, max: 3 },
       // Q6, Q7 질문 합산. min: (-5 + -5) = -10, max: (+3 + +2) = 5
-      accountability_score: { min: -10, max: 5 },
+      accountabilityScore: { min: -10, max: 5 },
     }
   };
 
@@ -84,14 +84,14 @@ export function useTrustScore() {
    * comment: string
    * }} 계산 결과가 담긴 객체
    */
-  const calculate = (userAnswers, type, comment) => {
+  const calculate = (userAnswers, type, comment, officeId, userToken) => {
     // 1. 후기 1건의 '지표별 점수' 계산 (Metric Score Calculation)
     // 각 지표(professionalism, listing_accuracy 등)의 점수를 0으로 초기화합니다.
     const metricScores = {
-      professionalism_score: 0,
-      listing_accuracy_score: 0,
-      cost_transparency_score: 0,
-      accountability_score: 0,
+      professionalismScore: 0,
+      listingAccuracyScore: 0,
+      costTransparencyScore: 0,
+      accountabilityScore: 0,
     };
 
     // 후기 종류에 따라 답변 개수가 달라집니다 (상담: 5개, 계약: 7개)
@@ -101,7 +101,7 @@ export function useTrustScore() {
     for (let i = 0; i < questionCount; i++) {
       const mapping = logic.questionMapping[i];    // 질문 코드와 지표 정보 가져오기
       const questionCode = mapping.code;           // e.g., 'Q1_ATTITUDE'
-      const metric = mapping.metric;               // e.g., 'professionalism_score'
+      const metric = mapping.metric;               // e.g., 'professionalismScore'
       const answerIndex = userAnswers[i];          // 사용자의 답변 인덱스 (0, 1, or 2)
       const score = logic.scores[questionCode][answerIndex]; // 답변에 해당하는 점수
       metricScores[metric] += score;               // 해당 지표 점수에 누적
@@ -112,7 +112,7 @@ export function useTrustScore() {
     let rawScore = 0;
     for (const metric in logic.weights) {
       // '상담만' 후기인 경우, '책임감(accountability)' 지표는 계약과 관련된 것이므로 계산에서 제외합니다.
-      if (type === 'consultation' && metric === 'accountability_score') continue;
+      if (type === 'consultation' && metric === 'accountabilityScore') continue;
       
       const weight = logic.weights[metric]; // 해당 지표의 가중치 (e.g., 0.4)
       rawScore += metricScores[metric] * weight;
@@ -124,7 +124,7 @@ export function useTrustScore() {
     let maxRawScore = 0;
     for (const metric in logic.weights) {
       // 역시 '상담만' 후기에서는 '책임감' 지표를 제외합니다.
-      if (type === 'consultation' && metric === 'accountability_score') continue;
+      if (type === 'consultation' && metric === 'accountabilityScore') continue;
       
       const weight = logic.weights[metric];
       const range = logic.scoreRanges[metric]; // 해당 지표의 최소/최대 점수 범위
@@ -145,11 +145,13 @@ export function useTrustScore() {
     // 최종적으로 계산된 모든 정보를 객체로 묶어 반환합니다.
     return {
       reviewType: type,          // 후기 종류
-      metricScores,              // 4대 지표별 점수
+      ...metricScores,              // 4대 지표별 점수
       rawScore,                  // 가중치만 적용된 원시 점수
       finalTrustScore,           // 0-100으로 정규화된 최종 신뢰지수
       userAnswers,               // 사용자가 선택한 답변 원본
-      comment                    // 서술형 후기
+      comment,                    // 서술형 후기
+      officeId,
+      userToken
     };
   };
   
