@@ -10,8 +10,8 @@
     <div class="agency-card-main">
       <div class="agency-header">
         <div class="agency-name bodyMedium16px">{{ name }}</div>
-        <div class="trust-badge bodyMedium12px">
-          <span class="star bodyMedium12px">★</span> {{ trustScore }}
+        <div class="trust-badge bodyMedium10px">
+          <span class="star bodyMedium10px">★</span> {{ trustScore }}
         </div>
       </div>
       <div class="agency-address bodyMedium14px">{{ address }}</div>
@@ -96,7 +96,7 @@ const computedImg = props.img && props.img.length > 0
   text-overflow: ellipsis;
 }
 .trust-badge {
-  height: 20px;
+  height: 16px;
   background: rgba(17, 31, 92, 0.1);
   color: var(--color-primary);
   border-radius: 7px;
@@ -104,10 +104,10 @@ const computedImg = props.img && props.img.length > 0
   display: flex;
   align-items: center;
   gap: 2px;
-  line-height: 24px;
+  line-height: 8px;
 }
 .trust-badge .star {
-  margin-right: 2px;
+  margin-right: 1px;
 }
 .agency-address {
   color: var(--color-primary);

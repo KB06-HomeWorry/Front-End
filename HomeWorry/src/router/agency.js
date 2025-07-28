@@ -15,11 +15,6 @@ export default [
     component: () => import('../pages/agency/AgencyReviewWrite.vue'),
   },
   {
-    path: '/agency/compotest',
-    name: 'agencyCompoTest',
-    component: () => import('../pages/agency/AgencyTest.vue'),
-  },
-  {
     path: '/agency/list',
     name: 'agencyList',
     component: () => import('../pages/agency/AgencyListPage.vue'),
