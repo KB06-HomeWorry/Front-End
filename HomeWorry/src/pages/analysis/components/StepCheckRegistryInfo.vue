@@ -94,7 +94,6 @@ watch(
 
 <style scoped>
 .title {
-  margin-left: 20px;
   color: var(--color-primary);
 }
 </style>

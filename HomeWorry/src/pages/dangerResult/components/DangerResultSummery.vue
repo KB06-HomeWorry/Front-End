@@ -5,12 +5,26 @@
       :key="index"
       class="bodyMedium16px"
     >
-      {{ title }}
-      <br /><br />
-      <div
-        class="bodyMedium12px"
-        v-html="dangerResultStore.descriptionContentList[index]"
-      ></div>
+      <template v-if="title === '등기부등본 서류 확인 미흡'">
+        <details>
+          <summary>{{ title }}</summary>
+          <div
+            class="bodyMedium12px"
+            v-html="dangerResultStore.descriptionContentList[index]"
+            style="margin-top: 8px"
+          ></div>
+        </details>
+      </template>
+
+      <template v-else>
+        {{ title }}
+        <br /><br />
+        <div
+          class="bodyMedium12px"
+          v-html="dangerResultStore.descriptionContentList[index]"
+        ></div>
+        <br />
+      </template>
       <br />
       <hr />
       <br />
@@ -21,15 +35,13 @@
     위험 수준이 낮아 별도의 점검 결과 설명은 제공되지 않습니다.
   </div>
 
-  <div v-else class="bodyMedium16px">결과를 불러오는 중입니다...<</div>
+  <div v-else class="bodyMedium16px">결과를 불러오는 중입니다...</div>
 </template>
 
 <script setup>
 import { useDangerResultStore } from '@/stores/dangerResult';
 
 const dangerResultStore = useDangerResultStore();
-
-console.log('dangerResultStore:', dangerResultStore.descriptionTitleList);
 </script>
 
 <style scoped></style>
