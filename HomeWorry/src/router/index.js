@@ -26,6 +26,10 @@ const router = createRouter({
     ...agencyRoutes,
     ...notfoundRoutes,
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // 항상 맨 위로 스크롤
+    return { top: 0 }
+  },
 });
 
 export default router;

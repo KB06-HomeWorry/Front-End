@@ -4,7 +4,7 @@
       <h3>비밀번호 확인</h3>
       <div class="pw-row">
         <input
-          class="pw-input bodyMedium14px"
+          class="pw-input bodyLight12px"
           type="password"
           v-model="currentPw"
           placeholder="현재 비밀번호 입력"
@@ -98,6 +98,11 @@ function close() {
   padding: 16px;
   box-sizing: border-box;
   font-size: 16px;
+}
+
+.pw-input::placeholder {
+  color: var(--color-mediumgray);  
+  opacity: 1;
 }
 
 .modal-error { 

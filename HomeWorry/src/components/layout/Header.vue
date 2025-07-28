@@ -90,7 +90,7 @@ const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
   height: 60px;
   background-color: var(--color-white);
   z-index: 100;
-  max-width: 390px;
+  max-width: 393px;
   width: 100%;
   margin: 0 auto;
   border-bottom: 0.5px solid var(--color-light);

@@ -70,7 +70,9 @@ defineEmits(['click']);
 }
 
 .btn-lgshort-wrapper:hover {
-  border: 1.5px solid var(--color-primary);
-  /* border-color: var(--color-primary); */
+  border: 1.2px solid var(--color-primary);
+  color: var(--color-primary);
+  background: rgba(17, 31, 92, 0.1);
 }
+
 </style>
