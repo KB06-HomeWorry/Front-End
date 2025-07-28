@@ -54,7 +54,7 @@
 
       <!-- 월세 입력 시 안내 문구 -->
       <div class="input-desc bodyLight12px">
-        • 입력한 보증금과 월세를 기반으로 주변 시세와 비교해 과도한 고가 거래
+        * 입력한 보증금과 월세를 기반으로 주변 시세와 비교해 과도한 고가 거래
         또는 저가 거래 여부를 분석해 매물의 리스크 가능성을 판단할 수 있습니다.
       </div>
     </div>
@@ -84,13 +84,30 @@
 
       <!-- 거래가 입력 시 안내 문구 -->
       <div class="input-desc bodyLight12px">
-        • 입력한 거래가를 기반으로 주변 시세와 비교해 과도한 고가 거래 또는 저가
+        * 입력한 거래가를 기반으로 주변 시세와 비교해 과도한 고가 거래 또는 저가
         거래 여부를 분석해 매물의 리스크 가능성을 판단할 수 있습니다.
       </div>
 
       <!-- 거래가 입력 오류 메시지 -->
       <div v-if="priceError" class="input-error bodyLight12px">
         {{ priceError }}
+      </div>
+    </div>
+
+    <!-- 실평수 입력 필드 -->
+    <div class="input-group" style="margin-top: 24px">
+      <label class="input-label bodyMedium20px">실평수</label>
+      <input
+        type="number"
+        class="input-box bodyLight16px"
+        placeholder="실평수를 입력해주세요."
+        v-model="areaString"
+        @input="onAreaInput"
+      />
+
+      <div class="input-desc bodyLight12px">
+        * 해당 매물의 실평수를 입력해주세요. 정확한 평수 입력은 리스크 분석과
+        시세 비교에 도움이 됩니다.
       </div>
     </div>
   </div>
@@ -121,6 +138,10 @@ const depositValue = ref(0);
 const depositString = ref('');
 const monthlyRentValue = ref(0);
 const monthlyRentString = ref('');
+
+// 평수 입력 상태와 문자열 (숫자만 추출하여 저장)
+const areaValue = ref(0);
+const areaString = ref('');
 
 // 어떤 입력란에 포커스가 있는지 관리 (버튼 그룹 동작 제어용)
 const focusedInput = ref(null);
@@ -176,6 +197,13 @@ function onMonthlyRentInput(e) {
 // 보증금과 월세 합산하여 스토어에 저장
 function updateTotalMonthlyPrice() {
   analysisStore.sthRisk.price = depositValue.value + monthlyRentValue.value;
+}
+
+// 평수 입력 처리 및 숫자만 추출해 상태 저장
+function onAreaInput(e) {
+  areaString.value = e.target.value;
+  areaValue.value = extractNumber(areaString.value);
+  // TODO: 스토어에 평수 저장할 로직 추가
 }
 
 // 입력 포커스 상태 업데이트 (보증금/월세 구분용)
