@@ -24,8 +24,8 @@ defineEmits(['click']);
   width: 75px;
   height: 55px;
   border: 1.5px solid var(--color-primary);
-  border-radius: 12px;
-  background: #ffffff;
+  border-radius: 12px 12px 12px 0;
+  background: var(--color-white);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@ defineEmits(['click']);
 }
 
 .bottom-section {
-  background: #ffffff;
+  background: var(--color-white);
   height: 60%;
   display: flex;
   align-items: flex-start;  
@@ -52,15 +52,15 @@ defineEmits(['click']);
 .divider {
   height: 1.5px;
   width: 100%;
-  background: #111F5C;
+  background: var(--color-primary);
   margin: 0;
 }
 
 .top-text {
-  color: #fff;
+  color: var(--color-white);
 }
 
 .bottom-text {
-  color: #111F5C;
+  color: var(--color-primary);
 }
 </style>
