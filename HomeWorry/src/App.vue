@@ -23,8 +23,8 @@ const hideFooter = computed(() => !!route.meta.hideFooter)
 
 <style scoped>
 .app-wrapper {
-  max-width: 393px;
-  width: 100%;
+  min-width: 393px;
+  /* width: 100%; */
   margin: 0 auto;
   min-height: 100vh;
   background-color: #fff;
