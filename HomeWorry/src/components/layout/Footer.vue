@@ -28,6 +28,8 @@ import mapLight from "@/assets/icons/nav_map_light.png";
 import mapDark from "@/assets/icons/nav_map_dark.png";
 import analysisLight from "@/assets/icons/nav_analysis_light.png";
 import analysisDark from "@/assets/icons/nav_analysis_dark.png";
+import agencyLight from "@/assets/icons/nav_agency_light.png"
+import agencyDark from "@/assets/icons/nav_agency_dark.png"
 import myLight from "@/assets/icons/nav_my_light.png";
 import myDark from "@/assets/icons/nav_my_dark.png";
 import { useChecklistStore } from "@/stores/checklist";
@@ -51,11 +53,11 @@ const tabs = [
     to: "/map",
   },
   {
-    name: "analysis",
-    label: "분석",
-    iconLight: analysisLight,
-    iconDark: analysisDark,
-    to: "/analysis",
+    name: "agency",
+    label: "중개사",
+    iconLight: agencyLight,
+    iconDark: agencyDark,
+    to: "/agency/list",
   },
   {
     name: "my",
