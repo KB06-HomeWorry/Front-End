@@ -51,23 +51,23 @@ const chartItems = computed(() => {
   return [
     {
       label: '매물 신뢰도',
-      width: normalize('listing_accuracy_score', props.metricScores.listing_accuracy_score),
-      score: toFiveScale(normalize('listing_accuracy_score', props.metricScores.listing_accuracy_score))
+      width: props.metricScores.listing_accuracy_score,
+      score: toFiveScale(props.metricScores.listing_accuracy_score)
     },
     {
       label: '비용 투명성',
-      width: normalize('cost_transparency_score', props.metricScores.cost_transparency_score),
-      score: toFiveScale(normalize('cost_transparency_score', props.metricScores.cost_transparency_score))
+      width: props.metricScores.cost_transparency_score,
+      score: toFiveScale(props.metricScores.cost_transparency_score)
     },
     {
       label: '책임감',
-      width: normalize('accountability_score', props.metricScores.accountability_score),
-      score: toFiveScale(normalize('accountability_score', props.metricScores.accountability_score))
+      width: props.metricScores.accountability_score,
+      score: toFiveScale(props.metricScores.accountability_score)
     },
     {
       label: '전문성/태도',
-      width: normalize('professionalism_score', props.metricScores.professionalism_score),
-      score: toFiveScale(normalize('professionalism_score', props.metricScores.professionalism_score))
+      width: props.metricScores.professionalism_score,
+      score: toFiveScale(props.metricScores.professionalism_score)
     },
   ];
 });

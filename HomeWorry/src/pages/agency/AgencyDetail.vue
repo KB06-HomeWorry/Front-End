@@ -70,65 +70,62 @@ const route = useRoute()
 const office_id = route.query.agencyId || route.params.agencyId || '1'
 
 // API에서 받아올 agency 정보
-// const agency = ref({
-//   office_name: '',
-//   profileUrl: '',
-//   hashtags: [],
-//   agent_name: '',
-//   license_number: '',
-//   address: '',
-//   phone: '',
-//   description:'',
-// })
+const agency = ref({
+  office_name: '',
+  profileUrl: '',
+  hashtags: [],
+  agent_name: '',
+  license_number: '',
+  address: '',
+  phone: '',
+  description:'',
+})
 
-// onMounted(async () => {
-//   try {
-//     // const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
-//     agency.value = {
-//       // ...agency.value,
-//       // office_name: res.data.officeName,
-//       // agent_name: res.data.agentName,
-//       // license_number: res.data.agentNumber,
-//       // address: res.data.address,
-//       // phone: res.data.phone
-//     }
-//   } catch (e) {
-//     alert('중개사무소 정보를 불러오지 못했습니다.')
-//   }
-// })
-
-const agency = ref({})
-const agencyScore = ref(null)
+const agencyScore = ref({
+  finalTrustScore:'',
+  averageMetricScores:{
+    listing_accuracy_score:'',
+    cost_transparency_score:'',
+    professionalism_score:'',
+    accountability_score:''
+  }
+})
 const reviews = ref([])
 
 onMounted(async () => {
   try {
-    const [agencyRes, reviewsRes] = await Promise.all([
-      axios.get(`http://localhost:3001/agencies/${office_id}`),
-      axios.get(`http://localhost:3001/reviews?agency_id=${office_id}`)
-    ]);
-
-    agency.value = agencyRes.data;
-    reviews.value = reviewsRes.data;
-
-    if (reviews.value && reviews.value.length > 0) {
-      agencyScore.value = calculateAgencyScore(reviews.value);
-    } else {
-      agencyScore.value = {
-        finalTrustScore: 0,
-        averageMetricScores: {
-          listing_accuracy_score: 0, cost_transparency_score: 0,
-          professionalism_score: 0, accountability_score: 0,
-        },
-      };
+    // 중개사 정보 조회
+    const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
+    agency.value = {
+      ...agency.value,
+      office_name: res.data.officeName,
+      agent_name: res.data.agentName,
+      license_number: res.data.licenseNumber,
+      address: res.data.address,
+      phone: res.data.phone
     }
-  } catch (e) {
-    alert('중개사무소 정보를 불러오지 못했습니다.');
-    console.error(e);
-  }
-});
 
-// const office_id = agency.value.id
+    // 중개사 신뢰점수 조회
+    const res_score = await axios.get(`http://localhost:8080/api/agent/trustScore/${office_id}`)
+    agencyScore.value = {
+      ...agencyScore.value,
+      finalTrustScore: res_score.data.totalTrustScore,
+      averageMetricScores:{
+        listing_accuracy_score: res_score.data.listingAccuracyScore,
+        cost_transparency_score: res_score.data.costTransparencyScore,
+        professionalism_score: res_score.data.professionalismScore,
+        accountability_score: res_score.data.accountabilityScore
+      }
+    }
+
+    // 중개사 리뷰 목록 조회
+    const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
+    reviews.value = res_reviews.data
+    
+  } catch (e) {
+    alert('중개사무소 정보를 불러오지 못했습니다.')
+  }
+})
 
 const goToListingPage = () => {
   // 추후 백엔드 연동 시 사용
@@ -137,9 +134,7 @@ const goToListingPage = () => {
 }
 
 const goToReviewPage = () => {
-  // 추후 백엔드 연동 시 사용
-  // router.push(`/agency/${agencyId}/review`)
-  router.push('/agency/review-write')
+  router.push(`/agency/${office_id}/review-write`)
 }
 </script>
 

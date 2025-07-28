@@ -141,16 +141,17 @@ function onPwModalClose() {
   deleteMode.value = false
 }
 
-function onPwModalSuccess(token) {
+async function onPwModalSuccess() {
   if (deleteMode.value) {
-    handleDeleteClickAfterPw(token);
+    handleDeleteClickAfterPw();
   } else {
-    router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
+    const pwResetToken = await axios.get(`http://localhost:8080/api/member/verify-password/${token}`)
+    router.push(`/auth/change-password/${encodeURIComponent(pwResetToken.data)}`)
   }
   deleteMode.value = false; // 상태 초기화
 }
 
-const handleDeleteClickAfterPw = async (pwToken) => {
+const handleDeleteClickAfterPw = async () => {
   if (loading.value) return
   loading.value = true
   const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.')
@@ -160,7 +161,7 @@ const handleDeleteClickAfterPw = async (pwToken) => {
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/member/withdraw/${pwToken}`);
+    await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
     alert('회원탈퇴가 완료되었습니다.');
     router.replace('/auth/login');
   } catch (err) {
