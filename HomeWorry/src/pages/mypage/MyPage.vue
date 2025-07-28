@@ -46,7 +46,6 @@ import changepwIcon from '@/assets/icons/my_change_password.png'
 import deleteLight from '@/assets/icons/my_deleteaccount_light.png'
 import deleteDark from '@/assets/icons/my_deleteaccount_dark.png'
 
-// json-server로 테스트하였음. 백엔드 연결시 서버 포트&URI 수정 요망
 const user = ref({
   profileImg: 'https://via.placeholder.com/84x84.png?text=User',
   name: '',
@@ -79,12 +78,79 @@ const onDeleteMouseLeave = () => { isDeleteHover.value = false }
 const router = useRouter();
 const loading = ref(false)
 const showPwModal = ref(false)
+const deleteMode = ref(false)
 
+// 메뉴 클릭 핸들러
 const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/my/privacy')
+const handleChangePwClick = () => {
+  showPwModal.value = true
+  deleteMode.value = false
+}
+const handleDeleteClick = () => {
+  showPwModal.value = true
+  deleteMode.value = true
+}
 
-// 회원탈퇴 처리
-const handleDeleteClick = async () => {
+// // 회원탈퇴 처리
+// const handleDeleteClick = async () => {
+//   if (loading.value) return
+//   loading.value = true
+//   const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.')
+//   if (!ok) {
+//     loading.value = false
+//     return
+//   }
+
+//   try {
+//     await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
+//     alert('회원탈퇴가 완료되었습니다.');
+//     // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
+//     router.replace('/auth/login');
+//   } catch (err) {
+//     alert(
+//       err.response?.data?.message ||
+//       '회원탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.'
+//     )
+//   } finally {
+//     loading.value = false
+//   }
+// }
+
+// // 모달에서 인증 성공시 콜백
+// function onPwModalSuccess(token) {
+//   // 토큰 받아서 change-password로 이동 (token 쿼리로 전달)
+//   router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
+// }
+
+// 메뉴 구성
+const menuList = computed(() => [
+  { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
+  { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
+  { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
+  {
+    icon: isDeleteHover.value ? deleteDark : deleteLight,
+    label: '회원탈퇴', onClick: () => { showPwModal.value = true; deleteMode.value = true },
+    isDelete: true
+  }
+]);
+
+// 비밀번호 모달 닫기 시 deleteMode도 초기화
+function onPwModalClose() {
+  showPwModal.value = false
+  deleteMode.value = false
+}
+
+function onPwModalSuccess(token) {
+  if (deleteMode.value) {
+    handleDeleteClickAfterPw(token);
+  } else {
+    router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
+  }
+  deleteMode.value = false; // 상태 초기화
+}
+
+const handleDeleteClickAfterPw = async (pwToken) => {
   if (loading.value) return
   loading.value = true
   const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.')
@@ -94,9 +160,8 @@ const handleDeleteClick = async () => {
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
+    await axios.delete(`http://localhost:8080/api/member/withdraw/${pwToken}`);
     alert('회원탈퇴가 완료되었습니다.');
-    // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
     router.replace('/auth/login');
   } catch (err) {
     alert(
@@ -107,30 +172,6 @@ const handleDeleteClick = async () => {
     loading.value = false
   }
 }
-
-// 메뉴 클릭 핸들러 수정
-const handleChangePwClick = () => {
-  showPwModal.value = true
-}
-
-// 모달에서 인증 성공시 콜백
-function onPwModalSuccess(token) {
-  // 토큰 받아서 change-password로 이동 (token 쿼리로 전달)
-  router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
-}
-
-// 메뉴 구성
-const menuList = computed(() => [
-  { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
-  { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
-  { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
-  {
-    icon: isDeleteHover.value ? deleteDark : deleteLight,
-    label: '회원탈퇴',
-    onClick: handleDeleteClick,
-    isDelete: true
-  }
-]);
 
 // 연락처 하이픈 포맷팅 추가
 function formatPhone(phone) {
