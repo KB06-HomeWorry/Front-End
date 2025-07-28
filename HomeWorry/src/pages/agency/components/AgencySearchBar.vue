@@ -6,7 +6,7 @@
         class="search-input bodyMedium14px"
         v-model="searchText"
         @keyup.enter="onSearch"
-        placeholder="중개사무소 이름 입력"
+        placeholder="이름 또는 지역을 입력하세요"
       />
 
       <button class="icon-btn" @click="onSearch" aria-label="검색">
@@ -54,7 +54,7 @@ function onSearch() {
 }
 
 .search-input::placeholder {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--color-mediumgray);
 }
 
