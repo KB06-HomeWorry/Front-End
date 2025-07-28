@@ -9,11 +9,16 @@ export default [
     name: 'agencyDetail',
     component: () => import('../pages/agency/AgencyDetail.vue'),
   },
-  // {
-  //   path: '/agency/review-write',
-  //   name: 'agencyReviewWrite',
-  //   component: () => import('../pages/agency/AgencyReviewWrite.vue'),
-  // },
+  {
+    path: '/agency/review-write',
+    name: 'agencyReviewWrite',
+    component: () => import('../pages/agency/AgencyReviewWrite.vue'),
+  },
+  {
+    path: '/agency/list',
+    name: 'agencyList',
+    component: () => import('../pages/agency/AgencyListPage.vue'),
+  },
   {
     path: '/agency/:agencyId/review-write',
     name: 'agencyReviewWrite',
