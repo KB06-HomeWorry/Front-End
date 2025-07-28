@@ -1,5 +1,6 @@
 <template>
   <div class="not-found-page">
+    <SimpleHeader title="테스트 심플헤더"/>
     <span>잘못된 경로로 접근했습니다</span>
 
     <BtnLg text="메인페이지로 이동" @click="goToHome" />
@@ -49,6 +50,7 @@ import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
 import BtnSm from '@/components/button/BtnSm.vue';
 import BtnSmSlim from '@/components/button/BtnSmSlim.vue';
 import BtnTiny from '@/components/button/BtnTiny.vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 
 import checklistIcon from '@/assets/icons/checklist_1.png';
 
