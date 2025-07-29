@@ -62,26 +62,30 @@ const loadDangerResult = async () => {
 
 const loadAnalysisResult = async () => {
   const documentData = {
-    registerCertifiedCount: analysisStore.registerCertifiedCount,
     houseAddress: analysisStore.houseAddress,
-    middleAgent: analysisStore.middleAgent,
-    sthRisk: analysisStore.sthRisk,
+    documentAgentDTO: { ...analysisStore.middleAgent },
+    documentSthRiskDTO: { ...analysisStore.sthRisk },
+    registerCertifiedCount: analysisStore.registerCertifiedCount,
   };
 
-  const { data } = await axios.post(
-    `http://localhost:8080/analysis`,
-    documentData
-  );
+  try {
+    const { data } = await axios.post(
+      'http://localhost:8080/analysis',
+      documentData
+    );
 
-  console.log('서버 응답:', data);
+    console.log('서버 응답:', data);
 
-  dangerResultStore.setDangerResult(
-    data.grade,
-    data.message,
-    data.descriptionTitleList,
-    data.descriptionContentList,
-    data.imageUrl
-  );
+    dangerResultStore.setDangerResult(
+      data.grade,
+      data.message,
+      data.descriptionTitleList,
+      data.descriptionContentList,
+      data.imageUrl
+    );
+  } catch (error) {
+    console.error('서류 분석 API 호출 중 오류:', error);
+  }
 };
 
 onMounted(() => {
