@@ -2,7 +2,7 @@
   <div class="commission-calculator">
     <!-- 거래 종류 선택 -->
     <div class="form-group bodyMedium16px">
-      <InputSelect
+      <CalOption
         label="거래 종류"
         :options="transactionOptions"
         v-model="transactionType"
@@ -12,7 +12,7 @@
 
     <!-- 물건 종류 선택 -->
     <div class="form-group bodyMedium16px">
-      <InputSelect
+      <CalOption
         label="물건 종류"
         :options="propertyOptions"
         v-model="propertyType"
@@ -23,14 +23,15 @@
     <!-- 매매/전세 (단일 가격 입력) -->
     <div v-if="transactionType !== 'monthlyRent'" class="form-group bodyMedium16px">
       <label>{{ transactionType === 'sale' ? '매매가' : '보증금' }}</label>
-      <div class="input-with-unit">
+      <div class="input-with-unit bodyMedium14px">
         <input
           type="text"
           class="input-box"
-          :placeholder="transactionType === 'sale' ? '예: 50000 (만원)' : '예: 30000 (만원)'"
-          v-model="priceString"
+          :placeholder="transactionType === 'sale' ? '예: 50000만원' : '예: 30000만원'"
+          :value="displayPriceString"
           @input="onPriceInput"
           @focus="focusedInput = 'price'"
+          ref="priceInputRef"
         />
       </div>
       <NumberButtonGroup
@@ -49,11 +50,12 @@
       <div class="input-with-unit">
         <input
           type="text"
-          class="input-box"
-          placeholder="예: 1000 (만원)"
-          v-model="priceString"
+          class="input-box bodyMedium14px"
+          placeholder="예: 1000만원"
+          :value="displayPriceString"
           @input="onPriceInput"
           @focus="focusedInput = 'price'"
+          ref="priceInputRef"
         />
       </div>
       <NumberButtonGroup
@@ -66,14 +68,15 @@
       </div>
 
       <label style="margin-top:16px;">월세</label>
-      <div class="input-with-unit">
+      <div class="input-with-unit bodyMedium14px">
         <input
           type="text"
           class="input-box"
-          placeholder="예: 50 (만원)"
-          v-model="monthlyRentString"
+          placeholder="예: 50만원"
+          :value="displayMonthlyRentString"
           @input="onMonthlyRentInput"
           @focus="focusedInput = 'monthlyRent'"
+          ref="monthlyInputRef"
         />
       </div>
       <NumberButtonGroup
@@ -86,17 +89,22 @@
       </div>
     </div>
 
-    <BtnMedSlim @click="calculateCommission" class="calc-button" text="계산하기" />
+    <BtnMedSlim @click="handleCalcBtn" class="calc-button" :text="calcBtnText" />
 
     <div v-if="result.commission !== null" class="result-container">
       <div class="result-item">
         <span class="label bodyMedium14px">적용 거래가액</span>
         <span class="value titleBold16px">{{ formatCurrency(result.transactionAmount) }}원</span>
       </div>
-      <div class="result-item">
-        <span class="label bodyMedium14px">상한 요율</span>
-        <span class="value titleBold16px">{{ result.rate * 100 }}%</span>
-      </div>
+    <div class="result-item">
+      <span class="label bodyMedium14px">
+        상한 요율
+        <QuestionTooltip>
+          상한요율은 법적으로 정해진 최대 중개보수율입니다. 실제 청구 요율은 이보다 낮을 수 있습니다.
+        </QuestionTooltip>
+      </span>
+      <span class="value titleBold16px">{{ result.rate * 100 }}%</span>
+    </div>
       <div v-if="result.limit" class="result-item">
         <span class="label bodyMedium14px">한도액</span>
         <span class="value titleBold16px">{{ formatCurrency(result.limit) }}원</span>
@@ -111,31 +119,31 @@
         <span class="value titleBold16px">{{ formatCurrency(Math.floor(result.commission * 1.1)) }}원</span>
       </div>
     </div>
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-message bodyMedium16px">
       {{ error }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import OptionBtnSmall from '@/pages/home/components/OptionBtnSmall.vue'; // 혹시 필요하면 유지
+import { ref, reactive, computed, nextTick } from 'vue';
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
 import NumberButtonGroup from '@/components/input/NumberButtonGroup.vue';
-import InputSelect from '@/components/input/InputSelect.vue';
+import CalOption from '@/pages/home/components/CalOption.vue';
+import QuestionTooltip from '@/components/button/QuestionTooltip.vue';
 
-// 상태 관리
-const propertyType = ref('housing');
-const transactionType = ref('sale');
+const propertyType = ref('');
+const transactionType = ref('');
 const focusedInput = ref('price');
 
-// 금액 입력값 (string), 실제 값 (number)
-const priceString = ref('');
 const priceValue = ref(0);
-const monthlyRentString = ref('');
-const monthlyRentValue = ref(0);
+const priceString = ref('');
+const priceInputRef = ref(null);
 
-// 결과, 에러
+const monthlyRentValue = ref(0);
+const monthlyRentString = ref('');
+const monthlyInputRef = ref(null);
+
 const result = reactive({
   commission: null,
   transactionAmount: null,
@@ -144,7 +152,6 @@ const result = reactive({
 });
 const error = ref('');
 
-// 옵션
 const transactionOptions = [
   { label: '매매', value: 'sale' },
   { label: '전세', value: 'lease' },
@@ -156,27 +163,54 @@ const propertyOptions = [
   { label: '기타', value: 'other' }
 ];
 
-// 입력값 처리 함수
+// 숫자 + '만원' 붙이기 (항상)
+const displayPriceString = computed(() => priceValue.value > 0 ? priceValue.value.toLocaleString() + '만원' : '');
+const displayMonthlyRentString = computed(() => monthlyRentValue.value > 0 ? monthlyRentValue.value.toLocaleString() + '만원' : '');
+
+// 입력 처리
 function onPriceInput(e) {
-  priceString.value = e.target.value;
-  priceValue.value = Number(priceString.value.replace(/[^0-9]/g, '')) || 0;
+  // 숫자만 추출
+  const numStr = e.target.value.replace(/[^0-9]/g, '');
+  priceValue.value = Number(numStr) || 0;
+  // 커서 맨뒤로
+  nextTick(() => {
+    if (priceInputRef.value) {
+      const len = priceInputRef.value.value.length;
+      priceInputRef.value.setSelectionRange(len, len);
+    }
+  });
 }
 function onMonthlyRentInput(e) {
-  monthlyRentString.value = e.target.value;
-  monthlyRentValue.value = Number(monthlyRentString.value.replace(/[^0-9]/g, '')) || 0;
+  const numStr = e.target.value.replace(/[^0-9]/g, '');
+  monthlyRentValue.value = Number(numStr) || 0;
+  nextTick(() => {
+    if (monthlyInputRef.value) {
+      const len = monthlyInputRef.value.value.length;
+      monthlyInputRef.value.setSelectionRange(len, len);
+    }
+  });
 }
 
-// 금액 버튼 누르면 현재 포커스된 input에 누적
+// 금액 버튼 누르면 누적
 function addPrice(amount) {
   priceValue.value += amount;
-  priceString.value = priceValue.value.toString();
 }
 function addMonthlyRent(amount) {
   monthlyRentValue.value += amount;
-  monthlyRentString.value = monthlyRentValue.value.toString();
 }
 
-// 한글 단위 변환 (만원 단위 입력)
+function resetCalculator() {
+  priceValue.value = 0;
+  priceString.value = '';
+  monthlyRentValue.value = 0;
+  monthlyRentString.value = '';
+  result.commission = null;
+  result.transactionAmount = null;
+  result.rate = null;
+  result.limit = null;
+  error.value = '';
+}
+
 function numberToKoreanWon(num) {
   if (!num) return '0원';
   const units = [
@@ -197,7 +231,6 @@ function numberToKoreanWon(num) {
 const formattedPrice = computed(() => numberToKoreanWon(priceValue.value));
 const formattedMonthlyPrice = computed(() => numberToKoreanWon(monthlyRentValue.value));
 
-// 계산
 const formatCurrency = (value) => {
   if (value === null || value === undefined) return '0';
   return value.toLocaleString('ko-KR');
@@ -207,7 +240,14 @@ function calculateCommission() {
   result.commission = null;
   error.value = '';
 
-  // validation
+  if (!transactionType.value) {
+    error.value = "거래 종류를 선택해주세요.";
+    return;
+  }
+  if (!propertyType.value) {
+    error.value = "물건 종류를 선택해주세요.";
+    return;
+  }
   if (!priceValue.value || priceValue.value <= 0) {
     error.value = "금액을 입력해주세요.";
     return;
@@ -217,12 +257,10 @@ function calculateCommission() {
     return;
   }
 
-  // 만원 단위 -> 원 단위
   let amount = 0;
   if (transactionType.value === 'sale' || transactionType.value === 'lease') {
     amount = priceValue.value * 10000;
   } else if (transactionType.value === 'monthlyRent') {
-    // 보증금+월세 계산 (만약 더 엄밀한 계산법 적용시 조정)
     let baseAmount = priceValue.value + monthlyRentValue.value * 100;
     if (baseAmount * 10000 < 50000000) {
       baseAmount = priceValue.value + monthlyRentValue.value * 70;
@@ -231,7 +269,6 @@ function calculateCommission() {
   }
   result.transactionAmount = amount;
 
-  // 수수료율 및 한도
   let rate = 0, limit = null;
   if (propertyType.value === 'housing') {
     if (transactionType.value === 'sale') {
@@ -266,11 +303,23 @@ function calculateCommission() {
     result.commission = Math.floor(calculated);
   }
 }
+
+const calcBtnText = computed(() =>
+  result.commission !== null ? "다시 계산하기" : "계산하기"
+);
+
+function handleCalcBtn() {
+  if (result.commission !== null) {
+    resetCalculator();
+  } else {
+    calculateCommission();
+  }
+}
 </script>
+
 
 <style scoped>
 .commission-calculator {
-  max-width: 500px;
   margin: 2rem ;
   border-radius: 12px;
 }
@@ -280,7 +329,7 @@ function calculateCommission() {
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 6px;
   color: var(--color-primary);
 }
 
@@ -293,17 +342,19 @@ function calculateCommission() {
 .input-with-unit {
   display: flex;
   align-items: center;
+  color: var(--color-primary);
 }
 
 .input-box {
   width: 100%;
-  height: 44px;
-  padding: 0 14px;
+  height: 48px;
+  padding: 0 12px;
   border: 1px solid var(--color-light);
-  border-radius: 10px;
-  font-size: 16px;
-  color: var(--color-text);
+  border-radius: 12px;
   transition: border 0.2s;
+}
+.input-box::placeholder {
+  color: var(--color-mediumgray);
 }
 .input-box:focus {
   border-color: var(--color-primary);
@@ -315,7 +366,10 @@ function calculateCommission() {
 
 .formatted-price {
   margin-top: 2px;
+  margin-left: 8px;
   color: var(--color-primary);
+  text-align: right;
+
 }
 
 .calc-button {
@@ -323,28 +377,27 @@ function calculateCommission() {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 14px;
+  margin-top: 12px;
 }
 
 .result-container {
   padding-top: 0.5rem;
 }
-.result-container h3 {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
+
 .result-item {
   display: flex;
   justify-content: space-between;
   padding: 0.8rem 0;
   align-items: center;
 }
+
 .result-item .label {
     letter-spacing: -0.03em;
     color: var(--color-darkgray);
+    line-height: 14px;
 }
 .result-item .value {
-  color: #333;
+  color: var(--color-black);
 }
 .final-commission .value {
   color: #bf0000;
@@ -354,7 +407,7 @@ function calculateCommission() {
 }
 hr {
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--color-lightgray);
   margin: 0.5rem 0;
 }
 .error-message {
