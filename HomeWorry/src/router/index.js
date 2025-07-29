@@ -10,6 +10,7 @@ import notfoundRoutes from "./notfound";
 import dangerResults from "./dangerResult";
 import Calculator from "../pages/home/Calculator.vue";
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [

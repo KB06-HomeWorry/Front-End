@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="search-bar">
+      <button class="reset-btn bodyMedium14px" @click="reset">초기화</button>
       <FilterButton text="거래방식" @click="openSheet('roomtype')" />
       <FilterButton text="전용면적" @click="openSheet('area')" />
+      
     </div>
     <BottomSheet :visible="sheetOpen" @close="sheetOpen = false">
     <template #title>
@@ -48,4 +50,5 @@ function onAreaChange(val) { /* ... */ }
   border-top: 1px solid var(--color-lightgray);
   border-bottom: 1px solid var(--color-lightgray);
 }
+
 </style>
