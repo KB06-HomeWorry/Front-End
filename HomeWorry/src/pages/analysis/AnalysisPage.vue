@@ -44,6 +44,7 @@ import CustomModal from '@/components/modal/CustomModal.vue';
 import { useAnalysisStep } from '@/composables/useAnalysisStep';
 import { useAnalysisStore } from '@/stores/analysis.js';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const { steps, setStageByIndex } = useAnalysisStep();
 const currentStep = ref(1);
@@ -71,13 +72,57 @@ function onModalCancel() {
   isModalOpen.value = false;
 }
 
-function handleStepChange(stepNumber) {
+async function fetchAgentByAddress(address) {
+  try {
+    const { data } = await axios.get(
+      'http://localhost:8080/analysis/agent/address',
+      {
+        params: { houseAddress: address },
+      }
+    );
+    console.log('중개사 정보 API 응답:', data);
+
+    if (data && data.length > 0) {
+      const agent = data[0];
+      analysisStore.middleAgent = {
+        ...analysisStore.middleAgent,
+        address: agent.address || analysisStore.middleAgent.address,
+        agentRegisterNumber:
+          agent.licenseNumber || analysisStore.middleAgent.agentRegisterNumber,
+      };
+    }
+  } catch (error) {
+    console.error('중개사 정보 불러오기 실패:', error);
+  }
+}
+
+async function handleStepChange(stepNumber) {
+  if (currentStep.value === 1 && stepNumber === 2) {
+    if (
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
+  }
+
   currentStep.value = stepNumber;
   setStageByIndex(stepNumber - 1);
 }
 
-function handleStageChange(index, stepName) {
-  currentStep.value = index + 1;
+async function handleStageChange(index, stepName) {
+  const nextStep = index + 1;
+
+  if (currentStep.value === 1 && nextStep === 2) {
+    if (
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
+  }
+
+  currentStep.value = nextStep;
   setStageByIndex(index);
 }
 
@@ -87,10 +132,17 @@ const buttonText = computed(() =>
     : '다음 단계 넘어가기'
 );
 
-function handleButtonClick() {
+async function handleButtonClick() {
   if (currentStep.value === steps.value.length) {
     startAnalysis();
   } else {
+    if (
+      currentStep.value === 1 &&
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
     currentStep.value++;
     setStageByIndex(currentStep.value - 1);
   }
