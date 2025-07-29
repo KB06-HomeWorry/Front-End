@@ -23,6 +23,7 @@
 
 <script setup>
 const props = defineProps({
+  id: String,
   name: String,
   address: String,
   phone: String,
