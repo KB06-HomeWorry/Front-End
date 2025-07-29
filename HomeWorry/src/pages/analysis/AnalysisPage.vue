@@ -31,7 +31,6 @@
 
 <script setup>
 import { ref, computed } from 'vue';
-import axios from 'axios';
 import StepNavigationBar from '@/components/navigation/StepNavigationBar.vue';
 
 import StepCheckRegistryInfo from './components/StepCheckRegistryInfo.vue';
@@ -40,18 +39,15 @@ import StepAgentTrust from './components/StepAgentTrust.vue';
 import StepRiskAnalysis from './components/StepRiskAnalysis.vue';
 
 import StepButton from '@/components/button/BtnMed.vue';
+import CustomModal from '@/components/modal/CustomModal.vue';
 
 import { useAnalysisStep } from '@/composables/useAnalysisStep';
 import { useAnalysisStore } from '@/stores/analysis.js';
-import { useDangerResultStore } from '@/stores/dangerResult';
-import { useRoute, useRouter } from 'vue-router';
-
-import CustomModal from '@/components/modal/CustomModal.vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const { steps, setStageByIndex } = useAnalysisStep();
-
 const currentStep = ref(1);
-const dangerResultStore = useDangerResultStore();
 const analysisStore = useAnalysisStore();
 const router = useRouter();
 
@@ -76,80 +72,131 @@ function onModalCancel() {
   isModalOpen.value = false;
 }
 
-function handleStepChange(stepNumber) {
+async function fetchAgentByAddress(address) {
+  try {
+    const { data } = await axios.get(
+      'http://localhost:8080/analysis/agent/address',
+      {
+        params: { houseAddress: address },
+      }
+    );
+    console.log('중개사 정보 API 응답:', data);
+
+    if (data && data.length > 0) {
+      const agent = data[0];
+      analysisStore.middleAgent = {
+        ...analysisStore.middleAgent,
+        address: agent.address || analysisStore.middleAgent.address,
+        agentRegisterNumber:
+          agent.licenseNumber || analysisStore.middleAgent.agentRegisterNumber,
+      };
+    }
+  } catch (error) {
+    console.error('중개사 정보 불러오기 실패:', error);
+  }
+}
+
+async function handleStepChange(stepNumber) {
+  if (currentStep.value === 1 && stepNumber === 2) {
+    if (
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
+  }
+
   currentStep.value = stepNumber;
   setStageByIndex(stepNumber - 1);
 }
 
-function handleStageChange(index, stepName) {
-  currentStep.value = index + 1;
+async function handleStageChange(index, stepName) {
+  const nextStep = index + 1;
+
+  if (currentStep.value === 1 && nextStep === 2) {
+    if (
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
+  }
+
+  currentStep.value = nextStep;
   setStageByIndex(index);
 }
 
-const buttonText = computed(() => {
-  return currentStep.value === steps.value.length
+const buttonText = computed(() =>
+  currentStep.value === steps.value.length
     ? '분석 시작하기'
-    : '다음 단계 넘어가기';
-});
+    : '다음 단계 넘어가기'
+);
 
-function handleButtonClick() {
+async function handleButtonClick() {
   if (currentStep.value === steps.value.length) {
     startAnalysis();
   } else {
+    if (
+      currentStep.value === 1 &&
+      analysisStore.houseAddress &&
+      analysisStore.houseAddress.trim() !== ''
+    ) {
+      await fetchAgentByAddress(analysisStore.houseAddress);
+    }
     currentStep.value++;
     setStageByIndex(currentStep.value - 1);
   }
 }
 
 async function startAnalysis() {
-  console.log('분석 시작하기 버튼 클릭!\n✅ 저장된 값 확인:');
-  console.log('매물 주소:', analysisStore.houseAddress);
-  console.log('중개사 정보:', analysisStore.middleAgent);
-  console.log('리스크 분석 정보:', analysisStore.sthRisk);
-  console.log(
-    '등기부등본 체크리스트 개수:',
-    analysisStore.registerCertifiedCount
-  );
+  const sthRisk = analysisStore.sthRisk;
 
+  // 숫자 변환
+  const priceNum = Number(sthRisk.price);
+  const monthlyPriceNum = Number(sthRisk.monthlyPrice);
+  const sizeNum = Number(sthRisk.size);
+
+  // 문자열 유효성 검사 함수
+  const isValidString = (str) => typeof str === 'string' && str.trim() !== '';
+
+  const typeValid = isValidString(sthRisk.type);
+  const houseAddressValid = isValidString(analysisStore.houseAddress);
+
+  // 매물 주소가 없는데 리스크 분석 데이터가 있으면 안 됨
   if (
-    !analysisStore.sthRisk.type &&
-    analysisStore.sthRisk.price.trim() !== ''
+    !houseAddressValid &&
+    (typeValid || priceNum > 0 || monthlyPriceNum > 0 || sizeNum > 0)
   ) {
+    openModal(
+      '❗️ 매물 주소가 입력되지 않았는데 리스크 분석 데이터가 있습니다.\n\n' +
+        '✅ 매물 주소는 필수 정보이며, 정확한 분석을 위해 반드시 입력이 필요합니다.\n\n' +
+        '매물 주소를 먼저 입력해주세요.'
+    );
+    return;
+  }
+
+  // 거래 유형 없이 거래가 입력되어 있으면 안 됨
+  if (!typeValid && (priceNum > 0 || monthlyPriceNum > 0)) {
     openModal(
       '❗️ 거래 유형이 선택되지 않았는데 거래가가 입력되어 있습니다.\n\n거래 유형을 먼저 선택해주세요.'
     );
     return;
   }
 
-  if (!analysisStore.houseAddress || analysisStore.houseAddress.trim() === '') {
-    const sthRisk = analysisStore.sthRisk;
-    const hasRiskData =
-      sthRisk.type ||
-      sthRisk.price ||
-      (sthRisk.selectedOptions && sthRisk.selectedOptions.length > 0);
-    if (hasRiskData) {
-      openModal(
-        '❗️ 매물 주소가 입력되지 않았는데 리스크 분석 데이터가 있습니다.\n\n' +
-          '✅ 매물 주소는 필수 정보이며,\n정확한 분석을 위해 입력이 필요합니다.\n\n' +
-          '매물 주소를 먼저 입력해주세요.'
-      );
-      return;
-    }
-  }
-
+  // 분석에 필요한 모든 데이터를 묶어 백엔드 API로 전송하기 위한 객체
   const documentData = {
-    registerCertifiedCount: analysisStore.registerCertifiedCount,
     houseAddress: analysisStore.houseAddress,
-    middleAgent: analysisStore.middleAgent,
-    sthRisk: analysisStore.sthRisk,
+    documentAgentDTO: { ...analysisStore.middleAgent },
+    documentSthRiskDTO: { ...analysisStore.sthRisk },
+    registerCertifiedCount: analysisStore.registerCertifiedCount,
   };
+  console.log('서버로 전송하는 데이터:', documentData);
 
   try {
-    router.push({
+    // documentData를 문자열로 바꿔서 쿼리로 넘김
+    await router.push({
       path: '/dangerResult',
-      query: {
-        documentData,
-      },
+      query: { documentData: JSON.stringify(documentData) },
     });
   } catch (error) {
     openModal('분석 중 오류가 발생했습니다. 다시 시도해주세요.');
