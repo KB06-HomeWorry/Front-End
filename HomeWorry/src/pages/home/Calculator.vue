@@ -105,6 +105,7 @@
       </span>
       <span class="value titleBold16px">{{ result.rate * 100 }}%</span>
     </div>
+    
       <div v-if="result.limit" class="result-item">
         <span class="label bodyMedium14px">한도액</span>
         <span class="value titleBold16px">{{ formatCurrency(result.limit) }}원</span>
@@ -118,6 +119,9 @@
         <span class="label bodyMedium14px">청구 예상 금액 (VAT 포함)</span>
         <span class="value titleBold16px">{{ formatCurrency(Math.floor(result.commission * 1.1)) }}원</span>
       </div>
+        <div class="result-guide bodyLight12px">
+    ※ 위 금액은 법정 상한액이며, 실제 수수료는 중개사와 협의를 <br/> 통해 조정될 수 있습니다.
+    </div>
     </div>
     <div v-if="error" class="error-message bodyMedium16px">
       {{ error }}
@@ -410,6 +414,13 @@ hr {
   border-top: 1px solid var(--color-lightgray);
   margin: 0.5rem 0;
 }
+
+.result-guide {
+  margin-top: 8px;
+  color: var(--color-mediumgray);
+  letter-spacing: -0.03em;
+}
+
 .error-message {
   text-align: center;
   color: #bf0000;
