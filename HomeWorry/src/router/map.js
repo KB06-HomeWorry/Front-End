@@ -5,6 +5,11 @@ export default [
     component: () => import('../pages/map/MapPage.vue'),
   },
   {
+    path: '/map/agency',
+    name: 'map-agency',
+    component: () => import('../pages/map/MapAgencyPage.vue'),
+  },
+  {
     path: '/map/compotest',
     name: 'mapcompotest',
     component: () => import('../pages/map/MapCompoTest.vue'),
