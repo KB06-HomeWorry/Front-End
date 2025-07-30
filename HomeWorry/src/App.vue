@@ -34,7 +34,9 @@ const hideFooter = computed(() => !!route.meta.hideFooter)
 
 .main-content {
   flex: 1;
-  padding-top: 60px;
   padding-bottom: 70px;
+}
+.main-content.has-header {
+  padding-top: 60px;
 }
 </style>
