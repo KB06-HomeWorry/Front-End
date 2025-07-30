@@ -13,7 +13,19 @@
       >
         <div class="checklist-content">
           <div class="checklist-question bodyMedium16px">
-            {{ item.content }}
+            <div class="question-row">
+              <div
+                v-if="
+                  checklistStore.topFiveAnswers.some(
+                    (ans) => ans === item.checklistId
+                  )
+                "
+                class="hot-badge"
+              >
+                🙊
+              </div>
+              <div>{{ item.content }}</div>
+            </div>
           </div>
           <div class="effectiveness-text bodyLight12px">
             * {{ item.effectiveness }}
@@ -25,12 +37,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch, ref } from 'vue';
-import { useChecklistStore } from '@/stores/checklist';
-import ProgressBar from '@/pages/agency/components/ProgressBar.vue';
+import { computed, onMounted, watch, ref } from "vue";
+import { useChecklistStore } from "@/stores/checklist";
+import ProgressBar from "@/pages/agency/components/ProgressBar.vue";
 
 const checklistStore = useChecklistStore();
-const emit = defineEmits(['progress-full']);
+const emit = defineEmits(["progress-full"]);
 const hasEmitted = ref(false);
 
 function toggleCheck(item) {
@@ -63,7 +75,7 @@ const progressPercent = computed(() =>
 
 watch(progressPercent, (newVal) => {
   if (newVal === 100 && !hasEmitted.value) {
-    emit('progress-full');
+    emit("progress-full");
     hasEmitted.value = true;
   }
 });
@@ -136,5 +148,38 @@ watch(() => checklistStore.loadChecklist());
   word-break: keep-all;
   color: inherit;
   opacity: 0.8;
+}
+
+.question-row {
+  display: flex;
+  align-items: center;
+}
+
+.hot-badge {
+  position: relative;
+  color: red;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* hover 시 tooltip 표시 */
+.hot-badge::after {
+  content: "이 문항은 최근 많이 틀린 질문입니다.";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.hot-badge:hover::after {
+  opacity: 1;
 }
 </style>

@@ -1,29 +1,30 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import axios from 'axios';
+import { defineStore } from "pinia";
+import { ref } from "vue";
+import axios from "axios";
 
-export const useChecklistStore = defineStore('checklist', () => {
+export const useChecklistStore = defineStore("checklist", () => {
   const checklistData = ref({
-    type: '매매',
-    stage: '계약 전',
+    type: "매매",
+    stage: "계약 전",
     userId: 1,
   });
 
   const checklist = ref([]);
   const answerList = ref([]);
+  const topFiveFalseAnswers = ref([]);
 
   const loadChecklist = async () => {
     const { type, stage, userId } = checklistData.value;
 
     try {
-      const response = await axios.get('http://localhost:8080/checklist', {
+      const response = await axios.get("http://localhost:8080/checklist", {
         params: { type, stage, user_id: userId },
       });
 
       const data = response.data;
 
       if (!data || !Array.isArray(data.checklist)) {
-        console.error('Invalid checklist data:', data);
+        console.error("Invalid checklist data:", data);
         checklist.value = [];
         answerList.value = [];
         return;
@@ -42,7 +43,7 @@ export const useChecklistStore = defineStore('checklist', () => {
 
       answerList.value = data.answers || [];
     } catch (error) {
-      console.error('Checklist load error:', error);
+      console.error("Checklist load error:", error);
       checklist.value = [];
       answerList.value = [];
     }
@@ -59,12 +60,12 @@ export const useChecklistStore = defineStore('checklist', () => {
 
     try {
       await axios.post(
-        'http://localhost:8080/checklist/answers',
+        "http://localhost:8080/checklist/answers",
         answerList.value
       );
       // console.log('서버에 초기화된 답변 저장 완료');
     } catch (error) {
-      console.error('초기화된 답변 저장 실패:', error);
+      console.error("초기화된 답변 저장 실패:", error);
     }
   };
 
@@ -72,6 +73,7 @@ export const useChecklistStore = defineStore('checklist', () => {
     checklistData,
     checklist,
     answerList,
+    topFiveFalseAnswers,
     loadChecklist,
     resetChecklist,
   };

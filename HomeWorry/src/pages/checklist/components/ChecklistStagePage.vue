@@ -26,16 +26,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useRouter } from 'vue-router';
-import { useChecklistStore } from '@/stores/checklist';
-import { useChecklistStep } from '@/composables/useChecklistStep';
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+import { useChecklistStore } from "@/stores/checklist";
+import { useChecklistStep } from "@/composables/useChecklistStep";
 
 const router = useRouter();
 const checklistStore = useChecklistStore();
 const steps = ref([]);
 const activeIndex = ref(0);
-const emojis = ['📝', '💰', '🏠', '🎉'];
+const emojis = ["📝", "💰", "🏠", "🎉"];
 let intervalId = null;
 
 // 체크리스트 화면으로 이동
@@ -43,7 +44,7 @@ function goToChecklist(step) {
   checklistStore.checklistData.stage = step;
 
   router.push({
-    path: '/checklist',
+    path: "/checklist",
     query: {
       type: checklistStore.checklistData.type,
       stage: checklistStore.checklistData.stage,
@@ -62,6 +63,12 @@ onMounted(async () => {
       userId: parseInt(userId),
     };
   }
+
+  const { data } = await axios.get(
+    "http://localhost:8080/checklist/answers/five"
+  );
+  checklistStore.topFiveAnswers = data;
+  console.log("서버 응답:", checklistStore.topFiveAnswers);
 
   await checklistStore.loadChecklist();
   const { steps: loadedSteps } = useChecklistStep();
