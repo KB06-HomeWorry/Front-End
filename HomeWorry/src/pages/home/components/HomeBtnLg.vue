@@ -64,7 +64,7 @@ defineEmits(['click']);
 }
 
 .btn-desc {
-  color: var(--color-primary);
+  color: var(--color-darkgray);
   letter-spacing: -0.03em;
   line-height: 1.34; 
   display: block;
