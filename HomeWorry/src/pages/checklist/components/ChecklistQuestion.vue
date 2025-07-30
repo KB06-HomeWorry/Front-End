@@ -1,26 +1,23 @@
 <template>
   <div class="checklist-container">
-    <ul>
+    <ProgressBar
+      :percent="progressPercent"
+      :label="`${checkedCount} / ${totalCount}`"
+    />
+    <ul class="checklist-list">
       <li
         v-for="item in checklistStore.checklist"
         :key="item.questionId"
-        style="margin-bottom: 16px"
+        :class="['checklist-item', { checked: item.checked }]"
+        @click="toggleCheck(item)"
       >
         <div class="checklist-content">
-          <label :for="'checklist-' + item.questionId" class="checklist-box">
-            <input
-              type="checkbox"
-              :checked="item.checked"
-              @change="onCheckChange($event, item)"
-              :id="'checklist-' + item.questionId"
-            />
-            <span class="checklist-question bodyMedium16px">
-              {{ item.content }}
-            </span>
-          </label>
-        </div>
-        <div class="effectiveness-text bodyLight12px">
-          •{{ item.effectiveness }}
+          <div class="checklist-question bodyMedium16px">
+            {{ item.content }}
+          </div>
+          <div class="effectiveness-text bodyLight12px">
+            * {{ item.effectiveness }}
+          </div>
         </div>
       </li>
     </ul>
@@ -28,29 +25,38 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useChecklistStore } from '@/stores/checklist';
-
+import ProgressBar from '@/pages/agency/components/ProgressBar.vue';
 const checklistStore = useChecklistStore();
 
-function onCheckChange(event, item) {
-  const checked = event.target.checked;
-  item.checked = checked;
+function toggleCheck(item) {
+  item.checked = !item.checked;
 
   const existing = checklistStore.answerList.find(
     (ans) => ans.questionId === item.questionId
   );
 
   if (existing) {
-    existing.answer = checked;
+    existing.answer = item.checked;
   } else {
     checklistStore.answerList.push({
       questionId: item.questionId,
       userId: checklistStore.checklistData.userId,
-      answer: checked,
+      answer: item.checked,
     });
   }
 }
+
+const checkedCount = computed(
+  () => checklistStore.checklist.filter((item) => item.checked).length
+);
+
+const totalCount = computed(() => checklistStore.checklist.length);
+
+const progressPercent = computed(() =>
+  totalCount.value === 0 ? 0 : (checkedCount.value / totalCount.value) * 100
+);
 
 onMounted(() => {
   checklistStore.loadChecklist();
@@ -64,48 +70,58 @@ watch(
 
 <style scoped>
 .checklist-container {
-  max-width: 600px;
-  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.checklist-list {
+  width: 330px;
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.checklist-item {
+  height: 100px;
+  overflow: hidden;
+  border: 0.5px solid var(--color-secondarylight);
+  border-radius: 12px;
+  background-color: #fff0f3;
+  padding: 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.checklist-item.checked {
+  background-color: #ffffff;
+  border: 0.5px solid #999999;
+  color: var(--color-mediumgray);
 }
 
 .checklist-content {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  justify-content: center;
 }
 
-.checklist-box {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 10px;
+.checklist-question {
+  line-height: 1.4;
+}
+
+.checklist-item.checked .checklist-question {
+  text-decoration: line-through;
 }
 
 .effectiveness-text {
-  white-space: normal;
+  line-height: 1.2;
   word-break: keep-all;
-}
-
-.checklist-box input[type='checkbox'] {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--color-lightgray2);
-  transform: scale(1.15);
-  margin: 0;
-  cursor: pointer;
-  transition: accent-color 0.2s;
-}
-
-.checklist-box input[type='checkbox']:hover,
-.checklist-box input[type='checkbox']:focus,
-.checklist-box input[type='checkbox']:checked,
-.checklist-box input[type='checkbox']:checked:hover,
-.checklist-box input[type='checkbox']:checked:focus {
-  accent-color: var(--color-secondarylight);
-}
-
-li > div:last-child {
-  margin-left: 32px;
-  margin-right: 10px;
-  margin-top: 2px;
+  color: inherit;
+  opacity: 0.8;
 }
 </style>
