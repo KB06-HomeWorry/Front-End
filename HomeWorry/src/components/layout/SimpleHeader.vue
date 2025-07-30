@@ -4,12 +4,12 @@
       <img :src="leftArrow" alt="뒤로가기" class="arrow-img" />
     </button>
     <span class="header-title bodyMedium16px">{{ title }}</span>
+    <slot name="action"></slot>
   </header>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
 import leftArrow from '@/assets/icons/back.png' 
 
 const props = defineProps({
@@ -42,7 +42,6 @@ function goBack() {
   padding: 14px 12px;
 }
 
-
 .back-btn {
   background: none;
   border: none;
@@ -51,13 +50,13 @@ function goBack() {
   margin-right: 8px;
   display: flex;
   align-items: center;
-    height: 100%;
+  height: 100%;
 }
 
 .arrow-img {
   width: 24px; 
   height: 24px;
-    display: block;
+  display: block;
 }
 
 .header-title {

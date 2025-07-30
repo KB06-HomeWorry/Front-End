@@ -1,4 +1,21 @@
 <template>
+  <div>
+    <SimpleHeader :title="agency.office_name">
+      <template #action>
+        <button
+          class="bookmark-btn"
+          @click="toggleBookmark"
+          aria-label="찜"
+          :title="isFavorite ? '찜 해제' : '찜하기'"
+        >
+          <img
+            :src="isFavorite ? bookmarkOn : bookmarkOff"
+            alt="찜"
+            class="bookmark-icon"
+          />
+        </button>
+      </template>
+    </SimpleHeader>
   <div class="agency-profile-wrap">
     <div class="profile-row">
       <img :src="agency.profileUrl" alt="프로필" class="profile-img" />
@@ -37,7 +54,6 @@
       <BtnAgency text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
     </div>
         <AgencyReviewSummary :score-data="agencyScore" />
-    <!-- 💡 후기 리스트 출력 부분 추가 -->
     <div class="review-list-wrap" v-if="reviews.length > 0">
       <ReviewItem
         v-for="(review, i) in reviews"
@@ -50,7 +66,7 @@
     <div v-else class="bodyLight12px" style="text-align:center;color:var(--color-mediumgray);margin:24px 0;">
       아직 작성된 후기가 없습니다.
     </div>
-
+</div>
   </div>
 </template>
 
@@ -63,11 +79,15 @@ import BtnAgency from '@/pages/agency/components/BtnAgency.vue'
 import AgencyReviewSummary from '@/pages/agency/components/AgencyReviewSummary.vue'
 import ReviewItem from '@/pages/agency/components/ReviewBox.vue'
 import { calculateAgencyScore } from '@/pages/agency/composables/useAllTrustScore.js'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import bookmarkOn from '@/assets/icons/star_filled.png'
+import bookmarkOff from '@/assets/icons/star_outline.png'
 
 const router = useRouter()
 const route = useRoute()
 
 const office_id = route.query.agencyId || route.params.agencyId || '1'
+const userId = localStorage.getItem('userId') || '1'
 
 // API에서 받아올 agency 정보
 const agency = ref({
@@ -91,6 +111,42 @@ const agencyScore = ref({
   }
 })
 const reviews = ref([])
+
+// 북마크 상태
+const isFavorite = ref(false)
+
+async function fetchFavoriteStatus() {
+  try {
+    const res = await axios.get(`/api/member/${userId}/favorite/${office_id}`)
+    if (typeof res.data === 'object' && 'favorite' in res.data) {
+      isFavorite.value = !!res.data.favorite
+    } else if (typeof res.data === 'boolean') {
+      isFavorite.value = res.data
+    } else if (typeof res.data === 'string') {
+      isFavorite.value = res.data === 'true'
+    } else {
+      isFavorite.value = false
+    }
+  } catch (e) {
+    isFavorite.value = false
+  }
+}
+
+async function toggleBookmark() {
+  try {
+    if (isFavorite.value) {
+      // [찜 해제]
+      await axios.delete(`/api/member/${userId}/favorite/${office_id}`)
+      isFavorite.value = false
+    } else {
+      // [찜 등록]
+      await axios.post(`/api/member/${userId}/favorite`, { agencyId: office_id })
+      isFavorite.value = true
+    }
+  } catch (e) {
+    alert('찜 처리 중 오류가 발생했습니다.')
+  }
+}
 
 onMounted(async () => {
   try {
@@ -121,7 +177,7 @@ onMounted(async () => {
     // 중개사 리뷰 목록 조회
     const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
     reviews.value = res_reviews.data
-    
+    await fetchFavoriteStatus()    
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')
   }
@@ -139,6 +195,22 @@ const goToReviewPage = () => {
 </script>
 
 <style scoped>
+.bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 2px;
+}
+.bookmark-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
 .agency-profile-wrap {
   margin: 1.5rem 2rem;
 }
@@ -220,7 +292,7 @@ const goToReviewPage = () => {
   justify-content: center;    /* 중앙정렬 */
   gap: 6px;
   margin-top: 12px;
-  flex-wrap: wrap;            /* 여러 줄일 때 줄바꿈 */
+  flex-wrap: wrap;    
 }
 
 .agency-description {
@@ -229,7 +301,6 @@ const goToReviewPage = () => {
   border-bottom: 1px solid var(--color-mediumgray);
   padding: 12px 10px;
   min-height: 80px;
-  /* background: var(--color-lightgray2); */
 }
 
 .desc-content {
@@ -241,7 +312,7 @@ const goToReviewPage = () => {
   margin-top: 10px;
   display: flex;
   gap: 8px;
-  justify-content: center;   /* 중앙정렬 */
+  justify-content: center;  
   align-items: center;
 }
 

@@ -1,9 +1,12 @@
 <template>
   <div class="app-wrapper">
     <Header v-if="!hideHeader"/>
-    <main class="main-content">
+    <main
+      class="main-content"
+      :class="{ 'has-header': !hideHeader }"
+    >
       <RouterView />
-    </main>
+    </main> 
     <Footer v-if="!hideFooter"/>
   </div>
 </template>
@@ -34,7 +37,9 @@ const hideFooter = computed(() => !!route.meta.hideFooter)
 
 .main-content {
   flex: 1;
-  padding-top: 60px;
   padding-bottom: 70px;
+}
+.main-content.has-header {
+  padding-top: 60px;
 }
 </style>
