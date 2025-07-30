@@ -36,6 +36,7 @@ const isWhiteBg = computed(() => {
   border-radius: 12px;
   width: 330px;
   height: 35px;
+  line-height: 35px;
   text-align: center;
   padding: 0;
   border: none;

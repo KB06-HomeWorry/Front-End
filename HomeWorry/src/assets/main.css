@@ -24,6 +24,7 @@ body {
   --color-lightgray: #d4d4d4;
   --color-light: #d9d9d9;
   --color-mediumgray: #bdbdbd;
+  --color-darkgray: #818181;
   --color-lightgray2: #f4f4f4;
   --transition: all 0.3s ease;
 }
@@ -84,7 +85,7 @@ body {
 
 .bodyMedium14px {
   font-size: 0.875rem;
-  font-weight: 00;
+  font-weight: 500;
   font-family: 'GmarketSansMedium', sans-serif;
 }
 
@@ -115,6 +116,11 @@ body {
 
 .bodyLight12px {
   font-size: 0.75rem;
+  font-weight: 300;
+  font-family: 'GmarketSansLight', sans-serif;
+}
+.bodyLight10px {
+  font-size: 0.625rem;
   font-weight: 300;
   font-family: 'GmarketSansLight', sans-serif;
 }

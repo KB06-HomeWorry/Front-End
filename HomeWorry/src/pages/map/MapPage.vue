@@ -1,5 +1,12 @@
 <template>
   <div style="width: 100%; height: 100vh">
+
+    <div>
+      <FilterBar />
+    </div>
+
+    <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
+
     <KakaoMap
       :lat="lat"
       :lng="lng"
@@ -22,13 +29,14 @@
           <div class="custom-overlay">
             <!-- {{ (dongMarker.dongName, dongMarker.price) }} -->
             <span class="bg-red-500 text-white px-2 py-1 rounded">
-              {{ dongMarker.dongName }}
+              {{ dongMarker.dongName }})
             </span>
             {{ dongMarker.price }}
             <!-- {{ dongMarker }} -->
           </div>
         </KakaoMapCustomOverlay>
       </template>
+
       <template
         v-if="level < 4"
         v-for="(marker, index) in markers"
@@ -39,19 +47,44 @@
           :lng="marker.lng"
           :y-anchor="1.4"
         >
-          <div class="custom-overlay">
-            {{ marker.price }}
+        <!-- click 추가 -->
+          <div class="custom-overlay" @click="goToDetail(marker)">
+            <span @click="console.log(marker)"> {{ marker.price }}</span>
           </div>
         </KakaoMapCustomOverlay>
       </template>
+<!-- listingMarkers 지도에 표시 -->
+<template
+  v-if="level < 4 && isListingsVisible"
+  v-for="(marker, index) in listingMarkers"
+  :key="'listing-' + index"
+>
+  <KakaoMapCustomOverlay
+    :lat="marker.lat"
+    :lng="marker.lng"
+    :y-anchor="1.4"
+  >
+    <div
+      class="custom-overlay text-white"
+      style="background-color: #1e3a8a;"
+      @click="goToDetail(marker)"
+    >
+      {{ marker.price }}
+    </div>
+  </KakaoMapCustomOverlay>
+</template>
     </KakaoMap>
+
     <h1 class="dong-label bg-opacity-50" :class="randomBgClass">
       📍 {{ currentDong }} ({{ mapCenter.lat.toFixed(4) }},
       {{ mapCenter.lng.toFixed(4) }})
       {{ level }}
     </h1>
+
   </div>
 </template>
+
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -60,6 +93,8 @@ import {
   KakaoMapMarker,
   KakaoMapCustomOverlay,
 } from 'vue3-kakao-maps';
+import FilterBar from '../map/components/FilterBar.vue'
+import ListingToggle from './ListingToggle.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -92,6 +127,8 @@ const currentDong = ref('');
 const mapCenter = ref({ lat: lat.value, lng: lng.value });
 const randomBgClass = ref('bg-white'); // Initial Tailwind background class
 
+const listingMarkers = ref([]);
+
 // Tailwind CSS background colors for the label
 const tailwindBgColors = [
   'bg-red-500',
@@ -109,7 +146,9 @@ onMounted(async () => {
   await loadPricelist();
   await loadMaximumList();
   getCurrentLocation();
+  await loadListings();
 });
+
 async function loadMaximumList() {
   try {
     const response = await fetch('/maximums.csv');
@@ -144,38 +183,53 @@ async function loadMaximumList() {
   }
 }
 
+
 // Load pricelist data
 async function loadPricelist() {
   try {
-    const response = await fetch('/pricelist.csv');
-    const csvText = await response.text();
-    const lines = csvText.split('\n');
-    const headers = lines[0].split(',');
-    const priceIndex = headers.indexOf('THING_AMT_KOR');
-    const latIndex = headers.indexOf('latitude');
-    const lonIndex = headers.indexOf('longitude');
+    const response = await fetch('/api/pricetrend'); // ✅ API 호출
+    const data = await response.json();              // ✅ JSON 파싱
 
-    const loadedMarkers = [];
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-      if (line) {
-        const values = line.split(',');
-        const latitude = parseFloat(values[latIndex]);
-        const longitude = parseFloat(values[lonIndex]);
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          loadedMarkers.push({
-            lat: latitude,
-            lng: longitude,
-            price: values[priceIndex],
-          });
-        }
-      }
-    }
+    const loadedMarkers = data.map(item => ({
+      lat: item.latitude,
+      lng: item.longitude,
+      price: item.price || item.monthlyRent || '가격없음',  // 상황에 따라 적절한 필드 사용
+    }));
+
     markers.value = loadedMarkers;
+
   } catch (error) {
-    console.error('Error loading or parsing pricelist.csv:', error);
+    console.error('❌ API 로딩 실패:', error);
   }
 }
+
+// listing map
+async function loadListings() {
+  try {
+    const response = await fetch('/api/listing');
+    const data = await response.json();              
+
+    const loaded = data.map(item => ({
+      lat: item.latitude,
+      lng: item.longitude,
+      price: item.monthlyRent
+        ? `월세 ${item.deposit}/${item.monthlyRent}`
+        : `전세 ${item.deposit}`,
+      id: item.id,
+      title: item.listing,
+      address: item.address,
+      deposit: item.deposit,
+      rent: item.monthlyRent,
+    }));
+
+    listingMarkers.value = loaded;
+
+  } catch (error) {
+    console.error('❌ API 로딩 실패:', error);
+  }
+}
+
+
 
 const onMapReady = (map) => {
   mapInstance.value = map;
@@ -225,6 +279,37 @@ const getRandomTailwindBgClass = () => {
   const randomIndex = Math.floor(Math.random() * tailwindBgColors.length);
   return tailwindBgColors[randomIndex];
 };
+
+//map 다음 상세 페이지 이동
+function goToDetail(marker) {
+  if (!marker.lat || !marker.lng) {
+    console.error('❌ 마커 좌표 없음:', marker);
+    return;
+  }
+
+  router.push({
+    path: '/map/detail',
+    query: {
+      lat: marker.lat,
+      lng: marker.lng,
+      price: marker.price
+    }
+  });
+}
+
+// listing toggle
+const isListingsVisible = ref(false);
+
+function toggleListings() {
+  isListingsVisible.value = !isListingsVisible.value;
+
+  if (isListingsVisible.value) {
+    // 마커 생성 로직 (지도에 매물 표시)
+  } else {
+    // 마커 제거 로직
+  }
+}
+
 </script>
 
 <style>
@@ -236,6 +321,7 @@ const getRandomTailwindBgClass = () => {
   font-size: 12px;
   font-weight: bold;
   white-space: nowrap;
+  pointer-events: auto;
 }
 .dong-label {
   position: absolute;
