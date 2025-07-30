@@ -36,7 +36,7 @@ import { ref } from "vue";
 import IncidentChecklist from "../components/IncidentChecklist.vue";
 import { useAnalysisStore } from "@/stores/analysis.js";
 import { storeToRefs } from "pinia";
-import HelpButton from "@/components/input/HelpButton.vue";
+import HelpButton from "@/components/button/HelpButton.vue";
 
 const store = useAnalysisStore();
 const { registerCertifiedCount, checklistAnswers } = storeToRefs(store);

@@ -124,7 +124,7 @@ import InputSelect from "@/components/input/InputSelect.vue";
 import NumberButtonGroup from "@/components/input/NumberButtonGroup.vue";
 import { useAnalysisStore } from "@/stores/analysis.js";
 import { storeToRefs } from "pinia";
-import HelpButton from "@/components/input/HelpButton.vue";
+import HelpButton from "@/components/button/HelpButton.vue";
 
 const analysisStore = useAnalysisStore();
 const { sthRisk } = storeToRefs(analysisStore);

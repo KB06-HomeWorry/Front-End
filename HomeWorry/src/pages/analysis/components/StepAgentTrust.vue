@@ -1,6 +1,17 @@
 <template>
   <div class="agency-trust-check">
     <div class="label-row">
+      <label class="input-label bodyMedium20px">중개사무소 이름</label>
+      <HelpButton :message="addressMessage" />
+    </div>
+    <InputField
+      placeholder="중개사무소 이름을 검색해주세요."
+      v-model="agentName"
+      desc="•중개사무소 이름을 통한 검색으로 해당 중개사무소의 정보를 검색할 수 있습니다."
+      :readonly="true"
+    />
+
+    <div class="label-row">
       <label class="input-label bodyMedium20px">중개사무소 주소</label>
       <HelpButton :message="addressMessage" />
     </div>
@@ -30,11 +41,12 @@ import InputField from "@/components/input/InputField.vue";
 import { openPostcode } from "@/composables/usePostcode.js";
 import { useAnalysisStore } from "@/stores/analysis.js";
 import { storeToRefs } from "pinia";
-import HelpButton from "@/components/input/HelpButton.vue";
+import HelpButton from "@/components/button/HelpButton.vue";
 
 const analysisStore = useAnalysisStore();
 const { middleAgent } = storeToRefs(analysisStore);
 
+const agentName = ref(middleAgent.value.agentName);
 const address = ref(middleAgent.value.address);
 const agentRegisterNumber = ref(middleAgent.value.agentRegisterNumber);
 const addressMessage = ref(
@@ -49,6 +61,10 @@ function handleOpenPostcode() {
     address.value = data.address;
   });
 }
+
+watch(agentName, (val) => {
+  analysisStore.middleAgent.agentName = val;
+});
 
 watch(address, (val) => {
   analysisStore.middleAgent.address = val;
