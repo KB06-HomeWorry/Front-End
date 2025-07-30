@@ -64,43 +64,43 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
-import ApartBtn from "@/pages/home/components/ApartBtn.vue";
-import BtnLgShort from "@/components/button/BtnLgShort.vue";
-import BtnLg from "@/components/button/BtnLg.vue";
-import BtnTiny from "@/components/button/BtnTiny.vue";
-import { useChecklistStore } from "@/stores/checklist";
+import { useRouter } from 'vue-router';
+import ApartBtn from '@/pages/home/components/ApartBtn.vue';
+import BtnLgShort from '@/components/button/BtnLgShort.vue';
+import BtnLg from '@/components/button/BtnLg.vue';
+import BtnTiny from '@/components/button/BtnTiny.vue';
+import { useChecklistStore } from '@/stores/checklist';
 
 const checklistStore = useChecklistStore();
 const router = useRouter();
 const handleApartmentClick = () => {};
 const handleCategoryClick = (category) => {
-  if (category === "전.월세 체크리스트" || category === "매매 체크리스트") {
-    const mappedType = category === "전.월세 체크리스트" ? "전/월세" : "매매";
+  if (category === '전.월세 체크리스트' || category === '매매 체크리스트') {
+    const mappedType = category === '전.월세 체크리스트' ? '전/월세' : '매매';
 
     console.log(mappedType);
     const query = {
       type: (checklistStore.checklistData.type = mappedType),
-      stage: "계약 전",
+      stage: '계약 전',
       userId: checklistStore.checklistData.userId,
     };
 
-    router.push({ path: "/checklist", query });
+    router.push({ path: '/checklist-stage', query });
   }
 };
 const handleAiAnaysisClick = () => {
-  router.push({ path: "/ai/analysis" });
+  router.push({ path: '/ai/analysis' });
 };
 const handleDocumentAnaysisClick = () => {
-  router.push({ path: "/analysis" });
+  router.push({ path: '/analysis' });
 };
 
 function goToLogin() {
-  router.replace("/auth/login");
+  router.replace('/auth/login');
 }
 
 function goToAgency1() {
-  router.replace("/agencysample/1");
+  router.replace('/agencysample/1');
 }
 </script>
 
