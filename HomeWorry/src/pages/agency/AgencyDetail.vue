@@ -1,4 +1,22 @@
 <template>
+  <div>
+    <!-- 1. SimpleHeader에 title과 action slot(북마크 버튼) 삽입 -->
+    <SimpleHeader :title="agency.office_name">
+      <template #action>
+        <button
+          class="bookmark-btn"
+          @click="toggleBookmark"
+          aria-label="찜"
+          :title="isFavorite ? '찜 해제' : '찜하기'"
+        >
+          <img
+            :src="isFavorite ? bookmarkOn : bookmarkOff"
+            alt="찜"
+            class="bookmark-icon"
+          />
+        </button>
+      </template>
+    </SimpleHeader>
   <div class="agency-profile-wrap">
     <div class="profile-row">
       <img :src="agency.profileUrl" alt="프로필" class="profile-img" />
@@ -50,7 +68,7 @@
     <div v-else class="bodyLight12px" style="text-align:center;color:var(--color-mediumgray);margin:24px 0;">
       아직 작성된 후기가 없습니다.
     </div>
-
+</div>
   </div>
 </template>
 
@@ -63,6 +81,9 @@ import BtnAgency from '@/pages/agency/components/BtnAgency.vue'
 import AgencyReviewSummary from '@/pages/agency/components/AgencyReviewSummary.vue'
 import ReviewItem from '@/pages/agency/components/ReviewBox.vue'
 import { calculateAgencyScore } from '@/pages/agency/composables/useAllTrustScore.js'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import bookmarkOn from '@/assets/icons/star_filled.png'
+import bookmarkOff from '@/assets/icons/star_outline.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -91,6 +112,13 @@ const agencyScore = ref({
   }
 })
 const reviews = ref([])
+
+// 북마크 상태
+const isFavorite = ref(false)
+function toggleBookmark() {
+  isFavorite.value = !isFavorite.value
+  // 서버 반영 필요시, 이곳에 axios POST/DELETE 등 추가
+}
 
 onMounted(async () => {
   try {
@@ -139,6 +167,22 @@ const goToReviewPage = () => {
 </script>
 
 <style scoped>
+.bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 2px;
+}
+.bookmark-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
 .agency-profile-wrap {
   margin: 1.5rem 2rem;
 }
