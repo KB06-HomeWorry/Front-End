@@ -1,9 +1,12 @@
 <template>
   <div class="app-wrapper">
     <Header v-if="!hideHeader"/>
-    <main class="main-content">
+    <main
+      class="main-content"
+      :class="{ 'has-header': !hideHeader }"
+    >
       <RouterView />
-    </main>
+    </main> 
     <Footer v-if="!hideFooter"/>
   </div>
 </template>
