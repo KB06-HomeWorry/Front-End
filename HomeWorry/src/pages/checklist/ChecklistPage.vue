@@ -5,7 +5,13 @@
       {{ checklistStore.checklistData.stage }}
     </p>
 
-    <ChecklistQuestion />
+    <ChecklistQuestion @progress-full="handleProgressFull" />
+
+    <img
+      v-if="showCelebrationImage"
+      class="celebration-img"
+      src="@/assets/images/celebration.png"
+    />
 
     <div class="fab-btn">
       <CircleButton @click="handleSaveRequested" />
@@ -21,19 +27,22 @@
 </template>
 
 <script setup>
-import ChecklistQuestion from './components/ChecklistQuestion.vue';
-import CustomModal from '@/components/modal/CustomModal.vue';
-import CircleButton from './components/CircleButton.vue';
-
-import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+
+import ChecklistQuestion from './components/ChecklistQuestion.vue';
+import CircleButton from './components/CircleButton.vue';
+import CustomModal from '@/components/modal/CustomModal.vue';
+
 import { useChecklistStore } from '@/stores/checklist';
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
 const checklistStore = useChecklistStore();
+
 const showModal = ref(false);
+const showCelebrationImage = ref(false);
 
 const stageEmojis = {
   '계약 전': '📝',
@@ -49,6 +58,7 @@ const stageEmoji = computed(() => {
 
 onMounted(async () => {
   const { type, stage, userId } = route.query;
+
   if (type && stage && userId) {
     checklistStore.checklistData.type = type;
     checklistStore.checklistData.stage = stage;
@@ -91,6 +101,13 @@ function handleModalConfirm() {
     },
   });
 }
+
+function handleProgressFull() {
+  showCelebrationImage.value = true;
+  setTimeout(() => {
+    showCelebrationImage.value = false;
+  }, 1000);
+}
 </script>
 
 <style scoped>
@@ -109,6 +126,7 @@ function handleModalConfirm() {
 
 .desc {
   color: var(--color-black);
+  margin-bottom: 16px;
 }
 
 .fab-btn {
@@ -123,5 +141,31 @@ function handleModalConfirm() {
   padding-right: 20px;
   box-sizing: border-box;
   z-index: 100;
+}
+
+.celebration-img {
+  width: 100px;
+  height: auto;
+  margin-top: 24px;
+  animation: fadeInOut 1s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 </style>

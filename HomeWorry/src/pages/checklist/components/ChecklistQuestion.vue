@@ -25,10 +25,13 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted, watch, ref } from 'vue';
 import { useChecklistStore } from '@/stores/checklist';
 import ProgressBar from '@/pages/agency/components/ProgressBar.vue';
+
 const checklistStore = useChecklistStore();
+const emit = defineEmits(['progress-full']);
+const hasEmitted = ref(false);
 
 function toggleCheck(item) {
   item.checked = !item.checked;
@@ -58,14 +61,24 @@ const progressPercent = computed(() =>
   totalCount.value === 0 ? 0 : (checkedCount.value / totalCount.value) * 100
 );
 
-onMounted(() => {
-  checklistStore.loadChecklist();
+watch(progressPercent, (newVal) => {
+  if (newVal === 100 && !hasEmitted.value) {
+    emit('progress-full');
+    hasEmitted.value = true;
+  }
 });
 
-watch(
-  () => [checklistStore.checklistData.type, checklistStore.checklistData.stage],
-  () => checklistStore.loadChecklist()
-);
+onMounted(() => {
+  checklistStore.loadChecklist();
+  hasEmitted.value = false;
+});
+
+watch(() => [
+  checklistStore.checklistData.type,
+  checklistStore.checklistData.stage,
+]);
+
+watch(() => checklistStore.loadChecklist());
 </script>
 
 <style scoped>
