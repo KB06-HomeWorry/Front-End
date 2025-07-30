@@ -56,21 +56,6 @@ async function fetchAgencies() {
     alert("중개사무소 위치 정보를 불러오지 못했습니다.")
   }
 }
-         
-// 마커 클릭 오버레이
-async function onMarkerClick(agency) {
-  try {
-    const sel_agency = await axios.get(`http://localhost:8080/api/agent/${agency.officeId}`)
-    selectedAgency.value = {
-      ...sel_agency.data,
-      lat: agency.lat,
-      lng: agency.lng
-    }
-    console.log(selectedAgency)
-  } catch (e) {
-    alert("중개사무소 정보를 불러오지 못했습니다.")
-  }
-}
 
 // 마커 생성
 function makeMarker(){
