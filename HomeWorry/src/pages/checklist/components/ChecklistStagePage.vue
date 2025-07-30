@@ -13,7 +13,7 @@
         :key="index"
         class="step-card"
         :class="{ active: index === activeIndex }"
-        @click="goToChecklist(index + 1)"
+        @click="goToChecklist(step)"
       >
         <div class="emoji bodyMedium24px">{{ emojis[index] }}</div>
         <div class="label">
@@ -39,14 +39,15 @@ const emojis = ['📝', '💰', '🏠', '🎉'];
 let intervalId = null;
 
 // 체크리스트 화면으로 이동
-function goToChecklist(stepIndex) {
+function goToChecklist(step) {
+  checklistStore.checklistData.stage = step;
+
   router.push({
     path: '/checklist',
     query: {
       type: checklistStore.checklistData.type,
       stage: checklistStore.checklistData.stage,
       userId: checklistStore.checklistData.userId,
-      step: stepIndex,
     },
   });
 }
