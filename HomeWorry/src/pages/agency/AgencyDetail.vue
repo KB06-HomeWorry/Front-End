@@ -55,7 +55,6 @@
       <BtnAgency text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
     </div>
         <AgencyReviewSummary :score-data="agencyScore" />
-    <!-- 💡 후기 리스트 출력 부분 추가 -->
     <div class="review-list-wrap" v-if="reviews.length > 0">
       <ReviewItem
         v-for="(review, i) in reviews"
@@ -89,6 +88,7 @@ const router = useRouter()
 const route = useRoute()
 
 const office_id = route.query.agencyId || route.params.agencyId || '1'
+const userId = localStorage.getItem('userId') || '1'
 
 // API에서 받아올 agency 정보
 const agency = ref({
@@ -115,9 +115,39 @@ const reviews = ref([])
 
 // 북마크 상태
 const isFavorite = ref(false)
-function toggleBookmark() {
-  isFavorite.value = !isFavorite.value
-  // 서버 반영 필요시, 이곳에 axios POST/DELETE 등 추가
+
+async function fetchFavoriteStatus() {
+  try {
+    const res = await axios.get(`/api/member/${userId}/favorite/${office_id}`)
+    // ★ API 응답이 어떻게 오는지 실제 확인 후 맞추세요!
+    if (typeof res.data === 'object' && 'favorite' in res.data) {
+      isFavorite.value = !!res.data.favorite
+    } else if (typeof res.data === 'boolean') {
+      isFavorite.value = res.data
+    } else if (typeof res.data === 'string') {
+      isFavorite.value = res.data === 'true'
+    } else {
+      isFavorite.value = false
+    }
+  } catch (e) {
+    isFavorite.value = false
+  }
+}
+
+async function toggleBookmark() {
+  try {
+    if (isFavorite.value) {
+      // [찜 해제]
+      await axios.delete(`/api/member/${userId}/favorite/${office_id}`)
+      isFavorite.value = false
+    } else {
+      // [찜 등록]
+      await axios.post(`/api/member/${userId}/favorite`, { agencyId: office_id })
+      isFavorite.value = true
+    }
+  } catch (e) {
+    alert('찜 처리 중 오류가 발생했습니다.')
+  }
 }
 
 onMounted(async () => {
@@ -149,7 +179,7 @@ onMounted(async () => {
     // 중개사 리뷰 목록 조회
     const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
     reviews.value = res_reviews.data
-    
+    await fetchFavoriteStatus()    
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')
   }
@@ -264,7 +294,7 @@ const goToReviewPage = () => {
   justify-content: center;    /* 중앙정렬 */
   gap: 6px;
   margin-top: 12px;
-  flex-wrap: wrap;            /* 여러 줄일 때 줄바꿈 */
+  flex-wrap: wrap;    
 }
 
 .agency-description {
@@ -273,7 +303,6 @@ const goToReviewPage = () => {
   border-bottom: 1px solid var(--color-mediumgray);
   padding: 12px 10px;
   min-height: 80px;
-  /* background: var(--color-lightgray2); */
 }
 
 .desc-content {
@@ -285,7 +314,7 @@ const goToReviewPage = () => {
   margin-top: 10px;
   display: flex;
   gap: 8px;
-  justify-content: center;   /* 중앙정렬 */
+  justify-content: center;  
   align-items: center;
 }
 
