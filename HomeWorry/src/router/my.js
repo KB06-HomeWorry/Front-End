@@ -9,4 +9,9 @@ export default [
     name: 'my-privacy',
     component: () => import('../pages/mypage/PrivacyNotice.vue'),
   },
+  {
+    path: '/my/agency/bookmark',
+    name: 'my-agency-bookmark',
+    component: () => import('../pages/mypage/AgencyBookmark.vue'),
+  },
 ];

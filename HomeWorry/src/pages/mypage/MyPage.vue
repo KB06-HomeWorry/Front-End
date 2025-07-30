@@ -40,6 +40,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
+import bookmarkIcon from '@/assets/icons/my_bookmark.png'
 import noticeIcon from '@/assets/icons/my_notice.png'
 import privacyIcon from '@/assets/icons/my_privacy.png'
 import changepwIcon from '@/assets/icons/my_change_password.png'
@@ -81,6 +82,7 @@ const showPwModal = ref(false)
 const deleteMode = ref(false)
 
 // 메뉴 클릭 핸들러
+const goToBookmark = () => router.push('/my/agency/bookmark')
 const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/my/privacy')
 const handleChangePwClick = () => {
@@ -125,6 +127,7 @@ const handleDeleteClick = () => {
 
 // 메뉴 구성
 const menuList = computed(() => [
+  { icon: bookmarkIcon, label: '저장된 중개사무소 목록', onClick: goToBookmark },
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
   { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
