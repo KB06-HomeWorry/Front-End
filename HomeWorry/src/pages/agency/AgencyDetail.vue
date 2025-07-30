@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- 1. SimpleHeader에 title과 action slot(북마크 버튼) 삽입 -->
     <SimpleHeader :title="agency.office_name">
       <template #action>
         <button
@@ -119,7 +118,6 @@ const isFavorite = ref(false)
 async function fetchFavoriteStatus() {
   try {
     const res = await axios.get(`/api/member/${userId}/favorite/${office_id}`)
-    // ★ API 응답이 어떻게 오는지 실제 확인 후 맞추세요!
     if (typeof res.data === 'object' && 'favorite' in res.data) {
       isFavorite.value = !!res.data.favorite
     } else if (typeof res.data === 'boolean') {

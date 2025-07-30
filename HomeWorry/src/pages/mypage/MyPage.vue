@@ -1,14 +1,19 @@
 <template>
-  <div class="mypage-container">
-    <!-- 프로필 영역 -->
-    <div class="profile-box">
-      <img class="profile-img" :src="user.profileImg" alt="프로필" />
-      <div class="profile-info">
-        <div class="profile-name titleBold20px">{{ user.name }}</div>
-        <div class="profile-email bodyMedium14px">
-          <span class="emoji">📧</span>{{ user.email }}</div>
-        <div class="profile-phone bodyMedium14px">
-          <span class="emoji">📞</span>{{ formatPhone(user.phone) }}
+  <div>
+    <SimpleHeader title="마이페이지" />
+
+    <div class="mypage-container">
+      <!-- 프로필 영역 -->
+      <div class="profile-box">
+        <img class="profile-img" :src="user.profileImg" alt="프로필" />
+        <div class="profile-info">
+          <div class="profile-name titleBold20px">{{ user.name }}</div>
+          <div class="profile-email bodyMedium14px">
+            <span class="emoji">📧</span>{{ user.email }}
+          </div>
+          <div class="profile-phone bodyMedium14px">
+            <span class="emoji">📞</span>{{ formatPhone(user.phone) }}
+          </div>
         </div>
       </div>
     </div>
@@ -38,6 +43,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import bookmarkIcon from '@/assets/icons/my_bookmark.png'

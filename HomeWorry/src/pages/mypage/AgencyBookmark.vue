@@ -1,4 +1,7 @@
 <template>
+      <div>
+    <SimpleHeader title="저장된 공인중개사무소">
+    </SimpleHeader>
   <div class="bookmark-page">
     <div v-if="agencies.length > 0" class="agency-list-grid">
       <BookmarkCard
@@ -17,10 +20,12 @@
       북마크 된 중개사무소가 없습니다.
     </div>
   </div>
+    </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import BookmarkCard from '@/pages/mypage/components/BookmarkCard.vue'
 import profile1 from '@/assets/icons/sample_profile1.png'
 import profile2 from '@/assets/icons/sample_profile2.png'
