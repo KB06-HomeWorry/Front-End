@@ -16,8 +16,10 @@
           &times;
         </button>
 
-        <h3 id="modalTitle" class="modal-title">중개사무소 선택</h3>
-        <ul class="agent-list">
+        <h3 id="modalTitle" class="modal-title bodyMedium16px">
+          중개사무소 선택
+        </h3>
+        <ul class="agent-list bodyMedium12px">
           <li
             v-for="(agent, index) in agents"
             :key="index"
@@ -36,7 +38,7 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount } from 'vue';
 
 const props = defineProps({
   modelValue: Boolean,
@@ -46,33 +48,33 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:modelValue", "select", "cancel"]);
+const emit = defineEmits(['update:modelValue', 'select', 'cancel']);
 
 // 모달 닫기
 function handleClose() {
-  emit("update:modelValue", false);
-  emit("cancel");
+  emit('update:modelValue', false);
+  emit('cancel');
 }
 
 // 특정 항목 선택
 function handleSelect(agent) {
-  emit("select", agent);
-  emit("update:modelValue", false);
+  emit('select', agent);
+  emit('update:modelValue', false);
 }
 
 // ESC 키 눌렀을 때 모달 닫기
 const handleEscapeKey = (e) => {
-  if (e.key === "Escape") handleClose();
+  if (e.key === 'Escape') handleClose();
 };
 
 // 컴포넌트 마운트 시 ESC 키 이벤트 등록
 onMounted(() => {
-  window.addEventListener("keydown", handleEscapeKey);
+  window.addEventListener('keydown', handleEscapeKey);
 });
 
 // 언마운트 시 이벤트 해제
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleEscapeKey);
+  window.removeEventListener('keydown', handleEscapeKey);
 });
 </script>
 
@@ -92,8 +94,8 @@ onBeforeUnmount(() => {
   background-color: var(--color-white);
   padding: 24px;
   border-radius: 12px;
-  width: 80%;
-  max-width: 400px;
+  width: 360px;
+  max-width: 90%;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -102,7 +104,6 @@ onBeforeUnmount(() => {
 .modal-title {
   margin: 0 0 16px 0;
   text-align: center;
-  font-weight: bold;
 }
 
 .agent-list {
@@ -133,13 +134,11 @@ onBeforeUnmount(() => {
 
 .agent-name {
   margin: 0 0 4px 0;
-  font-weight: bold;
   color: var(--color-black, #000);
 }
 
 .agent-info {
   margin: 0;
-  font-size: 12px;
   color: var(--color-gray, #666);
 }
 
