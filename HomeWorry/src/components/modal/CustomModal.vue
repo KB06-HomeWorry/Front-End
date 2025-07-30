@@ -15,7 +15,11 @@
         >
           &times;
         </button>
-        <p id="modalDesc" class="modal-message bodyMedium14px">{{ message }}</p>
+        <p
+          id="modalDesc"
+          class="modal-message bodyMedium14px"
+          v-html="message"
+        ></p>
         <div class="modal-buttons">
           <button
             v-if="cancelText"
@@ -39,7 +43,7 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount } from "vue";
 
 // Props: 모델 값, 메시지, 버튼 텍스트
 const props = defineProps({
@@ -50,42 +54,42 @@ const props = defineProps({
   },
   confirmText: {
     type: String,
-    default: '확인',
+    default: "확인",
   },
   cancelText: {
     type: String,
-    default: '',
+    default: "",
   },
 });
 
 // 이벤트: 모델 값 업데이트, confirm, cancel
-const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);
+const emit = defineEmits(["update:modelValue", "confirm", "cancel"]);
 
 // 모달 확인 처리
 const handleConfirm = () => {
-  emit('update:modelValue', false);
-  emit('confirm');
+  emit("update:modelValue", false);
+  emit("confirm");
 };
 
 // 모달 닫기(취소) 처리
 const handleCancel = () => {
-  emit('update:modelValue', false);
-  emit('cancel');
+  emit("update:modelValue", false);
+  emit("cancel");
 };
 
 // ESC 키 눌렀을 때 모달 닫기
 const handleEscapeKey = (e) => {
-  if (e.key === 'Escape') handleCancel();
+  if (e.key === "Escape") handleCancel();
 };
 
 // 컴포넌트 마운트 시 ESC 키 이벤트 등록
 onMounted(() => {
-  window.addEventListener('keydown', handleEscapeKey);
+  window.addEventListener("keydown", handleEscapeKey);
 });
 
 // 언마운트 시 이벤트 해제
 onBeforeUnmount(() => {
-  window.removeEventListener('keydown', handleEscapeKey);
+  window.removeEventListener("keydown", handleEscapeKey);
 });
 </script>
 

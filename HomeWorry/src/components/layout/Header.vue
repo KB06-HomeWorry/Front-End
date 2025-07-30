@@ -7,7 +7,7 @@
     </div>
 
     <!-- 초기화 버튼: /checklist일 때만 -->
-    <div class="right" v-if="showChecklistTitle">
+    <div class="right" v-if="isChecklistPage && !isChecklistStagePage">
       <button
         class="action-btn titleBold12px"
         @click="isConfirmModalVisible = true"
@@ -62,7 +62,14 @@ import CustomModal from '@/components/modal/CustomModal.vue';
 const route = useRoute();
 const checklistStore = useChecklistStore();
 
-const showChecklistTitle = computed(() => route.path.startsWith('/checklist'));
+const isChecklistPage = computed(() => route.path.startsWith('/checklist'));
+const isChecklistStagePage = computed(() =>
+  route.path.startsWith('/checklist-stage')
+);
+
+const showChecklistTitle = computed(
+  () => isChecklistPage.value || isChecklistStagePage.value
+);
 const type = computed(() => route.query.type || '');
 
 const isConfirmModalVisible = ref(false);
