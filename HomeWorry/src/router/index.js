@@ -8,6 +8,7 @@ import checklistRoutes from "./checklist";
 import agencyRoutes from "./agency";
 import notfoundRoutes from "./notfound";
 import dangerResults from "./dangerResult";
+import wordquizRoutes from "./wordquiz";
 import Calculator from "../pages/home/Calculator.vue";
 
 const router = createRouter({
@@ -31,6 +32,7 @@ const router = createRouter({
     ...myRoutes,
     ...agencyRoutes,
     ...notfoundRoutes,
+    ...wordquizRoutes,
   ],
   scrollBehavior(to, from, savedPosition) {
     // 항상 맨 위로 스크롤
