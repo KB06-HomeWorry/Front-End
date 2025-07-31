@@ -14,8 +14,8 @@
           <span class="star bodyMedium10px">★</span> {{ trustScore }}
         </div>
       </div>
-      <div class="agency-address bodyMedium14px">{{ address }}</div>
-      <div class="agency-phone bodyMedium12px">{{ phone }}</div>
+      <div class="agency-address bodyMedium12px">{{ address }}</div>
+      <div class="agency-phone bodyLight12px">{{ phone }}</div>
     </div>
   </div>
   </router-link>
@@ -117,6 +117,6 @@ const computedImg = props.img && props.img.length > 0
   text-overflow: ellipsis;
 }
 .agency-phone {
-  color: var(--color-mediumgray);
+  color: var(--color-darkgray);
 }
 </style>

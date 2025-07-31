@@ -3,8 +3,8 @@
     <div class="btn-content">
       <img v-if="icon" :src="icon" alt="icon" class="btn-icon" />
       <div class="btn-text-col">
-        <span class="btn-title titleBold14px">{{ title }}</span>
-        <span class="btn-desc bodyMedium12px">{{ desc }}</span>
+        <span class="btn-text titleBold14px">{{ text }}</span>
+        <span class="btn-desc bodyLight12px">{{ desc }}</span>
       </div>
     </div>
   </button>
@@ -13,7 +13,7 @@
 <script setup>
 const props = defineProps({
   icon: { type: String, default: null },
-  title: { type: String, required: true },
+  text: { type: String, required: true },
   desc: { type: String, required: true },
 });
 defineEmits(['click']);
@@ -56,7 +56,7 @@ defineEmits(['click']);
   gap: 2px;
 }
 
-.btn-title {
+.btn-text {
   color: var(--color-primary);
   letter-spacing: -0.03em;
   line-height: 1.34;
