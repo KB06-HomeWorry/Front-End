@@ -4,7 +4,7 @@
       <img v-if="icon" :src="icon" alt="icon" class="btn-icon" />
       <div class="btn-text-col">
         <span class="btn-text titleBold14px">{{ text }}</span>
-        <span class="btn-desc bodyMedium12px">{{ desc }}</span>
+        <span class="btn-desc bodyLight12px">{{ desc }}</span>
       </div>
     </div>
   </button>
