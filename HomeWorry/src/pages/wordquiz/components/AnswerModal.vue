@@ -85,7 +85,7 @@ function onClose() { emit('close') }
   min-height: 140px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
   margin: 170px auto 32px auto; 
   display: flex;
   flex-direction: column;
