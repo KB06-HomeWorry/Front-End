@@ -24,8 +24,7 @@ const router = useRouter();
 const checklistStore = useChecklistStore();
 
 const type = checklistStore.checklistData.type;
-checklistStore.checklistData.stage = '계약 전';
-const stage = '계약 전';
+const stage = checklistStore.checklistData.stage;
 const userId = checklistStore.checklistData.userId;
 
 const props = defineProps({

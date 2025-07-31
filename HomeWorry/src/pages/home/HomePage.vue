@@ -2,6 +2,34 @@
   <section class="main-grid">
     <div class="left-column">
       <ApartBtn
+        text="에이아이 계약서 분석입니당"
+        icon="/src/assets/icons/home_robot.png"
+        @click="handleAiAnaysisClick"
+      />
+    </div>
+    <div class="right-column">
+      <ApartBtn
+        text="서류 분석"
+        icon="/src/assets/icons/home_document.png"
+        @click="handleDocumentAnaysisClick"
+      />
+    </div>
+
+    <div class="checklist-column">
+      <BtnLg
+        text="전·월세 체크리스트"
+        icon="/src/assets/icons/checklist_rent.png"
+        @click="handleCategoryClick('전.월세 체크리스트')"
+      />
+      <BtnLg
+        text="매매 체크리스트"
+        icon="/src/assets/icons/checklist_sale.png"
+        @click="handleCategoryClick('매매 체크리스트')"
+      />
+    </div>
+
+    <div class="left-column">
+      <ApartBtn
         text="아파트"
         icon="/src/assets/icons/home_apartment.png"
         @click="handleApartmentClick"
@@ -26,20 +54,7 @@
       <BtnLgShort
         text="상가·사무실"
         icon="/src/assets/icons/home_store.png"
-        @click="handleCategoryClick('상가.사무실')"
-      />
-    </div>
-
-    <div class="checklist-column">
-      <BtnLg
-        text="전·월세 체크리스트"
-        icon="/src/assets/icons/checklist_rent.png"
-        @click="handleCategoryClick('전.월세 체크리스트')"
-      />
-      <BtnLg
-        text="매매 체크리스트"
-        icon="/src/assets/icons/checklist_sale.png"
-        @click="handleCategoryClick('매매 체크리스트')"
+        @click="handletestClick"
       />
     </div>
 
@@ -49,38 +64,53 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import ApartBtn from '@/pages/home/components/ApartBtn.vue';
-import BtnLgShort from '@/components/button/BtnLgShort.vue';
-import BtnLg from '@/components/button/BtnLg.vue';
-import BtnTiny from '@/components/button/BtnTiny.vue';
-import { useChecklistStore } from '@/stores/checklist';
+import { useRouter } from "vue-router";
+import axios from "axios";
+import ApartBtn from "@/pages/home/components/ApartBtn.vue";
+import BtnLgShort from "@/components/button/BtnLgShort.vue";
+import BtnLg from "@/components/button/BtnLg.vue";
+import BtnTiny from "@/components/button/BtnTiny.vue";
+import { useChecklistStore } from "@/stores/checklist";
 
 const checklistStore = useChecklistStore();
 const router = useRouter();
 const handleApartmentClick = () => {};
 const handleCategoryClick = (category) => {
-  if (category === '전.월세 체크리스트' || category === '매매 체크리스트') {
-    const mappedType = category === '전.월세 체크리스트' ? '전/월세' : '매매';
+  if (category === "전.월세 체크리스트" || category === "매매 체크리스트") {
+    const mappedType = category === "전.월세 체크리스트" ? "전/월세" : "매매";
 
     console.log(mappedType);
     const query = {
       type: (checklistStore.checklistData.type = mappedType),
-      stage: '계약 전',
+      stage: "계약 전",
       userId: checklistStore.checklistData.userId,
     };
 
-    router.push({ path: '/checklist', query });
+    router.push({ path: "/checklist-stage", query });
   }
+};
+const handleAiAnaysisClick = () => {
+  router.push({ path: "/ai/analysis" });
+};
+const handleDocumentAnaysisClick = () => {
+  router.push({ path: "/analysis" });
 };
 
 function goToLogin() {
-  router.replace('/auth/login');
+  router.replace("/auth/login");
 }
 
 function goToAgency1() {
-  router.replace('/agencysample/1');
+  router.replace("/agencysample/1");
 }
+
+const handletestClick = async () => {
+  const { data } = await axios.get(
+    "http://localhost:8080/checklist/answers/five"
+  );
+
+  console.log("서버 응답:", data);
+};
 </script>
 
 <style scoped>
