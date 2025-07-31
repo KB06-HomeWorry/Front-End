@@ -30,7 +30,7 @@ const emit = defineEmits(['select'])
 <style scoped>
 .quiz-card {
   background: rgba(17, 31, 92, 0.10);
-  padding: 0 0 44px 0;
+  padding: 0 0 56px 0;
   margin-left: -2rem;
   margin-right: -2rem;
   display: flex;
