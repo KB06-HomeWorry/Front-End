@@ -1,6 +1,6 @@
 <template>
   <div class="not-found-page">
-    <SimpleHeader title="테스트 심플헤더"/>
+    <SimpleHeader title="테스트 심플헤더" />
     <span>잘못된 경로로 접근했습니다</span>
 
     <BtnLg text="메인페이지로 이동" @click="goToHome" />
@@ -32,34 +32,31 @@
       <BtnSmSlim text="친절했어요" @click="handleClick('기본')" />
       <BtnTiny text="로그인/회원가입" @click="handleClick('기본')" />
 
-
       <!-- 흰 배경 버튼 테스트 -->
       <BtnMed text="흰색 버튼" color="#ffffff" @click="handleClick('흰색')" />
       <BtnSm text="저장하기" color="#ffffff" @click="handleClick('흰색')" />
-
-
     </div>
   </div>
 </template>
 
 <script setup>
-import BtnLg from '@/components/button/BtnLg.vue';
-import BtnLgShort from '@/components/button/BtnLgShort.vue';
-import BtnMed from '@/components/button/BtnMed.vue';
-import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
-import BtnSm from '@/components/button/BtnSm.vue';
-import BtnSmSlim from '@/components/button/BtnSmSlim.vue';
-import BtnTiny from '@/components/button/BtnTiny.vue';
-import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import BtnLg from "@/components/button/BtnLg.vue";
+import BtnLgShort from "@/components/button/BtnLgShort.vue";
+import BtnMed from "@/components/button/BtnMed.vue";
+import BtnMedSlim from "@/components/button/BtnMedSlim.vue";
+import BtnSm from "@/components/button/BtnSm.vue";
+import BtnSmSlim from "@/components/button/BtnSmSlim.vue";
+import BtnTiny from "@/components/button/BtnTiny.vue";
+import SimpleHeader from "@/components/layout/SimpleHeader.vue";
 
-import checklistIcon from '@/assets/icons/checklist_1.png';
+import checklistIcon from "@/assets/icons/checklist_1.png";
 
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 function goToHome() {
-  router.push({ name: 'home' });
+  router.push({ name: "home" });
 }
 
 function handleClick(type) {
