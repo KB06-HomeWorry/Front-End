@@ -11,12 +11,12 @@
       <div v-if="pagedList.length > 0" class="agency-list-grid">
         <BookmarkCard
           v-for="(agency, idx) in pagedList"
-          :key="agency.id"
-          :id="agency.id"
+          :key="agency.officeId"
+          :id="agency.officeId"
           :officeName="agency.officeName"
           :address="agency.address"
-          :imgUrl="agency.profileUrl"
-          :isFavorite="agency.isFavorite"
+          :imgUrl="agency.profileImage"
+          :isFavorite="true"
           :onToggleFavorite="toggleFavorite"
           :img="sampleImgs[idx % sampleImgs.length]"
         />
@@ -44,6 +44,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import BookmarkCard from '@/pages/mypage/components/BookmarkCard.vue'
 import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
@@ -54,22 +55,8 @@ import profile3 from '@/assets/icons/sample_profile3.png'
 
 const sampleImgs = [profile1, profile2, profile3]
 
-// 실제 사용시 아래 mockAgencies → API 호출로 대체
-const mockAgencies = [
-  { id: 1, officeName: "행복공인중개사", address: "서울특별시 강남구 논현동 123-4", profileUrl: "", isFavorite: true },
-  { id: 2, officeName: "드림공인중개사", address: "서울특별시 서초구 서초동 11-22", profileUrl: "", isFavorite: true },
-  { id: 3, officeName: "에이스공인중개사", address: "서울특별시 마포구 합정동 88-3", profileUrl: "", isFavorite: true },
-  { id: 4, officeName: "청운공인중개사", address: "서울특별시 강서구 화곡동 55-99", profileUrl: "", isFavorite: true },
-  { id: 5, officeName: "센텀공인중개사", address: "부산광역시 해운대구 센텀로 7", profileUrl: "", isFavorite: true },
-  { id: 6, officeName: "오렌지공인중개사", address: "대전광역시 유성구 봉명동 321-10", profileUrl: "", isFavorite: true },
-  { id: 7, officeName: "금강공인중개사", address: "충청남도 천안시 서북구 두정동 110", profileUrl: "", isFavorite: true },
-  { id: 8, officeName: "미래공인중개사", address: "서울특별시 관악구 신림동 101-5", profileUrl: "", isFavorite: true },
-  { id: 9, officeName: "럭키공인중개사", address: "인천광역시 남동구 구월동 222-3", profileUrl: "", isFavorite: true },
-  { id: 10, officeName: "스마트공인중개사", address: "경기도 수원시 권선구 세류동 99-4", profileUrl: "", isFavorite: true },
-  // ... (테스트 데이터 10개 이상 추가하면 페이지네이션 작동 잘 확인 가능)
-]
-
 const agencies = ref([])
+const userToken = localStorage.getItem('user-token')
 
 // 검색/정렬/페이지네이션 상태
 const searchText = ref('')
@@ -79,8 +66,18 @@ const pageSize = 8                 // 1페이지에 8개씩
 const maxPageDisplay = 5           // 하단 페이지버튼 5개씩
 
 onMounted(() => {
-  agencies.value = mockAgencies   // 실제 사용시: API에서 데이터 불러와서 할당
+  fetchAgencyList()
 })
+
+async function fetchAgencyList(){
+  try {
+    // 찜 목록 조회
+    const res = await axios.get(`http://localhost:8080/api/agent/${userToken}/favorite`)
+    agencies.value = res.data
+  } catch (e) {
+    alert('찜 목록을 불러오지 못했습니다.')
+  }
+}
 
 function onSearch(val) {
   searchText.value = val
@@ -120,10 +117,20 @@ function goToPage(p) {
   if (p >= 1 && p <= totalPages.value) page.value = p
 }
 
-async function toggleFavorite(id) {
-  const idx = agencies.value.findIndex(a => a.id === id)
-  if (idx === -1) return
-  agencies.value.splice(idx, 1)
+async function toggleFavorite(id, isFavorite) {
+  try {
+    if (isFavorite) {
+      // [찜 해제]
+      await axios.delete(`/api/agent/${userToken}/favorite/${id}`)
+    } else {
+      // [찜 등록]
+      await axios.get(`/api/agent/${userToken}/favorite/${id}`)
+    }
+  } catch (e) {
+    alert('찜 처리 중 오류가 발생했습니다.')
+  } finally {
+    fetchAgencyList()
+  }
 }
 </script>
 
