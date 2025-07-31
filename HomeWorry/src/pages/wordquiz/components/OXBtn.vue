@@ -6,7 +6,7 @@
 
 <script setup>
 defineProps({
-  imgSrc: { type: String, required: true }, // 예: '/assets/icons/icon.png'
+  imgSrc: { type: String, required: true },
 })
 </script>
 
