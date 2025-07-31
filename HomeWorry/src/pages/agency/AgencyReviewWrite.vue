@@ -245,7 +245,7 @@ async function submitReview() {
     await axios.post('http://localhost:8080/api/agent/reviews', reviewData);
 
     alert('리뷰가 등록되었습니다.');
-    router.push(`agency/${officeId}`);
+    router.push(`/agency/${officeId}`);
   } catch (error) {
     console.error('리뷰 작성 실패:', error);
     const errorMessage = error.response?.data?.message || '리뷰 등록 중 오류가 발생했습니다.';
