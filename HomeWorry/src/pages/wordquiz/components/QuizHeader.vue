@@ -21,6 +21,8 @@ const props = defineProps({
   display: flex;
   align-items: center;
   gap: 7px; /* 이미지와 텍스트 사이 여백 */
+  background: var(--color-white);
+  padding: 0 20px;
 }
 
 .quiz-info-img {
