@@ -21,8 +21,8 @@ defineEmits(['click']);
 
 <style scoped>
 .btn-lgshort-square {
-  width: 80px;
-  height: 80px;
+  width: 82px;
+  height: 82px;
   border-radius: 12px;
   background-color: #fff;
   border: 0.5px solid var(--color-light);

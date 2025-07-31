@@ -21,7 +21,7 @@
     <!-- 카드뉴스 부분 추후 컴포넌트로 구현 예정 (width 100% - height 200px) -->
     <div class="card-news-placeholder"></div>
 
-    <div class="home-btn-row" style="margin-bottom: 13px;">
+    <div class="home-btn-row" style="margin-bottom: 10px;">
       <HomeBtnMed text="전.월세 체크리스트" icon="/src/assets/icons/checklist_rent.png" @click="handleCategoryClick('전.월세 체크리스트')" />
       <HomeBtnMed text="매매 체크리스트" icon="/src/assets/icons/checklist_sale.png" @click="handleCategoryClick('매매 체크리스트')" />
     </div>
@@ -67,32 +67,32 @@ const handleCategoryClick = (category) => {
   width: 393px;
   /* max-width: 420px; */
   margin: 0 auto;
-  padding: 1rem;
+  padding: 14px 16px 8px 16px;
   box-sizing: border-box;
 }
 
 .home-btn-row {
   display: flex;
   flex-direction: row;
-  gap: 13px;
+  gap: 10px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 13px;
+  margin-bottom: 10px;
 }
 
 .home-btn-lg-col {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 10px;
   width: 100%;
-  margin: 13px 0;
+  margin: 10px 0;
 }
 
 .card-news-placeholder {
   width: 393px;
   height: 200px;
-  margin: 16px -16px;
+  margin: 14px -16px;
   background: rgba(17, 31, 92, 0.10);
 }
 </style>
