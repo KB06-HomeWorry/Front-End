@@ -33,8 +33,12 @@ function onClose() { emit('close') }
 .modal-backdrop {
   position: fixed;
   z-index: 99;
-  left: 0; right: 0; top: 0; bottom: 0;
+  left: 0; right: 0; top: 0; bottom: 70px;
+  /* width와 margin으로 중앙에 */
+  width: 393px;
+  height: auto;
   background: rgba(0,0,0,0.22);
+  margin: 0 auto;
   display: flex;
   justify-content: center;
   align-items: center;
