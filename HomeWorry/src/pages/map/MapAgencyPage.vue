@@ -7,35 +7,6 @@
       @onLoadKakaoMap="onMapReady"
       style="width: 100%; height: 100%"
     >
-      <template v-for="agency in agencies" :key="agency.id">
-        <KakaoMapCustomOverlay
-          :lat="agency.lat"
-          :lng="agency.lng"
-          :y-anchor="1.1"
-        >
-          <img
-            src="/map_agency_pin.png"
-            width="36"
-            height="42"
-            style="cursor:pointer;"
-            @click="onMarkerClick(agency)"
-          />
-        </KakaoMapCustomOverlay>
-      </template>
-
-      <KakaoMapCustomOverlay
-        v-if="selectedAgency"
-        :lat="selectedAgency.lat"
-        :lng="selectedAgency.lng"
-        :y-anchor="1.4"
-      >
-        <div class="custom-overlay">
-          <div class="title">{{ selectedAgency.officeName }}</div>
-          <div>{{ selectedAgency.agentName }}</div>
-          <div>{{ selectedAgency.phone }}</div>
-          <div>{{ selectedAgency.address }}</div>
-        </div>
-      </KakaoMapCustomOverlay>
     </KakaoMap>
   </div>
 </template>
@@ -56,7 +27,8 @@ const lat = ref(initialCenter[0]);
 const lng = ref(initialCenter[1]);
 
 const level = ref(Number(route.query.zoomLevel) || 8)
-const selectedAgency = ref(null)
+const agency_map = ref(null)
+const customOverlay = ref(null)
 
 // api에서 불러온 중개사 배열
 const agencies = ref([])
@@ -65,30 +37,89 @@ async function fetchAgencies() {
   try {
   const res = await axios.get('http://localhost:8080/api/agent/geo/list')
   agencies.value = res.data
+
+  return new Promise((resolve) => {
+    if (agencies.value.length > 0 && agency_map.value != null) {
+      makeMarker()
+      resolve()
+    } else {
+      const interval = setInterval(() => {
+        if (agencies.value.length > 0 && agency_map.value != null) {
+          clearInterval(interval)
+          makeMarker()
+          resolve()
+        }
+      }, 100)
+    }
+  })
   } catch (e) {
     alert("중개사무소 위치 정보를 불러오지 못했습니다.")
   }
 }
 
-// 마커 클릭 오버레이
-async function onMarkerClick(agency) {
+// 마커 생성
+function makeMarker(){
+  const imageSrc = "/map_agency_pin.png"
+  const imageSize = new kakao.maps.Size(36, 42)
+  const imageOption = { offset: new kakao.maps.Point(18, 36) }
+
+  const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+  customOverlay.value = new kakao.maps.CustomOverlay({
+    map: null,
+    position: null,
+    content: null,
+    xAnchor: 0.5,
+    yAnchor: 1.1,
+  })
+
+  agencies.value.forEach(agency => {
+    const marker = new kakao.maps.Marker({
+      map: agency_map.value,
+      position: new kakao.maps.LatLng(agency.lat, agency.lng),
+      image: markerImage
+    })
+
+    kakao.maps.event.addListener(marker, 'click', () => {
+      updateCustomOverlay(agency, marker.getPosition())
+    })
+  })
+}
+
+async function updateCustomOverlay (data, position) {
   try {
-    const sel_agency = await axios.get(`http://localhost:8080/api/agent/${agency.officeId}`)
-    selectedAgency.value = {
-      ...sel_agency.data,
-      lat: agency.lat,
-      lng: agency.lng
-    }
-    console.log(selectedAgency)
+    const sel_agency = await axios.get(`http://localhost:8080/api/agent/${data.officeId}`)
+    
+    const content = `
+    <div class="custom-overlay">
+      <div class="close-btn" title="닫기">X</div>
+      <div class="title">${sel_agency.data.officeName}</div>
+      <div>${sel_agency.data.agentName}</div>
+      <div>${sel_agency.data.address}</div>
+      <div>${sel_agency.data.phone}</div>
+    </div>`
+
+    customOverlay.value.setContent(content);
+    customOverlay.value.setPosition(position);
+    customOverlay.value.setMap(agency_map.value);
+
+    document.querySelector('.custom-overlay .close-btn').onclick = () => {
+    closeCustomOverlay();
+  };
   } catch (e) {
     alert("중개사무소 정보를 불러오지 못했습니다.")
   }
 }
 
+const closeCustomOverlay = () => {
+  customOverlay.value.setMap(null);
+};
+
 // 지도 이벤트 기반 쿼리 동기화
 function onMapReady(map) {
   kakao.maps.event.addListener(map, 'dragend', () => updateURL(map))
   kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map))
+  agency_map.value = map
 }
 
 function updateURL(map) {
@@ -110,11 +141,13 @@ function updateURL(map) {
 function waitKakaoReady() {
   return new Promise((resolve) => {
     if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
+      fetchAgencies()
       resolve()
     } else {
       const interval = setInterval(() => {
         if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
           clearInterval(interval)
+          fetchAgencies()
           resolve()
         }
       }, 100)
@@ -123,16 +156,12 @@ function waitKakaoReady() {
 }
 
 onMounted(async () => {
-  // await waitKakaoReady()
-  await fetchAgencies()
+  await waitKakaoReady()
 })
 
 watch(agencies, (newVal) => {
   console.log('agencies changed:', newVal)
 })
-
-console.log("--- 중개사무소 정보 ---")
-console.log(agencies.value)
 </script>
 
 <style>
