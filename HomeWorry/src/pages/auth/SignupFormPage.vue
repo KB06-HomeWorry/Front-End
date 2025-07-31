@@ -9,13 +9,6 @@
         :error="emailError"
         @check="checkEmailDuplicate"
       />
-      <!-- 이메일 -->
-      <!-- <InputField
-        label="이메일을 입력해주세요."
-        placeholder="이메일 주소를 입력하세요."
-        type="email"
-        v-model="email"
-      /> -->
 
       <!-- 비밀번호/비밀번호 확인 -->
       <InputField
@@ -51,11 +44,16 @@
       <InputField
         label="연락처를 입력해주세요."
         placeholder="숫자만 입력하세요"
-        type="tel"
-        inputmode="numeric"
-        v-model="phone"
-        :maxlength="13"
-      />
+      >
+        <input
+          class="input-box-pw bodyMedium16px"
+          type="tel"
+          :value="phone"
+          @input="onPhoneInput"
+          maxlength="13"
+          placeholder="연락처를 입력하세요."
+        />
+      </InputField>
 
       <BtnMed class="submit-btn" type="submit" text="회원가입 완료" :disabled="loading"/>
     </form>
@@ -112,8 +110,10 @@ async function checkEmailDuplicate() {
 }
 
 // 사용자가 입력한 값에서 숫자만 추출한 뒤, 숫자 개수에 맞게 하이픈 자동으로 들어가도록 하였음
-watch(phone, (newValue) => {
-  const numbers = newValue.replace(/[^0-9]/g, '');
+function onPhoneInput(e) {
+  let numbers = e.target.value.replace(/[^0-9]/g, '');
+  if (numbers.length > 11) numbers = numbers.slice(0, 11);
+
   let formatted = '';
   if (numbers.length < 4) {
     formatted = numbers;
@@ -123,7 +123,7 @@ watch(phone, (newValue) => {
     formatted = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
   }
   phone.value = formatted;
-});
+}
 
 // 비밀번호 2종류 이상 조합 검사 함수
 function isPasswordValid(pw) {

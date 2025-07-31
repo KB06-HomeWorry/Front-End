@@ -5,29 +5,14 @@
       :key="index"
       class="bodyMedium16px"
     >
-      <template v-if="title === '등기부등본 서류 확인 미흡'">
-        <details>
-          <summary>{{ title }}</summary>
-          <div
-            class="bodyMedium12px"
-            v-html="dangerResultStore.descriptionContentList[index]"
-            style="margin-top: 8px"
-          ></div>
-        </details>
-      </template>
-
-      <template v-else>
-        {{ title }}
-        <br /><br />
+      <details>
+        <summary>{{ title }}</summary>
         <div
           class="bodyMedium12px"
           v-html="dangerResultStore.descriptionContentList[index]"
+          style="margin-top: 8px"
         ></div>
-        <br />
-      </template>
-      <br />
-      <hr />
-      <br />
+      </details>
     </div>
   </div>
 
@@ -44,4 +29,38 @@ import { useDangerResultStore } from '@/stores/dangerResult';
 const dangerResultStore = useDangerResultStore();
 </script>
 
-<style scoped></style>
+<style scoped>
+details {
+  border: 1px solid var(--color-light);
+  border-radius: 12px;
+  padding: 16px 16px;
+  margin-bottom: 12px;
+  background-color: var(--color-white);
+  transition: all 0.3s ease;
+}
+
+summary {
+  list-style: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-black);
+}
+
+summary::marker {
+  display: none;
+}
+
+details[open] {
+  background: #eeeff6;
+}
+
+details > div {
+  margin-top: 8px;
+  color: var(--color-darkgray);
+  line-height: 1.5;
+  background-color: var(--color-white);
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+</style>

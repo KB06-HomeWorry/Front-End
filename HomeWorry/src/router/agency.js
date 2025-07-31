@@ -8,6 +8,7 @@ export default [
     path: '/agency/:agencyId',
     name: 'agencyDetail',
     component: () => import('../pages/agency/AgencyDetail.vue'),
+      meta: { hideHeader: true }
   },
   {
     path: '/agency/review-write',

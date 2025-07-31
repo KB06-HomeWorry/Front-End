@@ -8,7 +8,7 @@
 
     <!-- 리스트 -->
     <ul class="agency-list">
-      <li v-for="(agency, idx) in sortedList" :key="agency.officeId">
+      <li v-for="(agency, idx) in pagedList" :key="agency.officeId">
         <AgencyCard
           :id="agency.officeId"
           :name="agency.officeName"
@@ -19,6 +19,19 @@
         />
       </li>
     </ul>
+    <!-- 페이지네이션 -->
+<div class="pagination bodyMedium12px" v-if="totalPages > 1">
+  <button :disabled="page === 1" @click="goToPage(1)">≪</button>
+  <button :disabled="page === 1" @click="goToPage(page - 1)">이전</button>
+  <button
+    v-for="p in pageNumbers"
+    :key="p"
+    :class="{ active: page === p }"
+    @click="goToPage(p)"
+  >{{ p }}</button>
+  <button :disabled="page === totalPages" @click="goToPage(page + 1)">다음</button>
+  <button :disabled="page === totalPages" @click="goToPage(totalPages)">≫</button>
+</div>
   </div>
 </template>
 
@@ -51,6 +64,10 @@ const sampleImgs = [profile1, profile2, profile3]
 
 const agencies = ref([])
 
+// 페이지네이션 상태
+const page = ref(1)
+const pageSize = 20
+
 onMounted(async () => {
   try {
     // 중개사무소 목록 조회
@@ -67,6 +84,7 @@ const sortBy = ref('trust')
 
 function onSearch(val) {
   searchText.value = val
+  page.value = 1
 }
 
 const filteredList = computed(() =>
@@ -79,11 +97,40 @@ const filteredList = computed(() =>
 )
 
 const sortedList = computed(() => {
+  const list = [...filteredList.value]
   if (sortBy.value === 'trust') {
-    return [...filteredList.value].sort((a, b) => b.totalScore - a.totalScore)
+    return list.sort((a, b) => b.totalScore - a.totalScore)
   }
-  return [...filteredList.value].sort((a, b) => a.officeName.localeCompare(b.officeName, 'ko'))
+  return list.sort((a, b) => a.officeName.localeCompare(b.officeName, 'ko'))
 })
+
+const totalPages = computed(() =>
+  Math.ceil(sortedList.value.length / pageSize)
+)
+
+const pagedList = computed(() =>
+  sortedList.value.slice((page.value - 1) * pageSize, page.value * pageSize)
+)
+
+const maxPageDisplay = 5;
+
+const startPage = computed(() => {
+  // 현재 블록의 시작 번호 (1, 6, 11, ...)
+  return Math.floor((page.value - 1) / maxPageDisplay) * maxPageDisplay + 1;
+});
+const endPage = computed(() => {
+  // 끝 번호가 전체 페이지를 넘지 않도록
+  return Math.min(startPage.value + maxPageDisplay - 1, totalPages.value);
+});
+const pageNumbers = computed(() => {
+  // 시작~끝까지 배열 반환
+  return Array.from({ length: endPage.value - startPage.value + 1 }, (_, i) => startPage.value + i);
+});
+
+// 페이지 이동 함수
+function goToPage(p) {
+  if (p >= 1 && p <= totalPages.value) page.value = p
+}
 </script>
 
 <style scoped>
@@ -118,5 +165,35 @@ const sortedList = computed(() => {
 .agency-list li {
   padding: 0; 
   border: none; 
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 18px 0 0 0;
+}
+
+.pagination button {
+  border: none;
+  background: var(--color-lightgray2);
+  border-radius: 6px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 8px;
+  cursor: pointer;
+  color: var(--color-primary);
+  transition: background .15s;
+}
+
+.pagination button.active,
+.pagination button:active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.pagination button[disabled] {
+  opacity: .5;
+  cursor: not-allowed;
 }
 </style>

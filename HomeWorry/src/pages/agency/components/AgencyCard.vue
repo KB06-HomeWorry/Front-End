@@ -49,7 +49,7 @@ const computedImg = props.img && props.img.length > 0
 <style scoped>
 .agency-card {
   display: flex;
-  gap: 14px;
+  gap: 8px;
   padding: 12px 0 12px 0;
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
@@ -64,8 +64,8 @@ const computedImg = props.img && props.img.length > 0
 }
 
 .agency-profile-img {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   object-fit: cover;
   border-radius: 12px;
   background: #f3f3f3;
