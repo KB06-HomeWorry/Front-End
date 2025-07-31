@@ -169,6 +169,7 @@ async function loadMaximumList() {
         const longitude = parseFloat(values[lonIndex]);
         if (!isNaN(latitude) && !isNaN(longitude)) {
           loadedMarkers.push({
+            id: id,
             lat: latitude,
             lng: longitude,
             price: values[priceIndex],
@@ -191,9 +192,11 @@ async function loadPricelist() {
     const data = await response.json();              // ✅ JSON 파싱
 
     const loadedMarkers = data.map(item => ({
+      id:item.id,
       lat: item.latitude,
       lng: item.longitude,
       price: item.price || item.monthlyRent || '가격없음',  // 상황에 따라 적절한 필드 사용
+      source:'pricetrend'
     }));
 
     markers.value = loadedMarkers;
@@ -220,6 +223,7 @@ async function loadListings() {
       address: item.address,
       deposit: item.deposit,
       rent: item.monthlyRent,
+      source : 'listing'
     }));
 
     listingMarkers.value = loaded;
@@ -282,7 +286,7 @@ const getRandomTailwindBgClass = () => {
 
 //map 다음 상세 페이지 이동
 function goToDetail(marker) {
-  if (!marker.lat || !marker.lng) {
+  if (!marker.id) {
     console.error('❌ 마커 좌표 없음:', marker);
     return;
   }
@@ -290,9 +294,8 @@ function goToDetail(marker) {
   router.push({
     path: '/map/detail',
     query: {
-      lat: marker.lat,
-      lng: marker.lng,
-      price: marker.price
+      id: marker.id,
+      source:marker.source || 'listing'
     }
   });
 }
