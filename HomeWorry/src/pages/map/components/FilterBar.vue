@@ -2,42 +2,72 @@
   <div>
     <div class="search-bar">
       <button class="reset-btn bodyMedium14px" @click="reset">초기화</button>
-      <FilterButton text="거래방식" @click="openSheet('roomtype')" />
-      <FilterButton text="전용면적" @click="openSheet('area')" />
-      
+      <!-- 거래유형 필터 버튼 -->
+      <div class="transaction-type-group">
+        <button
+          v-for="type in transactionTypes"
+          :key="type.value"
+          :class="['transaction-type-btn', { selected: props.selectedTransactionType === type.value }]"
+          @click="selectTransactionType(type.value)"
+        >
+          {{ type.label }}
+        </button>
+      </div>
+      <!-- AreaSlider is always visible here -->
+      <AreaSlider
+        :minValue="props.minPyeong"
+        :maxValue="props.maxPyeong"
+        @change="onAreaChange"
+      />
     </div>
-    <BottomSheet :visible="sheetOpen" @close="sheetOpen = false">
-    <template #title>
-        {{ sheetType === 'roomtype' ? '거래방식' : sheetType === 'area' ? '전용면적' : '' }}
-      </template>
-      <template v-if="sheetType === 'roomtype'">
-        <FilterOptionList :options="roomtypeOptions" @select="onRoomtypeSelect" />
-      </template>
-      <template v-if="sheetType === 'area'">
-        <areaSlider @change="onAreaChange" />
-      </template>
-    </BottomSheet>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import FilterButton from '@/pages/map/components/FilterButton.vue'
-import BottomSheet from '@/pages/map/components/BottomSheet.vue'
-import FilterOptionList from '@/pages/map/components/FilterOptionList.vue'
-import AreaSlider from '@/pages/map/components/AreaSlider.vue'
+import AreaSlider from '../components/AreaSlider.vue'
 
-const sheetOpen = ref(false)
-const sheetType = ref('')
+const props = defineProps({
+  minPyeong: {
+    type: Number,
+    default: null,
+  },
+  maxPyeong: {
+    type: Number,
+    default: null,
+  },
+  selectedTransactionType: {
+    type: String,
+    default: '',
+  },
+})
 
-function openSheet(type) {
-  sheetType.value = type
-  sheetOpen.value = true
+const emit = defineEmits(['updatePyeong', 'updateTransactionType'])
+
+const transactionTypes = [
+  { label: '전체', value: '' },
+  { label: '전세', value: '전세' },
+  { label: '월세', value: '월세' },
+  { label: '단기임대', value: '단기임대' },
+]
+
+function selectTransactionType(type) {
+  emit('updateTransactionType', type)
 }
 
-const roomtypeOptions = ['월세', '전세', '매매', '단기임대']
-function onRoomtypeSelect(val) { /* ... */ }
-function onAreaChange(val) { /* ... */ }
+function onAreaChange(areaData) {
+  emit('updatePyeong', {
+    min: areaData.min,
+    max: areaData.max,
+  })
+}
+
+function reset() {
+  emit('updatePyeong', {
+    min: null,
+    max: null,
+  })
+  emit('updateTransactionType', '')
+}
 </script>
 
 <style scoped>
@@ -50,5 +80,21 @@ function onAreaChange(val) { /* ... */ }
   border-top: 1px solid var(--color-lightgray);
   border-bottom: 1px solid var(--color-lightgray);
 }
-
+.transaction-type-group {
+  display: flex;
+  gap: 4px;
+}
+.transaction-type-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--color-primary);
+  border-radius: 8px;
+  background: white;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 14px;
+}
+.transaction-type-btn.selected {
+  background: var(--color-primary);
+  color: white;
+}
 </style>

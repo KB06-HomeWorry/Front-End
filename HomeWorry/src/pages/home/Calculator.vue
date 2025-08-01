@@ -21,13 +21,18 @@
     </div>
 
     <!-- 매매/전세 (단일 가격 입력) -->
-    <div v-if="transactionType !== 'monthlyRent'" class="form-group bodyMedium16px">
+    <div
+      v-if="transactionType !== 'monthlyRent'"
+      class="form-group bodyMedium16px"
+    >
       <label>{{ transactionType === 'sale' ? '매매가' : '보증금' }}</label>
       <div class="input-with-unit bodyMedium14px">
         <input
           type="text"
           class="input-box"
-          :placeholder="transactionType === 'sale' ? '예: 50000만원' : '예: 30000만원'"
+          :placeholder="
+            transactionType === 'sale' ? '예: 50000만원' : '예: 30000만원'
+          "
           :value="displayPriceString"
           @input="onPriceInput"
           @focus="focusedInput = 'price'"
@@ -67,7 +72,7 @@
         {{ formattedPrice }}
       </div>
 
-      <label style="margin-top:16px;">월세</label>
+      <label style="margin-top: 16px">월세</label>
       <div class="input-with-unit bodyMedium14px">
         <input
           type="text"
@@ -89,39 +94,53 @@
       </div>
     </div>
 
-    <BtnMedSlim @click="handleCalcBtn" class="calc-button" :text="calcBtnText" />
+    <BtnMedSlim
+      @click="handleCalcBtn"
+      class="calc-button"
+      :text="calcBtnText"
+    />
 
     <div v-if="result.commission !== null" class="result-container">
       <div class="result-item">
         <span class="label bodyMedium14px">적용 거래가액</span>
-        <span class="value titleBold16px">{{ formatCurrency(result.transactionAmount) }}원</span>
+        <span class="value titleBold16px"
+          >{{ formatCurrency(result.transactionAmount) }}원</span
+        >
       </div>
-    <div class="result-item">
-      <span class="label bodyMedium14px">
-        상한 요율
-        <QuestionTooltip>
-          상한요율은 법적으로 정해진 최대 중개보수율입니다. 실제 청구 요율은 이보다 낮을 수 있습니다.
-        </QuestionTooltip>
-      </span>
-      <span class="value titleBold16px">{{ result.rate * 100 }}%</span>
-    </div>
-    
+      <div class="result-item">
+        <span class="label bodyMedium14px">
+          상한 요율
+          <QuestionTooltip>
+            상한요율은 법적으로 정해진 최대 중개보수율입니다. 실제 청구 요율은
+            이보다 낮을 수 있습니다.
+          </QuestionTooltip>
+        </span>
+        <span class="value titleBold16px">{{ result.rate * 100 }}%</span>
+      </div>
+
       <div v-if="result.limit" class="result-item">
         <span class="label bodyMedium14px">한도액</span>
-        <span class="value titleBold16px">{{ formatCurrency(result.limit) }}원</span>
+        <span class="value titleBold16px"
+          >{{ formatCurrency(result.limit) }}원</span
+        >
       </div>
       <hr />
       <div class="result-item final-commission">
         <span class="label bodyMedium14px">최대 중개보수 (VAT 별도)</span>
-        <span class="value titleBold16px">{{ formatCurrency(result.commission) }}원</span>
+        <span class="value titleBold16px"
+          >{{ formatCurrency(result.commission) }}원</span
+        >
       </div>
       <div class="result-item total-amount">
         <span class="label bodyMedium14px">청구 예상 금액 (VAT 포함)</span>
-        <span class="value titleBold16px">{{ formatCurrency(Math.floor(result.commission * 1.1)) }}원</span>
+        <span class="value titleBold16px"
+          >{{ formatCurrency(Math.floor(result.commission * 1.1)) }}원</span
+        >
       </div>
-        <div class="result-guide bodyLight12px">
-    ※ 위 금액은 법정 상한액이며, 실제 수수료는 중개사와 협의를 <br/> 통해 조정될 수 있습니다.
-    </div>
+      <div class="result-guide bodyLight12px">
+        ※ 위 금액은 법정 상한액이며, 실제 수수료는 중개사와 협의를 <br />
+        통해 조정될 수 있습니다.
+      </div>
     </div>
     <div v-if="error" class="error-message bodyMedium16px">
       {{ error }}
@@ -159,17 +178,23 @@ const error = ref('');
 const transactionOptions = [
   { label: '매매', value: 'sale' },
   { label: '전세', value: 'lease' },
-  { label: '월세', value: 'monthlyRent' }
+  { label: '월세', value: 'monthlyRent' },
 ];
 const propertyOptions = [
   { label: '주택', value: 'housing' },
   { label: '오피스텔', value: 'officetel' },
-  { label: '기타', value: 'other' }
+  { label: '기타', value: 'other' },
 ];
 
 // 숫자 + '만원' 붙이기 (항상)
-const displayPriceString = computed(() => priceValue.value > 0 ? priceValue.value.toLocaleString() + '만원' : '');
-const displayMonthlyRentString = computed(() => monthlyRentValue.value > 0 ? monthlyRentValue.value.toLocaleString() + '만원' : '');
+const displayPriceString = computed(() =>
+  priceValue.value > 0 ? priceValue.value.toLocaleString() + '만원' : ''
+);
+const displayMonthlyRentString = computed(() =>
+  monthlyRentValue.value > 0
+    ? monthlyRentValue.value.toLocaleString() + '만원'
+    : ''
+);
 
 // 입력 처리
 function onPriceInput(e) {
@@ -219,9 +244,10 @@ function numberToKoreanWon(num) {
   if (!num) return '0원';
   const units = [
     { value: 100000000, str: '억' },
-    { value: 10000, str: '만' }
+    { value: 10000, str: '만' },
   ];
-  let result = '', n = num * 10000;
+  let result = '',
+    n = num * 10000;
   for (const u of units) {
     if (n >= u.value) {
       result += `${Math.floor(n / u.value)}${u.str} `;
@@ -233,7 +259,9 @@ function numberToKoreanWon(num) {
   return result.trim();
 }
 const formattedPrice = computed(() => numberToKoreanWon(priceValue.value));
-const formattedMonthlyPrice = computed(() => numberToKoreanWon(monthlyRentValue.value));
+const formattedMonthlyPrice = computed(() =>
+  numberToKoreanWon(monthlyRentValue.value)
+);
 
 const formatCurrency = (value) => {
   if (value === null || value === undefined) return '0';
@@ -245,19 +273,22 @@ function calculateCommission() {
   error.value = '';
 
   if (!transactionType.value) {
-    error.value = "거래 종류를 선택해주세요.";
+    error.value = '거래 종류를 선택해주세요.';
     return;
   }
   if (!propertyType.value) {
-    error.value = "물건 종류를 선택해주세요.";
+    error.value = '물건 종류를 선택해주세요.';
     return;
   }
   if (!priceValue.value || priceValue.value <= 0) {
-    error.value = "금액을 입력해주세요.";
+    error.value = '금액을 입력해주세요.';
     return;
   }
-  if (transactionType.value === 'monthlyRent' && (!monthlyRentValue.value || monthlyRentValue.value < 0)) {
-    error.value = "월세를 입력해주세요.";
+  if (
+    transactionType.value === 'monthlyRent' &&
+    (!monthlyRentValue.value || monthlyRentValue.value < 0)
+  ) {
+    error.value = '월세를 입력해주세요.';
     return;
   }
 
@@ -273,26 +304,51 @@ function calculateCommission() {
   }
   result.transactionAmount = amount;
 
-  let rate = 0, limit = null;
+  let rate = 0,
+    limit = null;
   if (propertyType.value === 'housing') {
     if (transactionType.value === 'sale') {
-      if (amount < 50000000) { rate = 0.006; limit = 250000; }
-      else if (amount < 200000000) { rate = 0.005; limit = 800000; }
-      else if (amount < 900000000) { rate = 0.004; }
-      else if (amount < 1200000000) { rate = 0.005; }
-      else if (amount < 1500000000) { rate = 0.006; }
-      else { rate = 0.007; }
-    } else if (transactionType.value === 'lease' || transactionType.value === 'monthlyRent') {
-      if (amount < 50000000) { rate = 0.005; limit = 200000; }
-      else if (amount < 100000000) { rate = 0.004; limit = 300000; }
-      else if (amount < 600000000) { rate = 0.003; }
-      else if (amount < 1200000000) { rate = 0.004; }
-      else if (amount < 1500000000) { rate = 0.005; }
-      else { rate = 0.006; }
+      if (amount < 50000000) {
+        rate = 0.006;
+        limit = 250000;
+      } else if (amount < 200000000) {
+        rate = 0.005;
+        limit = 800000;
+      } else if (amount < 900000000) {
+        rate = 0.004;
+      } else if (amount < 1200000000) {
+        rate = 0.005;
+      } else if (amount < 1500000000) {
+        rate = 0.006;
+      } else {
+        rate = 0.007;
+      }
+    } else if (
+      transactionType.value === 'lease' ||
+      transactionType.value === 'monthlyRent'
+    ) {
+      if (amount < 50000000) {
+        rate = 0.005;
+        limit = 200000;
+      } else if (amount < 100000000) {
+        rate = 0.004;
+        limit = 300000;
+      } else if (amount < 600000000) {
+        rate = 0.003;
+      } else if (amount < 1200000000) {
+        rate = 0.004;
+      } else if (amount < 1500000000) {
+        rate = 0.005;
+      } else {
+        rate = 0.006;
+      }
     }
   } else if (propertyType.value === 'officetel') {
-    if (transactionType.value === 'sale') { rate = 0.005; }
-    else { rate = 0.004; }
+    if (transactionType.value === 'sale') {
+      rate = 0.005;
+    } else {
+      rate = 0.004;
+    }
   } else {
     rate = 0.009;
   }
@@ -309,7 +365,7 @@ function calculateCommission() {
 }
 
 const calcBtnText = computed(() =>
-  result.commission !== null ? "다시 계산하기" : "계산하기"
+  result.commission !== null ? '다시 계산하기' : '계산하기'
 );
 
 function handleCalcBtn() {
@@ -321,10 +377,9 @@ function handleCalcBtn() {
 }
 </script>
 
-
 <style scoped>
 .commission-calculator {
-  margin: 2rem ;
+  margin: 2rem;
   border-radius: 12px;
 }
 .form-group {
@@ -373,7 +428,6 @@ function handleCalcBtn() {
   margin-left: 8px;
   color: var(--color-primary);
   text-align: right;
-
 }
 
 .calc-button {
@@ -396,15 +450,15 @@ function handleCalcBtn() {
 }
 
 .result-item .label {
-    letter-spacing: -0.03em;
-    color: var(--color-darkgray);
-    line-height: 14px;
+  letter-spacing: -0.03em;
+  color: var(--color-darkgray);
+  line-height: 14px;
 }
 .result-item .value {
   color: var(--color-black);
 }
 .final-commission .value {
-  color: #bf0000;
+  color: var(--color-error);
 }
 .total-amount .value {
   color: var(--color-primary);
@@ -423,7 +477,7 @@ hr {
 
 .error-message {
   text-align: center;
-  color: #bf0000;
+  color: var(--color-error);
   margin-top: 1rem;
 }
 </style>

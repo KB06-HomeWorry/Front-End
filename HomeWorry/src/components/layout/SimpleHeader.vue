@@ -9,17 +9,17 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import leftArrow from '@/assets/icons/back.png' 
+import { useRouter } from "vue-router";
+import leftArrow from "@/assets/icons/back.png";
 
 const props = defineProps({
-  title: { type: String, required: true }
-})
+  title: { type: String, required: true },
+});
 
-const router = useRouter()
+const router = useRouter();
 
 function goBack() {
-  router.back()
+  router.back();
 }
 </script>
 
@@ -54,14 +54,14 @@ function goBack() {
 }
 
 .arrow-img {
-  width: 24px; 
+  width: 24px;
   height: 24px;
   display: block;
 }
 
 .header-title {
   display: flex;
-  align-items: center; 
+  align-items: center;
   color: var(--color-primary);
   height: 100%;
   line-height: 60px;

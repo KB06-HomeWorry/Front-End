@@ -25,13 +25,13 @@
 
     <div class="home-btn-lg-col">
       <HomeBtnLg
-        text="AI 서류 분석"
+        text="AI 계약서 분석"
         icon="/src/assets/icons/home_ai.png"
         desc="학습된 인공지능으로 거래 계약서에 숨어있는 독소조항을 찾아낼 수 있습니다."
-        @click="go('/analysis/ai')"
+        @click="go('/ai/analysis')"
       />
       <HomeBtnLg
-        text="계약서 분석"
+        text="서류 분석"
         icon="/src/assets/icons/home_analysis.png"
         desc="매물 정보들을 입력하여 해당 매물의 위험도를 확인할 수 있습니다."
         @click="go('/analysis')"

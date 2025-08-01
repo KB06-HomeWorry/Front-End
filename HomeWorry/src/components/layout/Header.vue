@@ -1,8 +1,30 @@
 <template>
   <header class="header">
     <div class="left">
-      <h1 :class="showChecklistTitle ? 'bodyMedium20px' : 'titleBold24px'">
-        {{ showChecklistTitle ? `${type} 계약 체크리스트` : '집걱정단' }}
+      <SimpleHeader
+        v-if="!isHomePage && !isAgentPage"
+        :title="
+          isEstateEasePage
+            ? '부동산 용어 해석'
+            : isAIPage
+            ? 'AI 계약서 분석'
+            : isAnalysisPage
+            ? '서류 분석'
+            : showChecklistTitle
+            ? `${type} 계약 체크리스트`
+            : '집걱정단'
+        "
+      />
+      <h1
+        v-else
+        :class="isHomePage || isAgentPage ? 'titleBold24px' : 'bodyMedium16px'"
+      >
+        <template v-if="isEstateEasePage">부동산 용어 해석</template>
+        <template v-else-if="isAIPage">AI 계약서 분석</template>
+        <template v-else-if="isAnalysisPage">서류 분석</template>
+        <template v-else>
+          {{ showChecklistTitle ? `${type} 계약 체크리스트` : '집걱정단' }}
+        </template>
       </h1>
     </div>
 
@@ -58,6 +80,7 @@ import { ref, watch, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useChecklistStore } from '@/stores/checklist';
 import CustomModal from '@/components/modal/CustomModal.vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 
 const route = useRoute();
 const checklistStore = useChecklistStore();
@@ -82,7 +105,13 @@ const resetChecklist = () => {
 };
 
 const isInfoModalVisible = ref(false);
+const isAIPage = computed(() => route.path.startsWith('/ai'));
+const isEstateEasePage = computed(() =>
+  route.path.startsWith('/ai/estate-ease')
+);
 const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
+const isHomePage = computed(() => route.path === '/');
+const isAgentPage = computed(() => route.path.startsWith('/agency/list'));
 </script>
 
 <style scoped>
@@ -104,11 +133,22 @@ const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
   padding: 0 16px;
 }
 
+.left {
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+  height: 100%;
+  line-height: 60px;
+}
+
+.header {
+  padding: 0 8px;
+}
+
 .left h1 {
-  margin: 0;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  margin-top: 5px;
+  margin-left: 4px;
 }
 
 .action-btn {

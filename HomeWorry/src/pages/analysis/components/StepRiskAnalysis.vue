@@ -119,12 +119,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import InputSelect from "@/components/input/InputSelect.vue";
-import NumberButtonGroup from "@/components/input/NumberButtonGroup.vue";
-import { useAnalysisStore } from "@/stores/analysis.js";
-import { storeToRefs } from "pinia";
-import HelpButton from "@/components/button/HelpButton.vue";
+import { ref, computed, watch } from 'vue';
+import InputSelect from '@/components/input/InputSelect.vue';
+import NumberButtonGroup from '@/components/input/NumberButtonGroup.vue';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
+import HelpButton from '@/components/button/HelpButton.vue';
 
 const analysisStore = useAnalysisStore();
 const { sthRisk } = storeToRefs(analysisStore);
@@ -132,54 +132,54 @@ const { sthRisk } = storeToRefs(analysisStore);
 const dealType = ref(sthRisk.value.type);
 
 const typeMessage = ref(
-  "월세, 전세, 매매를 입력 받고 해당 동네, 평수의 매물 평균 시세와 비교해줍니다."
+  '월세, 전세, 매매를 입력 받고 해당 동네, 평수의 매물 평균 시세와 비교해줍니다.'
 );
-const depositMessage = ref("보증금을 입력받아 리스크 분석에 활용합니다.");
-const monthlyPriceMessage = ref("월세를 입력받아 리스크 분석에 활용합니다.");
-const dealPriceMessage = ref("거래가를 입력받아 리스크 분석에 활용합니다.");
+const depositMessage = ref('보증금을 입력받아 리스크 분석에 활용합니다.');
+const monthlyPriceMessage = ref('월세를 입력받아 리스크 분석에 활용합니다.');
+const dealPriceMessage = ref('거래가를 입력받아 리스크 분석에 활용합니다.');
 const sizeMessage = ref(
-  "매물의 실평수를 입력받아 비슷한 평수의 매물의 가격과의 차이를 비교합니다."
+  '매물의 실평수를 입력받아 비슷한 평수의 매물의 가격과의 차이를 비교합니다.'
 );
 
 const priceValue = ref(Number(sthRisk.value.price) || 0);
 const priceString = ref(
-  priceValue.value > 0 ? priceValue.value.toLocaleString() : ""
+  priceValue.value > 0 ? priceValue.value.toLocaleString() : ''
 );
 
 const monthlyPriceValue = ref(Number(sthRisk.value.monthlyPrice) || 0);
 const monthlyPriceString = ref(
-  monthlyPriceValue.value > 0 ? monthlyPriceValue.value.toLocaleString() : ""
+  monthlyPriceValue.value > 0 ? monthlyPriceValue.value.toLocaleString() : ''
 );
 
 const areaValue = ref(Number(sthRisk.value.size) || 0);
-const areaString = ref(areaValue.value > 0 ? areaValue.value.toString() : "");
+const areaString = ref(areaValue.value > 0 ? areaValue.value.toString() : '');
 
 const focusedInput = ref(null);
 
 const dealTypeOptions = [
-  { label: "전세", value: "전세" },
-  { label: "월세", value: "월세" },
-  { label: "매매", value: "매매" },
+  { label: '전세', value: '전세' },
+  { label: '월세', value: '월세' },
+  { label: '매매', value: '매매' },
 ];
 
-const buttonLabels = computed(() => ["1만원", "10만원", "100만원", "1천만원"]);
+const buttonLabels = computed(() => ['1만원', '10만원', '100만원', '1천만원']);
 const buttonAmounts = computed(() => [10_000, 100_000, 1_000_000, 10_000_000]);
 
-const dealPriceButtonLabels = ["100만원", "1천만원", "1억", "10억"];
+const dealPriceButtonLabels = ['100만원', '1천만원', '1억', '10억'];
 const dealPriceButtonAmounts = [
   1_000_000, 10_000_000, 100_000_000, 1_000_000_000,
 ];
 
 const dealPricePlaceholder = computed(() => {
   switch (dealType.value) {
-    case "전세":
-      return "전세 거래가를 입력해주세요.";
-    case "월세":
-      return "예: 보증금 1000 월세 80";
-    case "매매":
-      return "매매 거래가를 입력해주세요.";
+    case '전세':
+      return '전세 거래가를 입력해주세요.';
+    case '월세':
+      return '예: 보증금 1000 월세 80';
+    case '매매':
+      return '매매 거래가를 입력해주세요.';
     default:
-      return "거래가를 입력해주세요.";
+      return '거래가를 입력해주세요.';
   }
 });
 
@@ -190,7 +190,7 @@ function formatPrice(num) {
 
 // 숫자만 추출 함수
 function extractNumber(str) {
-  return Number(str.replace(/[^0-9]/g, "")) || 0;
+  return Number(str.replace(/[^0-9]/g, '')) || 0;
 }
 
 // 거래가 (price) 입력 처리
@@ -198,10 +198,10 @@ function onPriceInput(e) {
   priceString.value = e.target.value;
   priceValue.value = extractNumber(priceString.value);
 
-  if (dealType.value !== "월세") {
+  if (dealType.value !== '월세') {
     // 월세가 아닐 때 월세 값 초기화
     monthlyPriceValue.value = 0;
-    monthlyPriceString.value = "";
+    monthlyPriceString.value = '';
   }
 }
 
@@ -221,25 +221,25 @@ function onAreaInput(e) {
 
 // 포커스 관리
 function onPriceFocus() {
-  focusedInput.value = "price";
+  focusedInput.value = 'price';
 }
 function onMonthlyPriceFocus() {
-  focusedInput.value = "monthlyPrice";
+  focusedInput.value = 'monthlyPrice';
 }
 
 // 가격 값 변경 시 스토어 동기화 및 문자열 포맷 업데이트
 watch(priceValue, (val) => {
   sthRisk.value.price = val;
-  priceString.value = val > 0 ? formatPrice(val) : "";
+  priceString.value = val > 0 ? formatPrice(val) : '';
 });
 
 watch(monthlyPriceValue, (val) => {
   sthRisk.value.monthlyPrice = val;
-  monthlyPriceString.value = val > 0 ? formatPrice(val) : "";
+  monthlyPriceString.value = val > 0 ? formatPrice(val) : '';
 });
 
 watch(areaValue, (val) => {
-  areaString.value = val > 0 ? val.toString() : "";
+  areaString.value = val > 0 ? val.toString() : '';
 });
 
 // 거래 유형 변경 시 스토어 동기화 및 price, monthlyPrice 초기화
@@ -248,27 +248,27 @@ watch(dealType, (newType) => {
 
   // 거래유형 바뀌면 price 초기화
   priceValue.value = 0;
-  priceString.value = "";
+  priceString.value = '';
   sthRisk.value.price = 0;
 
-  if (newType !== "월세") {
+  if (newType !== '월세') {
     monthlyPriceValue.value = 0;
-    monthlyPriceString.value = "";
+    monthlyPriceString.value = '';
     sthRisk.value.monthlyPrice = 0;
   }
 });
 
 // 오류 메시지 계산
 const priceError = computed(() => {
-  if (!dealType.value && priceString.value.trim() !== "") {
-    return "거래 유형을 먼저 선택해주세요.";
+  if (!dealType.value && priceString.value.trim() !== '') {
+    return '거래 유형을 먼저 선택해주세요.';
   }
-  return "";
+  return '';
 });
 
 // 버튼 그룹 금액 더하기
 function addAmount(amount) {
-  if (focusedInput.value === "monthlyPrice") {
+  if (focusedInput.value === 'monthlyPrice') {
     monthlyPriceValue.value += amount;
   } else {
     priceValue.value += amount;
@@ -281,15 +281,15 @@ function addPrice(amount) {
 
 // 한글 단위 변환 함수
 function numberToKoreanWon(num) {
-  if (num === 0) return "0원";
+  if (num === 0) return '0원';
 
   const units = [
-    { value: 1_0000_0000, str: "억" },
-    { value: 1_0000_000, str: "천만" },
-    { value: 1_0000, str: "만" },
+    { value: 1_0000_0000, str: '억' },
+    { value: 1_0000_000, str: '천만' },
+    { value: 1_0000, str: '만' },
   ];
 
-  let result = "";
+  let result = '';
   let remainder = num;
 
   for (const unit of units) {
@@ -303,7 +303,7 @@ function numberToKoreanWon(num) {
   if (remainder > 0) {
     result += `${remainder.toLocaleString()}원`;
   } else {
-    result = result.trim() + "원";
+    result = result.trim() + '원';
   }
 
   return result.trim();
@@ -365,7 +365,7 @@ const formattedMonthlyPrice = computed(() =>
 }
 
 .input-error {
-  color: #bf0000;
+  color: var(--color-error);
   margin-top: 4px;
 }
 
