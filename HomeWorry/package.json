@@ -11,6 +11,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "lucide-vue-next": "^0.534.0",
     "papaparse": "^5.5.3",
     "pinia": "^3.0.3",
     "query": "^0.2.0",

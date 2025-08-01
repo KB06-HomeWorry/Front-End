@@ -11,8 +11,13 @@
         :disabled="disabled"
         @keyup.enter="$emit('check')"
       />
-      <button type="button" class="check-btn bodyMedium12px" @click="$emit('check')" :disabled="disabled">
-        중복<br/>확인
+      <button
+        type="button"
+        class="check-btn bodyMedium12px"
+        @click="$emit('check')"
+        :disabled="disabled"
+      >
+        중복<br />확인
       </button>
     </div>
     <div class="input-desc bodyLight12px" v-if="desc">{{ desc }}</div>
@@ -33,9 +38,9 @@ const props = defineProps({
   placeholder: { type: String, default: '이메일 주소를 입력하세요.' },
   desc: String,
   error: String,
-  disabled: Boolean
-})
-const emit = defineEmits(['update:modelValue', 'check'])
+  disabled: Boolean,
+});
+const emit = defineEmits(['update:modelValue', 'check']);
 </script>
 
 <style scoped>
@@ -88,10 +93,10 @@ const emit = defineEmits(['update:modelValue', 'check'])
 
 /* 에러 */
 .input-error {
-  color: #BF0000;
+  color: var(--color-error);
   font-weight: 700;
   margin-bottom: 4px;
-  min-height: 18px; 
+  min-height: 18px;
   line-height: 1.5;
   opacity: 0;
   transition: opacity 0.2s;
