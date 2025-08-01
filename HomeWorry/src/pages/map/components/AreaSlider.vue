@@ -4,6 +4,7 @@
     <template v-if="minValue === min && maxValue === max">
         전체
     </template>
+    
     <template v-else>
         {{ minValue }}평 ({{ toM2(minValue) }}㎡) ~
         {{ maxValue }}평 ({{ toM2(maxValue) }}㎡)
@@ -36,18 +37,30 @@
       <span>12평</span>
       <span>최대</span>
     </div>
+    <button class="apply-btn" @click="onApplyClick">적용</button>
     <button class="reset-btn bodyMedium14px" @click="reset">초기화</button>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { defineEmits,ref, computed, watch } from 'vue';
 
 const min = 5, max = 20;
 const minGap = 1; // 최소 포인터와 최대 포인터 사이의 최소 간격
 
 const minValue = ref(min);
 const maxValue = ref(max);
+
+const emit= defineEmits(['apply','close'])
+// const props = defineProps({
+//   areaRange: Object,
+// });
+
+function onApplyClick() {
+  emit('apply', { min: minValue.value, max: maxValue.value }); // ✅ 수정// 필터 적용
+  emit('close'); // 모달 닫기
+}
+
 
 // 선택된 범위의 스타일을 계산
 const rangeStyle = computed(() => {
@@ -83,6 +96,8 @@ function reset() {
   minValue.value = min;
   maxValue.value = max;
 }
+
+
 </script>
 
 <style scoped>
@@ -176,5 +191,18 @@ input[type="range"]::-webkit-slider-runnable-track {
   background: var(--color-primary);
   cursor: pointer;
   line-height: 25px;
+}
+
+.apply-btn {
+  width: 80px;
+  height: 25px;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  cursor: pointer;
+  line-height: 25px;
+  font-size: 14px;
+  padding: 0;
 }
 </style>

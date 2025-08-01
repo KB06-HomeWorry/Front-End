@@ -1,15 +1,17 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '../pages/home/HomePage2.vue';
-import authRoutes from './auth';
-import mapRoutes from './map';
-import analysisRoutes from './analysis';
-import myRoutes from './my';
-import checklistRoutes from './checklist';
-import agencyRoutes from './agency';
-import notfoundRoutes from './notfound';
-import dangerResults from './dangerResult';
+import { createRouter, createWebHistory } from "vue-router";
+import HomePage from "../pages/home/HomePage2.vue";
+import authRoutes from "./auth";
+import mapRoutes from "./map";
+import analysisRoutes from "./analysis";
+import myRoutes from "./my";
+import checklistRoutes from "./checklist";
+import agencyRoutes from "./agency";
+import notfoundRoutes from "./notfound";
+import dangerResults from "./dangerResult";
+import wordquizRoutes from "./wordquiz";
+import Calculator from "../pages/home/Calculator.vue";
 import ai from './ai';
-import Calculator from '../pages/home/Calculator.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +34,7 @@ const router = createRouter({
     ...myRoutes,
     ...agencyRoutes,
     ...notfoundRoutes,
+    ...wordquizRoutes,
     ...ai,
   ],
   scrollBehavior(to, from, savedPosition) {
