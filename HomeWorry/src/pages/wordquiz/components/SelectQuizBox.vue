@@ -8,9 +8,12 @@
     </div>
 
     <div class="select-btn-list">
-      <SelectBtn text="집을 빌려주고 월세를 받는 권리" @click="handleSelect(0)" />
-      <SelectBtn text="보증금을 내고 일정 기간 집을 사용할 수 있는 권리" @click="handleSelect(1)" />
-      <SelectBtn text="아파트의 소유권을 이전받는 권리" @click="handleSelect(2)" />
+      <SelectBtn
+        v-for="(choice, idx) in choices"
+        :key="idx"
+        :text="choice"
+        @click="() => emit('submit', choice)"
+      />
     </div>
   </div>
 </template>
@@ -25,11 +28,12 @@ const props = defineProps({
   number: { type: [String, Number], required: true },
   choices: { type: Array, required: true }
 })
-const emit = defineEmits(['select'])
+const emit = defineEmits(['submit']) 
 </script>
 
 <style scoped>
 .quiz-card {
+  width: 393px;
   background: rgba(17, 31, 92, 0.10);
   padding: 0 0 56px 0;
   margin-left: -2rem;

@@ -9,8 +9,8 @@
     </div>
     <!-- OX 버튼 -->
     <div class="quiz-ox-row">
-      <OXBtn imgSrc="/src/assets/icons/quiz_correct.png" @click="() => emit('select', 'O')" />
-      <OXBtn imgSrc="/src/assets/icons/quiz_wrong.png" @click="() => emit('select', 'X')" />
+      <OXBtn imgSrc="/src/assets/icons/quiz_correct.png" @click="() => emit('submit', 'O')" />
+      <OXBtn imgSrc="/src/assets/icons/quiz_wrong.png" @click="() => emit('submit', 'X')" />
     </div>
   </div>
 </template>
@@ -25,10 +25,17 @@ const props = defineProps({
   number: { type: [String, Number], required: true }
 })
 const emit = defineEmits(['select'])
+
+function onOXSelect(userAnswer) {
+  // 여기서 정답 체크, 모달 show 등 진행!
+  answerResult.value = (userAnswer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong');
+  showModal.value = true;
+}
 </script>
 
 <style scoped>
 .quiz-card {
+  width: 393px;
   background: rgba(17, 31, 92, 0.10);
   padding: 0 0 56px 0;
   margin-left: -2rem;
