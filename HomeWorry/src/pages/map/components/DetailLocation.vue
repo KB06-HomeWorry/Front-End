@@ -13,7 +13,7 @@
       <span class="address bodyMedium12px">{{ address }}</span>
       <button class="copy-btn" @click="copyAddress">
         <img src="@/assets/icons/copy.png" alt="복사" />
-        <span class="copy-label bodyMedium12px">복사</span>
+        <span class="copy-label bodyMedium10px">복사</span>
       </button>
     </div>
 
@@ -22,11 +22,11 @@
       <img src="@/assets/icons/nav_map_dark.png" alt="지도" class="map-img" />
     </div>
 
-    <!-- 하단 신고영역 -->
-    <div class="report-row bodyMedium12px">
-      <p>매물 신고</p>
+    <!-- 하단 신고 버튼 -->
+    <button class="report-row bodyMedium12px" @click="reportItem">
+      <span>매물 신고</span>
       <img src="@/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
-    </div>
+    </button>
   </div>
 </template>
 
@@ -37,6 +37,10 @@ const address = ref('서울특별시 영등포구 신길동 194-18')
 function copyAddress() {
   navigator.clipboard.writeText(address.value)
   alert('주소가 복사되었습니다!')
+}
+
+function reportItem() {
+  alert('신고하기 기능은 준비 중입니다!')
 }
 </script>
 
@@ -54,16 +58,6 @@ function copyAddress() {
   align-items: center;
   margin-bottom: 8px;
   color: var(--color-primary);
-}
-
-.road-name {
-  color: var(--color-darkgray);
-  display: flex;
-  align-items: center;
-}
-.road-refresh-icon {
-  width: 16px; height: 16px;
-  margin-left: 3px;
 }
 
 .location-row {
@@ -91,10 +85,11 @@ function copyAddress() {
   border: none;
   cursor: pointer;
   padding: 0;
+  margin-top: 2px;
 }
 .copy-btn img {
-  width: 12px; 
-  height: 12px;
+  width: 10px; 
+  height: 10px;
   margin-right: 2px;
 }
 .copy-label {
@@ -120,17 +115,22 @@ function copyAddress() {
   display: block;
 }
 
-/* 하단 신고영역 */
+/* 하단 신고영역(버튼) */
 .report-row {
   display: flex;
   justify-content: center;
   align-items: center;
   color: var(--color-darkgray);
-  margin-top: 10px;
+  margin: 10px auto 0 auto;
   letter-spacing: -0.03em;
+
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
 }
-.report-row p{
-    margin-top: 4px;
+.report-row span {
+  margin-top: 6px;
 }
 .alert-img {
   width: 16px; height: 16px;
