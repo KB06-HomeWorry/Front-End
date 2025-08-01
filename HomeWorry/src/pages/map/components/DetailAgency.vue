@@ -17,6 +17,10 @@
 </template>
 
 <script setup>
+import sample1 from '@/assets/icons/sample_profile1.png'
+import sample2 from '@/assets/icons/sample_profile2.png'
+import sample3 from '@/assets/icons/sample_profile3.png'
+
 const props = defineProps({
   id: Number,
   name: String,
@@ -26,11 +30,7 @@ const props = defineProps({
   profileIdx: { type: Number, default: 0 }
 })
 
-const sampleImgs = [
-  '@/assets/icons/sample_profile1.png',
-  '@/assets/icons/sample_profile1.png',
-  '@/assets/icons/sample_profile1.png'
-]
+const sampleImgs = [sample1, sample2, sample3]
 
 const computedImg = props.img && props.img.length > 0
   ? props.img
