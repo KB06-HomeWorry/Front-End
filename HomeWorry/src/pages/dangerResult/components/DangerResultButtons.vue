@@ -1,24 +1,24 @@
 <template>
   <div class="button-group">
-    <BtnMed
+    <BtnMedSlim
       v-if="props.moveDefined === 0"
       text="서류 분석"
       color="#ffffff"
       @click="handleClick('documentAnalysis')"
     />
-    <BtnMed
+    <BtnMedSlim
       text="AI 계약서 분석"
       color="#ffffff"
       @click="handleClick('aiContractAnalysis')"
     />
-    <BtnMed text="점검 다시하기" @click="checklistAgain()" />
+    <BtnMedSlim text="점검 다시하기" @click="checklistAgain()" />
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
 import { useChecklistStore } from '@/stores/checklist';
-import BtnMed from '@/components/button/BtnMed.vue';
+import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
 
 const router = useRouter();
 const checklistStore = useChecklistStore();
@@ -40,8 +40,7 @@ const handleClick = (action) => {
 
     case 'aiContractAnalysis':
       console.log('AI 계약서 분석 버튼 클릭됨');
-      // 여기에 AI 계약서 분석 관련 로직 추가
-      break;
+      router.push('ai/analysis');
     default:
       console.log('알 수 없는 액션:', action);
   }
