@@ -18,5 +18,5 @@ export default [
     path: '/map/detail',
     name: 'mapdetail',
     component:()=> import('../pages/map/DetailPage.vue'),
-  }
+  },
 ];

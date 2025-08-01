@@ -13,7 +13,24 @@
       >
         <div class="checklist-content">
           <div class="checklist-question bodyMedium16px">
-            {{ item.content }}
+            <div class="question-row">
+              <div
+                v-if="checklistStore.topFiveAnswers.includes(item.checklistId)"
+                class="hot-badge-wrapper"
+                @mouseenter="hoveredId = item.checklistId"
+                @mouseleave="hoveredId = null"
+                tabindex="0"
+              >
+                <span>⚠️</span>
+                <div
+                  v-if="hoveredId === item.checklistId"
+                  class="info-box bodyLight12px"
+                >
+                  많은 사용자가 체크하지 않아 위험 가능성이 높은 질문입니다.
+                </div>
+              </div>
+              <div>{{ item.content }}</div>
+            </div>
           </div>
           <div class="effectiveness-text bodyLight12px">
             * {{ item.effectiveness }}
@@ -32,6 +49,7 @@ import ProgressBar from '@/pages/agency/components/ProgressBar.vue';
 const checklistStore = useChecklistStore();
 const emit = defineEmits(['progress-full']);
 const hasEmitted = ref(false);
+const hoveredId = ref(null);
 
 function toggleCheck(item) {
   item.checked = !item.checked;
@@ -98,7 +116,7 @@ watch(() => checklistStore.loadChecklist());
 
 .checklist-item {
   height: 100px;
-  overflow: hidden;
+  overflow: visible;
   border: 0.5px solid var(--color-secondarylight);
   border-radius: 12px;
   background-color: #fff0f3;
@@ -136,5 +154,33 @@ watch(() => checklistStore.loadChecklist());
   word-break: keep-all;
   color: inherit;
   opacity: 0.8;
+}
+
+.question-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hot-badge-wrapper {
+  position: relative;
+}
+
+.info-box {
+  position: absolute;
+  bottom: 125%;
+  background-color: var(--color-white);
+  color: var(--color-black);
+  border-radius: 12px;
+  padding: 10px 14px;
+  line-height: 1.4;
+  white-space: pre-line;
+  border: 0.5px solid var(--color-mediumgray);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  min-width: 240px;
+  max-width: 340px;
+  pointer-events: none;
 }
 </style>

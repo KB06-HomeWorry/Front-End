@@ -87,7 +87,7 @@ const router = useRouter()
 const route = useRoute()
 
 const office_id = route.query.agencyId || route.params.agencyId || '1'
-const userId = localStorage.getItem('userId') || '1'
+const userToken = localStorage.getItem('user-token')
 
 // API에서 받아올 agency 정보
 const agency = ref({
@@ -117,16 +117,8 @@ const isFavorite = ref(false)
 
 async function fetchFavoriteStatus() {
   try {
-    const res = await axios.get(`/api/member/${userId}/favorite/${office_id}`)
-    if (typeof res.data === 'object' && 'favorite' in res.data) {
-      isFavorite.value = !!res.data.favorite
-    } else if (typeof res.data === 'boolean') {
-      isFavorite.value = res.data
-    } else if (typeof res.data === 'string') {
-      isFavorite.value = res.data === 'true'
-    } else {
-      isFavorite.value = false
-    }
+    const res = await axios.get(`/api/agent/${userToken}/isFavorite/${office_id}`)
+    isFavorite.value = res.data
   } catch (e) {
     isFavorite.value = false
   }
@@ -136,11 +128,11 @@ async function toggleBookmark() {
   try {
     if (isFavorite.value) {
       // [찜 해제]
-      await axios.delete(`/api/member/${userId}/favorite/${office_id}`)
+      await axios.delete(`/api/agent/${userToken}/favorite/${office_id}`)
       isFavorite.value = false
     } else {
       // [찜 등록]
-      await axios.post(`/api/member/${userId}/favorite`, { agencyId: office_id })
+      await axios.get(`/api/agent/${userToken}/favorite/${office_id}`)
       isFavorite.value = true
     }
   } catch (e) {
@@ -177,6 +169,8 @@ onMounted(async () => {
     // 중개사 리뷰 목록 조회
     const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
     reviews.value = res_reviews.data
+
+    // 중개사 찜 여부 조회
     await fetchFavoriteStatus()    
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')

@@ -3,12 +3,12 @@
     <button
       class="bookmark-btn"
       @click.stop="onToggleFavorite"
-      :aria-label="isFavorite ? '북마크 해제' : '북마크 등록'"
+      :aria-label="isBookmark ? '북마크 해제' : '북마크 등록'"
     >
       <img
         :src="isFavorite ? bookmarkOn : bookmarkOff"
         class="bookmark-icon"
-        :alt="isFavorite ? '북마크 완료' : '북마크 등록'"
+        :alt="isBookmark ? '북마크 완료' : '북마크 등록'"
       />
     </button>
     <div class="img-wrap">
@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import bookmarkOn from '@/assets/icons/star_filled.png'
 import bookmarkOff from '@/assets/icons/star_outline.png'
@@ -31,7 +31,7 @@ const router = useRouter()
 
 // 샘플 이미지는 상위에서 내려받음 
 const props = defineProps({
-  id: [String, Number],
+  id: Number,
   officeName: String,
   address: String,
   imgUrl: String,    // 실제 프로필 이미지
@@ -39,6 +39,8 @@ const props = defineProps({
   onToggleFavorite: { type: Function, required: true },
   img: { type: String, default: '' } // 프로필 이미지 없으면 들어갈 샘플이미지
 })
+
+const isBookmark = ref(null)
 
 const profileSrc = computed(() => {
   // 실제 이미지 > 샘플 이미지
@@ -53,8 +55,13 @@ const shortAddress = computed(() => {
 })
 
 function onToggleFavorite() {
-  props.onToggleFavorite(props.id)
+  props.onToggleFavorite(props.id, isBookmark.value)
+  isBookmark.value = !isBookmark.value
 }
+
+onMounted(() => {
+  isBookmark.value = props.isFavorite
+})
 
 // 카드 클릭 시 상세페이지로 이동
 function goToDetail() {

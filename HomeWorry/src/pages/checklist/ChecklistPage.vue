@@ -27,15 +27,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
+import { ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
 
-import ChecklistQuestion from './components/ChecklistQuestion.vue';
-import CircleButton from './components/CircleButton.vue';
-import CustomModal from '@/components/modal/CustomModal.vue';
+import ChecklistQuestion from "./components/ChecklistQuestion.vue";
+import CircleButton from "./components/CircleButton.vue";
+import CustomModal from "@/components/modal/CustomModal.vue";
 
-import { useChecklistStore } from '@/stores/checklist';
+import { useChecklistStore } from "@/stores/checklist";
 
 const route = useRoute();
 const router = useRouter();
@@ -45,15 +45,15 @@ const showModal = ref(false);
 const showCelebrationImage = ref(false);
 
 const stageEmojis = {
-  '계약 전': '📝',
-  '중도금 납부': '💰',
-  '잔금 및 입주': '🏠',
-  '잔금 및 소유권 이전': '🏠',
-  '입주 후': '🎉',
+  "계약 전": "📝",
+  "중도금 납부": "💰",
+  "잔금 및 입주": "🏠",
+  "잔금 및 소유권 이전": "🏠",
+  "입주 후": "🎉",
 };
 
 const stageEmoji = computed(() => {
-  return stageEmojis[checklistStore.checklistData.stage] || '';
+  return stageEmojis[checklistStore.checklistData.stage] || "";
 });
 
 onMounted(async () => {
@@ -63,7 +63,7 @@ onMounted(async () => {
     checklistStore.checklistData.type = type;
     checklistStore.checklistData.stage = stage;
     checklistStore.checklistData.userId = parseInt(userId);
-    console.log('스토어 초기화 완료:', checklistStore.checklistData);
+    console.log("스토어 초기화 완료:", checklistStore.checklistData);
   }
 
   await checklistStore.loadChecklist();
@@ -79,21 +79,21 @@ async function handleSaveRequested() {
       answer: item.checked || false,
     }));
 
-    console.log('저장할 데이터:', answerDTOList);
+    console.log("저장할 데이터:", answerDTOList);
 
-    await axios.post('http://localhost:8080/checklist/answers', answerDTOList);
+    await axios.post("http://localhost:8080/checklist/answers", answerDTOList);
 
     showModal.value = true;
   } catch (error) {
-    console.error('저장 실패:', error);
-    alert('저장에 실패했습니다.');
+    console.error("저장 실패:", error);
+    alert("저장에 실패했습니다.");
   }
 }
 
 function handleModalConfirm() {
   const { type, stage, userId } = checklistStore.checklistData;
   router.push({
-    path: '/dangerResult',
+    path: "/dangerResult",
     query: {
       type,
       stage,

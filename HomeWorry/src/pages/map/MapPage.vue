@@ -207,6 +207,7 @@ async function loadMaximumList() {
         const longitude = parseFloat(values[lonIndex])
         if (!isNaN(latitude) && !isNaN(longitude)) {
           loadedMarkers.push({
+            id: id,
             lat: latitude,
             lng: longitude,
             price: values[priceIndex],
@@ -226,6 +227,7 @@ async function loadPricelist() {
   try {
     const response = await fetch('/api/pricetrend') // ✅ API 호출
     const data = await response.json() // ✅ JSON 파싱
+
 
     const loadedMarkers = data.map((item) => ({
       lat: item.latitude,
@@ -251,6 +253,7 @@ async function loadPricelist() {
       dealType: item.dealType,
       address: item.address,
     }))
+
 
     markers.value = loadedMarkers.filter((marker) =>
       selectedHousingTypes.value.includes(marker.housingType),
@@ -279,6 +282,7 @@ async function loadListings() {
       address: item.address,
       deposit: item.deposit,
       rent: item.monthlyRent,
+
       rentalCondition: item.rentalCondition,
       details: item.details,
       agency: item.agency,
@@ -302,6 +306,7 @@ async function loadListings() {
         (selectedTransactionType.value === '' ||
           marker.transactionType === selectedTransactionType.value),
     )
+
   } catch (error) {
     console.error('❌ API 로딩 실패:', error)
   }
@@ -366,14 +371,17 @@ const getRandomTailwindBgClass = () => {
 
 //map 다음 상세 페이지 이동
 function goToDetail(marker) {
+
   if (!marker.lat || !marker.lng) {
     console.error('❌ 마커 좌표 없음:', marker)
     return
+
   }
 
   router.push({
     path: '/map/detail',
     query: {
+
       lat: marker.lat,
       lng: marker.lng,
       price: marker.price,
