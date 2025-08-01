@@ -1,10 +1,11 @@
 <template>
   <div class="range-slider">
     <div class="slider-label bodyMedium16px">
-
       <template v-if="minValue === min && maxValue === max"> 전체 </template>
       <template v-else>
-        {{ minValue }}평 ({{ toM2(minValue) }}㎡) ~ {{ maxValue }}평 ({{ toM2(maxValue) }}㎡)
+        {{ minValue }}평 ({{ toM2(minValue) }}㎡) ~ {{ maxValue }}평 ({{
+          toM2(maxValue)
+        }}㎡)
       </template>
     </div>
 
@@ -42,14 +43,12 @@
       <span>12평</span>
       <span>최대</span>
     </div>
-    <button class="apply-btn" @click="onApplyClick">적용</button>
     <button class="reset-btn bodyMedium14px" @click="reset">초기화</button>
   </div>
 </template>
 
 <script setup>
-
-import { ref, computed, watch, onUnmounted, defineEmits } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue';
 
 // Props to accept external values
 const props = defineProps({
@@ -61,84 +60,73 @@ const props = defineProps({
     type: Number,
     default: null,
   },
-})
+});
 
 // Emit changes to parent
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change']);
 
 const min = 5,
-  max = 20
-const minGap = 1 // 최소 포인터와 최대 포인터 사이의 최소 간격
+  max = 20;
+const minGap = 1; // 최소 포인터와 최대 포인터 사이의 최소 간격
 
 // Use props or defaults
-const minValue = ref(props.minValue !== null ? props.minValue : min)
-const maxValue = ref(props.maxValue !== null ? props.maxValue : max)
+const minValue = ref(props.minValue !== null ? props.minValue : min);
+const maxValue = ref(props.maxValue !== null ? props.maxValue : max);
 
 // Track if user is currently dragging
-const isDragging = ref(false)
-let debounceTimer = null
+const isDragging = ref(false);
+let debounceTimer = null;
 
 // Watch for prop changes and update local values (only from parent)
 watch(
   () => props.minValue,
   (newVal) => {
     if (newVal !== null) {
-      minValue.value = newVal
+      minValue.value = newVal;
     }
-  },
-)
+  }
+);
 
 watch(
   () => props.maxValue,
   (newVal) => {
     if (newVal !== null) {
-      maxValue.value = newVal
+      maxValue.value = newVal;
     }
-  },
-)
-
-const emit= defineEmits(['apply','close'])
-// const props = defineProps({
-//   areaRange: Object,
-// });
-
-function onApplyClick() {
-  emit('apply', { min: minValue.value, max: maxValue.value }); // ✅ 수정// 필터 적용
-  emit('close'); // 모달 닫기
-}
-
+  }
+);
 
 // 선택된 범위의 스타일을 계산
 const rangeStyle = computed(() => {
-  const range = max - min
-  const leftPercent = ((minValue.value - min) / range) * 100
-  const rightPercent = ((max - maxValue.value) / range) * 100
+  const range = max - min;
+  const leftPercent = ((minValue.value - min) / range) * 100;
+  const rightPercent = ((max - maxValue.value) / range) * 100;
 
   return {
     left: `${leftPercent}%`,
     right: `${rightPercent}%`,
-  }
-})
+  };
+});
 
 function toM2(py) {
-  return Math.round(py * 3.3)
+  return Math.round(py * 3.3);
 }
 
 // Handle drag start
 function onDragStart() {
-  isDragging.value = true
+  isDragging.value = true;
   // Clear any pending timer when starting to drag
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
-    debounceTimer = null
+    clearTimeout(debounceTimer);
+    debounceTimer = null;
   }
 }
 
 // Handle drag end
 function onDragEnd() {
-  isDragging.value = false
+  isDragging.value = false;
   // Emit after user stops dragging
-  emitChange()
+  emitChange();
 }
 
 // Emit changes to parent
@@ -146,50 +134,48 @@ function emitChange() {
   emit('change', {
     min: minValue.value,
     max: maxValue.value,
-  })
+  });
 }
 
 // 최소 값 포인터가 최대 값을 넘지 않도록 하였음
 function fixMin() {
   if (maxValue.value - minValue.value < minGap) {
-    minValue.value = maxValue.value - minGap
+    minValue.value = maxValue.value - minGap;
   }
   // Only emit if not currently dragging (for programmatic changes)
   if (!isDragging.value) {
-    emitChange()
+    emitChange();
   }
 }
 
 // 최대 값 포인터가 최소 값보다 내려가지 않도록 보정
 function fixMax() {
   if (maxValue.value - minValue.value < minGap) {
-    maxValue.value = minValue.value + minGap
+    maxValue.value = minValue.value + minGap;
   }
   // Only emit if not currently dragging (for programmatic changes)
   if (!isDragging.value) {
-    emitChange()
+    emitChange();
   }
 }
 
 function reset() {
-  minValue.value = min
-  maxValue.value = max
+  minValue.value = min;
+  maxValue.value = max;
   // Clear any pending timer and emit immediately for reset
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
-    debounceTimer = null
+    clearTimeout(debounceTimer);
+    debounceTimer = null;
   }
-  emitChange()
+  emitChange();
 }
-
 
 // Clean up timer on component unmount
 onUnmounted(() => {
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer);
   }
-})
-
+});
 </script>
 
 <style scoped>
@@ -284,18 +270,5 @@ input[type='range']::-webkit-slider-runnable-track {
   background: var(--color-primary);
   cursor: pointer;
   line-height: 25px;
-}
-
-.apply-btn {
-  width: 80px;
-  height: 25px;
-  background: var(--color-primary);
-  color: var(--color-white);
-  border: 1px solid var(--color-primary);
-  border-radius: 12px;
-  cursor: pointer;
-  line-height: 25px;
-  font-size: 14px;
-  padding: 0;
 }
 </style>
