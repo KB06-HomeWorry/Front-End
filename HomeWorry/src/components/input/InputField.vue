@@ -19,7 +19,7 @@
       :class="{ 'input-error--active': error }"
       aria-live="polite"
     >
-      {{ error || "\u00A0" }}
+      {{ error || '\u00A0' }}
     </div>
   </div>
 </template>
@@ -29,12 +29,12 @@ const props = defineProps({
   label: String,
   placeholder: String,
   modelValue: String,
-  type: { type: String, default: "text" },
+  type: { type: String, default: 'text' },
   desc: String,
   error: String,
   disabled: Boolean,
 });
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(['update:modelValue']);
 </script>
 
 <style scoped>
@@ -78,7 +78,7 @@ const emit = defineEmits(["update:modelValue"]);
 
 /* 에러 */
 .input-error {
-  color: #bf0000;
+  color: var(--color-error);
   font-weight: 700;
   margin-bottom: 4px;
   min-height: 18px;

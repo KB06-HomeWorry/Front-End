@@ -79,7 +79,7 @@ const closeModal = () => emit('close');
   margin-bottom: 13px;
 }
 .alert-icon {
-  color: #ef4444;
+  color: var(--color-danger);
   margin-right: 4px;
 }
 .modal-title {

@@ -153,7 +153,7 @@ const handleSectionClick = (result) => {
   margin-top: 2px;
 }
 .danger-icon {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 .safe-icon {
   color: #22c55e;
@@ -224,7 +224,7 @@ const handleSectionClick = (result) => {
   width: 76%;
   height: 12%;
   border-radius: 7px;
-  border: 1px dashed #ef4444;
+  border: 1px dashed var(--color-danger);
   box-sizing: border-box;
   background: rgba(239, 68, 68, 0.11);
   pointer-events: auto;

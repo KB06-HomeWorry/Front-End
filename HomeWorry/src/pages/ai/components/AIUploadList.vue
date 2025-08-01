@@ -57,7 +57,7 @@ const removeImage = (idx) => emit('removeImage', idx);
   position: absolute;
   top: -10px;
   right: -10px;
-  background: #ef4444;
+  background: var(--color-danger);
   color: var(--color-white);
   border-radius: 50%;
   padding: 3px 6px;
