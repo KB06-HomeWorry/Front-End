@@ -1,11 +1,29 @@
 <template>
   <header class="header">
     <div class="left">
-      <SimpleHeader v-if="!isHomePage && !isAgentPage" />
-      <h1 :class="isHomePage ? 'titleBold24px' : 'bodyMedium20px'">
-        <template v-if="isAnalysisPage">계약서 분석</template>
+      <SimpleHeader
+        v-if="!isHomePage && !isAgentPage"
+        :title="
+          isEstateEasePage
+            ? '부동산 용어 해석'
+            : isAIPage
+            ? 'AI 계약서 분석'
+            : isAnalysisPage
+            ? '서류 분석'
+            : showChecklistTitle
+            ? `${type} 계약 체크리스트`
+            : '집걱정단'
+        "
+      />
+      <h1
+        v-else
+        :class="isHomePage || isAgentPage ? 'titleBold24px' : 'bodyMedium16px'"
+      >
+        <template v-if="isEstateEasePage">부동산 용어 해석</template>
+        <template v-else-if="isAIPage">AI 계약서 분석</template>
+        <template v-else-if="isAnalysisPage">서류 분석</template>
         <template v-else>
-          {{ showChecklistTitle ? `${type} 계약 체크리스트` : "집걱정단" }}
+          {{ showChecklistTitle ? `${type} 계약 체크리스트` : '집걱정단' }}
         </template>
       </h1>
     </div>
@@ -58,24 +76,24 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
-import { useRoute } from "vue-router";
-import { useChecklistStore } from "@/stores/checklist";
-import CustomModal from "@/components/modal/CustomModal.vue";
-import SimpleHeader from "@/components/layout/SimpleHeader.vue";
+import { ref, watch, computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { useChecklistStore } from '@/stores/checklist';
+import CustomModal from '@/components/modal/CustomModal.vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 
 const route = useRoute();
 const checklistStore = useChecklistStore();
 
-const isChecklistPage = computed(() => route.path.startsWith("/checklist"));
+const isChecklistPage = computed(() => route.path.startsWith('/checklist'));
 const isChecklistStagePage = computed(() =>
-  route.path.startsWith("/checklist-stage")
+  route.path.startsWith('/checklist-stage')
 );
 
 const showChecklistTitle = computed(
   () => isChecklistPage.value || isChecklistStagePage.value
 );
-const type = computed(() => route.query.type || "");
+const type = computed(() => route.query.type || '');
 
 const isConfirmModalVisible = ref(false);
 const isAlertModalVisible = ref(false);
@@ -87,9 +105,13 @@ const resetChecklist = () => {
 };
 
 const isInfoModalVisible = ref(false);
-const isAnalysisPage = computed(() => route.path.startsWith("/analysis"));
-const isHomePage = computed(() => route.path === "/");
-const isAgentPage = computed(() => route.path.startsWith("/agency/list"));
+const isAIPage = computed(() => route.path.startsWith('/ai'));
+const isEstateEasePage = computed(() =>
+  route.path.startsWith('/ai/estate-ease')
+);
+const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
+const isHomePage = computed(() => route.path === '/');
+const isAgentPage = computed(() => route.path.startsWith('/agency/list'));
 </script>
 
 <style scoped>
@@ -113,17 +135,20 @@ const isAgentPage = computed(() => route.path.startsWith("/agency/list"));
 
 .left {
   display: flex;
-  align-items: center; /* 세로 가운데 정렬 */
+  align-items: center;
+  color: var(--color-primary);
+  height: 100%;
+  line-height: 60px;
 }
 
 .header {
-  padding: 0 8px; /* 왼쪽 공간을 줄임 */
+  padding: 0 8px;
 }
 
 .left h1 {
   white-space: nowrap;
   margin-top: 5px;
-  margin-left: 4px; /* 현재 0 또는 8px 대신 4px 정도로 줄임 */
+  margin-left: 4px;
 }
 
 .action-btn {
