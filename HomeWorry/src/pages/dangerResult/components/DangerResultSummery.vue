@@ -9,7 +9,9 @@
         <summary>{{ title }}</summary>
         <div
           class="bodyMedium12px"
-          v-html="dangerResultStore.descriptionContentList[index]"
+          v-html="
+            highlightPercentage(dangerResultStore.descriptionContentList[index])
+          "
           style="margin-top: 8px"
         ></div>
       </details>
@@ -27,6 +29,17 @@
 import { useDangerResultStore } from '@/stores/dangerResult';
 
 const dangerResultStore = useDangerResultStore();
+
+function highlightPercentage(text) {
+  if (!text) return '';
+
+  // 정규식: 숫자 + % (예: 93%)
+  const percentRegex = /(\d+(?:\.\d+)?%)/g;
+
+  return text.replace(percentRegex, (match) => {
+    return `<span class="highlight-percent">${match}</span>`;
+  });
+}
 </script>
 
 <style scoped>
@@ -62,5 +75,11 @@ details > div {
   background-color: var(--color-white);
   padding: 8px 12px;
   border-radius: 8px;
+}
+</style>
+
+<style>
+.highlight-percent {
+  color: var(--color-danger);
 }
 </style>
