@@ -4,7 +4,7 @@
       <HomeBtn80px
         text="아파트"
         icon="/src/assets/icons/home_apartment.png"
-        @click="() => go('/map/apart')"
+        @click="() => go('/map/apartment')"
       />
       <HomeBtn80px
         text="원.투룸"
@@ -14,7 +14,7 @@
       <HomeBtn80px
         text="빌라.주택"
         icon="/src/assets/icons/home_villa.png"
-        @click="() => go('/map/villa')"
+        @click="() => go('/map/building')"
       />
       <HomeBtn80px
         text="오피스텔"
