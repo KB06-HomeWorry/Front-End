@@ -9,4 +9,9 @@ export default [
     name: 'aiAnalysis',
     component: () => import('../pages/ai/AIDocumentSubmitPage.vue'),
   },
+  {
+    path: '/ai/compotest',
+    name: 'aicompotest',
+    component: () => import('../pages/ai/AICompoTest.vue'),
+  },
 ];
