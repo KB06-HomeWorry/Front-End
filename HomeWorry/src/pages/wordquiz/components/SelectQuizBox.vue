@@ -11,8 +11,8 @@
       <SelectBtn
         v-for="(choice, idx) in choices"
         :key="idx"
-        :text="choice"
-        @click="() => emit('submit', choice)"
+        :text="choice.trim()"
+        @click="() => emit('submit', String(idx + 1))"
       />
     </div>
   </div>

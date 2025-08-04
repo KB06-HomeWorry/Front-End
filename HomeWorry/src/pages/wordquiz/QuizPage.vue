@@ -47,7 +47,7 @@ const loadError = ref(null)
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:3001/quiz')
+    const res = await axios.get('http://localhost:8080/api/quiz/getQuiz')
     quizList.value = res.data
     isLoading.value = false
   } catch (err) {
