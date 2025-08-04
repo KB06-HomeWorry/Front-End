@@ -17,7 +17,7 @@
       {{ modelValue.length }}/{{ maxlength }}
       <span
         v-if="minlength && modelValue.length > 0 && modelValue.length < minlength"
-        class="warn-msg"
+        class="warn-msg bodyMedium10px"
       >
         {{ minlength }}자 이상 입력 필요
       </span>
@@ -78,14 +78,12 @@ function onInput(e) {
 .comment-length-info {
   text-align: right;
   color: var(--color-mediumgray);
-  font-size: 12px;
   margin-right: 2px;
   margin-top: -6px;
   margin-bottom: 2px;
 }
 .warn-msg {
-  color: var(--color-warn, #e43a3a);
+  color: var(--color-danger);
   margin-left: 8px;
-  font-size: 12px;
 }
 </style>

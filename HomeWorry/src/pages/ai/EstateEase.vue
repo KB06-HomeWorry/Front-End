@@ -1,10 +1,10 @@
 <template>
   <div class="sentence-simplify-page">
-    <div class="title bodyMedium20px">부동산 용어 해석</div>
+    <AIExplain class="explain-box"/>
     <EstateEaseInput v-model="input" :maxlength="100" :minlength="3" />
 
     <div class="btn-center-wrap">
-      <BtnSm
+      <BtnMedSlim
         :text="loading ? '변환 중...' : '변환하기'"
         :disabled="loading || input.trim().length < 3"
         @click="analyze"
@@ -14,7 +14,14 @@
     </div>
 
     <div v-if="result" class="result-card">
-      <div class="label bodyMedium16px">해석 결과</div>
+      <div class="result-title bodyMedium14px">
+        <img
+          src="@/assets/icons/quiz_lightbulb.png"
+          alt="해석 아이콘"
+          class="result-icon"
+        />
+        <span>해석 결과</span>
+      </div>
       <div class="result-content bodyLight12px">{{ result }}</div>
     </div>
 
@@ -25,8 +32,10 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
+import AIExplain from '@/pages/ai/components/AIExplain.vue'
 import EstateEaseInput from './components/EstateEaseInput.vue';
-import BtnSm from '@/components/button/BtnSm.vue';
+import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
+
 
 const input = ref('');
 const result = ref('');
@@ -68,61 +77,64 @@ async function analyze() {
 <style scoped>
 .sentence-simplify-page {
   max-width: 440px;
-  margin: 30px auto 0;
-  padding: 24px 16px;
-  border-radius: 16px;
+  margin: 1.5rem 2rem;
 }
 
-.title {
-  margin-bottom: 18px;
-  color: var(--color-primary);
+.explain-box{
+  margin-bottom: 1.5rem;
+
 }
 
 .btn-center-wrap {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 8px;
-  margin-bottom: 8px;
 }
 
 .btn-disabled-custom {
-  border: 1.2px solid var(--color-primary) !important;
-  color: var(--color-primary) !important;
-  background: rgba(17, 31, 92, 0.1) !important;
+  border: 1px solid var(--color-lightgray) !important;
+  color: var(--color-lightgray) !important;
   cursor: not-allowed !important;
+  background-color: #fff !important; 
 }
 
 .result-card {
   background: #f7f9fc;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--color-mediumgray, #e4e7ec);
-  padding: 18px 14px 16px 14px;
+  padding: 16px 14px 16px 14px;
   margin-top: 40px;
   min-height: 60px;
-  box-shadow: none;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
-.label {
+.result-title {
+  display: flex;
+  align-items: center;
   color: var(--color-primary);
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.result-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  margin-right: 3px;
+  margin-bottom: 6px;
 }
 
 .result-content {
   color: var(--color-black);
-  line-height: 1.7;
   background: none;
   padding: 0;
   white-space: pre-line;
   word-break: break-all;
+  text-align: left;
 }
 
 .error-msg {
-  color: #e43a3a;
+  color: var(--color-warn);
   margin-top: 14px;
   text-align: center;
 }

@@ -1,8 +1,9 @@
 <template>
   <div class="estatetext-textarea-wrap">
-    <div class="q-text bodyMedium14px">
-      ▷ 이해하기 어려운 부동산 문장을 입력해 주세요.
-    </div>
+<div class="q-text bodyMedium14px">
+  <img src="@/assets/icons/question_book.png" alt="입력 안내" class="q-icon" />
+  이해하기 어려운 부동산 문장을 입력해 주세요.
+</div>
 
     <textarea
       :value="modelValue"
@@ -35,7 +36,7 @@ const props = defineProps({
   rows: { type: Number, default: 4 },
   placeholder: {
     type: String,
-    default: '예: 본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.',
+    default: '본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.',
   },
 });
 const emit = defineEmits(['update:modelValue']);
@@ -45,22 +46,28 @@ function onInput(e) {
 </script>
 
 <style scoped>
-.estatetext-textarea-wrap {
-  margin-bottom: 24px;
-}
-
 .q-text {
+  color: var(--color-primary);
+  margin-left: 6px;
   margin-bottom: 8px;
-  display: block;
+  display: flex;
   line-height: 1.6;
   word-break: keep-all;
   letter-spacing: -0.03em;
 }
 
+.q-icon {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+  margin-top: 1px;
+}
+
 .estatetext-textarea {
   width: 100%;
   min-height: 64px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--color-mediumgray);
   resize: none;
   padding: 10px;
@@ -73,6 +80,12 @@ function onInput(e) {
   color: var(--color-mediumgray);
 }
 
+.estatetext-textarea:focus {
+  border: 1px solid var(--color-primary);
+  outline: none; /* 기본 outline(파란 외곽선) 제거 */
+  background: #fff;
+}
+
 .estatetext-length-info {
   text-align: right;
   color: var(--color-mediumgray);
@@ -81,7 +94,7 @@ function onInput(e) {
   margin-bottom: 2px;
 }
 .warn-msg {
-  color: var(--color-warn, #e43a3a);
+  color: var(--color-danger);
   margin-left: 8px;
 }
 </style>
