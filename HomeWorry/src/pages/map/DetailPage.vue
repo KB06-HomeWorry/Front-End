@@ -1,37 +1,64 @@
 <template>
   <div>
-    <button @click="goBackToMap"><</button>
+    <!-- <button @click="goBackToMap"><</button> -->
     <img :src="roomImg" alt="매물 이미지" style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"/>
     <section>
-        <div><span>{{ buildingName }}</span></div>
-        <div><h2 style="font-size: 24px; font-weight: bold;">{{ price }}</h2></div>
-      </section>
+        <div><span class="title-text">{{ buildingName }}</span></div>
+        <div><span class="price-text">{{ price }}</span></div>
+
+    </section>
     <!-- <section>
         <h2>실거래가</h2>
         <h3>계약일 층 거래 정보</h3>
     </section> -->
 
     <div class="section-bar">
-      <button @click="scrollTo('deal')" :class="['section-btn', { active: activeSection === 'deal' }]">거래정보</button>
+      <!-- <button @click="scrollTo('deal')" :class="['section-btn', { active: activeSection === 'deal' }]">거래정보</button> -->
       <button @click="scrollTo('listing')" :class="['section-btn', { active: activeSection === 'listing' }]">매물정보</button>
       <button @click="scrollTo('location')" :class="['section-btn', { active: activeSection === 'location' }]">위치정보</button>
     </div>
-    <section ref="deal">
-      <h3 style="font-size: 20px; font-weight: bold;">거래 정보</h3>
+    <!-- <section ref="deal">
+      <h3 style="font-size: 20px; font-weight: bold;">거래정보</h3>
       <h3>거래방식 {{ price }}</h3>
       <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
-    </section>
-    <section ref="listing">
-      <h3 style="font-size: 20px; font-weight: bold;">매물 정보</h3>
-      <h2>건물형태 {{housingType}}</h2>
-      <h2>전용/계약면적 {{ areaInfo }}</h2>
-      <h2>해당층/전체층 {{ floorInfo }}</h2>
-      <h2>방향 {{ direction }}</h2>
-      <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
-    </section>
+    </section> -->
+
+    <!-- code1 -->
+<section ref="listing">
+  <div class="location-info-card">
+    <h3 class="titleBold16px">매물정보</h3>
+
+    <div class="info-row">
+      <div class="info-label">거래방식</div>
+      <div class="info-value">{{ price }}</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">건물형태</div>
+      <div class="info-value">{{ housingType }}</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">전용/계약면적</div>
+      <div class="info-value">{{ areaInfo }}</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">해당층/전체층</div>
+      <div class="info-value">{{ floorInfo }}</div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-label">방향</div>
+      <div class="info-value">{{ direction }}</div>
+    </div>
+  </div>
+
+  <hr class="full-width-hr" />
+</section>
+
     <section ref="location">
-      <h3 style="font-size: 20px; font-weight: bold;">위치 정보</h3>
-      <button @click="copyLocation">위치</button>
+      <DetailLocation/>
     </section>
     <KakaoMap
   v-if="lat && lng"
@@ -43,6 +70,9 @@
  <KakaoMapMarker :lat="lat" :lng="lng" />
 </KakaoMap>
   </div>
+    <section ref="agency">
+    
+  </section>
 </template>
 
 <script setup>
@@ -50,6 +80,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
 import { ref, onMounted } from 'vue';
 import roomImg from '@/assets/icons/room.png';
+import DetailLocation from './components/DetailLocation.vue';
+import DetailAgency from './components/DetailAgency.vue';
 
 const router = useRouter();
 const route = useRoute();
@@ -135,43 +167,6 @@ function scrollTo(section) {
   targetRef?.value?.scrollIntoView({ behavior: 'smooth' });
 }
 
-const getCurrentLocation = () => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const latVal = position.coords.latitude;
-      const lngVal = position.coords.longitude;
-      currentLocation.value = { lat: latVal, lng: lngVal };
-    });
-  } else {
-    alert('Geolocation을 지원하지 않는 브라우저입니다.');
-  }
-};
-const copyLocation = () => {
-  if (!navigator.geolocation) {
-    alert('Geolocation을 지원하지 않는 브라우저입니다.');
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (position) => {
-      const latVal = position.coords.latitude;
-      const lngVal = position.coords.longitude;
-      currentLocation.value = { lat: latVal, lng: lngVal };
-
-      const text = `${latVal}, ${lngVal}`;
-      try {
-        await navigator.clipboard.writeText(text);
-        alert('📌 위치 좌표가 복사되었습니다!');
-      } catch (err) {
-        alert('❌ 복사 실패: ' + err);
-      }
-    },
-    (error) => {
-      alert('❌ 위치 정보를 가져올 수 없습니다.');
-      console.error(error);
-    }
-  );
-};
 
 </script>
 
@@ -196,5 +191,103 @@ const copyLocation = () => {
   background-color:#003366;
   color: white;
   border-radius: 6px;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+
+
+.location-info-card {
+  background: #fff;
+  padding: 24px 20px 18px 20px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111f5c;
+  margin-bottom: 8px;
+}
+
+/* 좌측 라벨 / 우측 값 2열 배치 */
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  gap: 12px;
+  border-top: 1px solid #f4f4f4;  /* 각 행 구분선 (첫 행은 아래 규칙으로 제거) */
+}
+.info-row:first-of-type {
+  border-top: none;
+}
+
+.info-label {
+  color: #666;
+  font-size: 14px;
+  min-width: 96px;           /* 라벨 폭 고정 → 간격 일정 */
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+  flex: 1;                   /* 남은 공간 사용 → 오른쪽 정렬 */
+  word-break: keep-all;      /* 값 줄바꿈 시 단어 단위 */
+}
+
+/* 카드 너비(원하면 전체 너비로) */
+.location-info-card {
+  background: #fff;
+  padding: 24px 20px 18px 20px;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* 아래 구분선 */
+.full-width-hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 16px 0;
+  width: 100%;
+}
+.titleBold16px {
+  font-size: 16px;
+  font-weight: bold;
+  color: #111f5c;
+}
+
+.bodyMedium12px {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+.bodyMedium14px {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.title-text {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 16px;
+  color: #000;
+}
+
+.price-text {
+  font-family: 'Pretendard', sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #000;
 }
 </style>
