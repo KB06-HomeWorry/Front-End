@@ -32,10 +32,9 @@
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
-import AIExplain from '@/pages/ai/components/AIExplain.vue'
+import AIExplain from '@/pages/ai/components/AIExplain.vue';
 import EstateEaseInput from './components/EstateEaseInput.vue';
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
-
 
 const input = ref('');
 const result = ref('');
@@ -80,9 +79,8 @@ async function analyze() {
   margin: 1.5rem 2rem;
 }
 
-.explain-box{
+.explain-box {
   margin-bottom: 1.5rem;
-
 }
 
 .btn-center-wrap {
@@ -95,7 +93,7 @@ async function analyze() {
   border: 1px solid var(--color-lightgray) !important;
   color: var(--color-lightgray) !important;
   cursor: not-allowed !important;
-  background-color: #fff !important; 
+  background-color: #fff !important;
 }
 
 .result-card {
@@ -134,7 +132,7 @@ async function analyze() {
 }
 
 .error-msg {
-  color: var(--color-warn);
+  color: var(--color-danger);
   margin-top: 14px;
   text-align: center;
 }
