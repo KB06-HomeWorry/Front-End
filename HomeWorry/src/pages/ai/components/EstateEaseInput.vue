@@ -1,7 +1,7 @@
 <template>
   <div class="estatetext-textarea-wrap">
 <div class="q-text bodyMedium14px">
-  <img src="@/assets/icons/progress-avatar.png" alt="입력 안내" class="q-icon" />
+  <img src="@/assets/icons/question_book.png" alt="입력 안내" class="q-icon" />
   이해하기 어려운 부동산 문장을 입력해 주세요.
 </div>
 
@@ -48,7 +48,7 @@ function onInput(e) {
 <style scoped>
 .q-text {
   color: var(--color-primary);
-  margin-left: 4px;
+  margin-left: 6px;
   margin-bottom: 8px;
   display: flex;
   line-height: 1.6;
