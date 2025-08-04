@@ -43,4 +43,32 @@ const router = createRouter({
   },
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('user-token')
+  if (token){
+    const payload = JSON.parse(atob(token.split('.')[1]))
+    const isExpired = payload.exp * 1000 < Date.now()      
+
+    if (to.meta.requiresAuth && isExpired){
+      alert('로그인이 필요한 서비스입니다.')
+      next({
+        path: '/auth/login',
+        query: {redirect: to.path}
+      })
+    } else {
+      next();
+    }
+  } else {
+    if (to.meta.requiresAuth){
+      alert('로그인이 필요한 서비스입니다.')
+      next({
+        path: '/auth/login',
+        query: {redirect: to.path}
+      })
+    } else {
+      next();
+    }
+  }
+})
+
 export default router;
