@@ -9,4 +9,9 @@ export default [
     name: 'aiAnalysis',
     component: () => import('../pages/ai/AIDocumentSubmitPage.vue'),
   },
+  {
+    path: '/ai/contract-ocr',
+    name: 'aiContractOcr',
+    component: () => import('../pages/ai/components/ContractOcrUploader.vue'),
+  },
 ];
