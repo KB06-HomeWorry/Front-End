@@ -6,9 +6,11 @@
         :minPyeong="minPyeong"
         :maxPyeong="maxPyeong"
         :selectedTransactionType="selectedTransactionType"
+        :sheet-open="isBottomSheetOpen"
         @update:transactionType="val => selectedTransactionType = val"
         @update:minPyeong="val => minPyeong = val"
         @update:maxPyeong="val => maxPyeong = val"
+        @update:sheet-open="val => isBottomSheetOpen = val"
       />
       <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
     </div>
@@ -66,14 +68,13 @@
       </template>
     </KakaoMap>
 
-    <!-- 🟡 플로팅 현재위치 버튼: 지도 오른쪽 하단 고정 -->
-    <button
-      @click="moveToCurrentLocation"
-      class="move-current-location-btn"
-      title="현재 위치로 이동"
-    >
-      <img src="@/assets/icons/Location.png" alt="현재 위치" />
-    </button>
+    <!-- 플로팅 버튼 스택 (우하단에 세로로 묶어서 배치) -->
+    <FloatingButtonStack
+      v-if="!isBottomSheetOpen"
+      @zoom-in="zoomIn"
+      @zoom-out="zoomOut"
+      @move-current-location="moveToCurrentLocation"
+    />
 
     <!-- 현재 동 시세 상단 고정 -->
     <div style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index:101;">
@@ -94,6 +95,7 @@ import FilterBar from '@/pages/map/components/FilterBar.vue';
 import ListingToggle from '@/pages/map/ListingToggle.vue';
 import MarketPrice from '@/pages/map/components/MarketPrice.vue';
 import MarkerPriceDetail from '@/pages/map/components/MarkerPriceDetail.vue';
+import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -110,6 +112,9 @@ const dongMarkers = ref([]);
 const listingMarkers = ref([]);
 const isListingsVisible = ref(true);
 
+// 👇 시트 오픈 상태, 플로팅 버튼 제어용
+const isBottomSheetOpen = ref(false);
+
 const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435);
 const lng = ref(route.query.center?.split(',').map(Number)[1] || 127.0812);
 const level = ref(Number(route.query.zoomLevel) || 8);
@@ -118,13 +123,14 @@ const currentLocation = ref(null);
 const currentDong = ref('');
 const mapCenter = ref({ lat: lat.value, lng: lng.value });
 
-// [1] 카테고리(라우트) → 시세/매물 타입 매핑
+// 카테고리(라우트) → 시세/매물 타입 매핑
 const pathToCategory = {
   '/map/apartment': 'apartment',
   '/map/onetwo': 'oneroom',
   '/map/building': 'villa',
   '/map/officetel': 'officetel',
 };
+
 const categoryConfig = {
   apartment: {
     priceTypes: ['아파트'],
@@ -143,6 +149,7 @@ const categoryConfig = {
     listingTypes: ['오피스텔'],
   },
 };
+
 const selectedCategory = ref('apartment');
 
 watch(
@@ -283,6 +290,7 @@ onMounted(() => {
     }
   );
 });
+
 const getCurrentLocation = (success, fail) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -309,11 +317,10 @@ const moveToCurrentLocation = () => {
 const onMapReady = (map) => {
   mapInstance.value = map;
   coor2address({ lat: lat.value, lng: lng.value });
-  const zoomControl = new window.kakao.maps.ZoomControl();
-  map.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMLEFT );
   kakao.maps.event.addListener(map, 'dragend', () => updateURL(map));
   kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map));
 };
+
 const updateURL = (mapInstance) => {
   const center = mapInstance.getCenter();
   const zoom = mapInstance.getLevel();
@@ -349,28 +356,20 @@ const currentDongPrice = computed(() => {
   const found = dongMarkers.value.find(m => m.dongName === currentDong.value);
   return found ? found.price : '0';
 });
+
+function zoomIn() {
+  if (mapInstance.value) {
+    mapInstance.value.setLevel(mapInstance.value.getLevel() - 1);
+  }
+}
+function zoomOut() {
+  if (mapInstance.value) {
+    mapInstance.value.setLevel(mapInstance.value.getLevel() + 1);
+  }
+}
 </script>
 
 <style>
-.move-current-location-btn {
-  position: absolute;
-  right: 24px;
-  bottom: 88px;
-  z-index: 102;
-  border: none;
-  border-radius: 50%;
-  margin-bottom: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
- box-shadow: 0 2px 10px rgba(50,99,217,0.14);
-}
-.move-current-location-btn img {
-  width: 40px;
-  height: 40px;
-}
-
 .custom-overlay {
   padding: 5px 10px;
   background-color: var(--color-secondarylight);

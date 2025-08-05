@@ -11,7 +11,7 @@
       />
     </div>
 
-    <BottomSheet :visible="sheetOpen" @close="sheetOpen = false">
+    <BottomSheet :visible="props.sheetOpen" @close="closeSheet">
       <template #title>
         <div class="sheet-title-row bodyMedium14px">
           <span>
@@ -69,8 +69,14 @@ const props = defineProps({
   minPyeong: Number,
   maxPyeong: Number,
   selectedTransactionType: Array, // 여러개 선택 가능
+  sheetOpen: Boolean,
 })
-const emit = defineEmits(['update:transactionType', 'update:minPyeong', 'update:maxPyeong'])
+const emit = defineEmits([
+  'update:transactionType',
+  'update:minPyeong',
+  'update:maxPyeong',
+  'update:sheetOpen'
+])
 
 // 내부 임시 상태 (확인 전까지는 부모에 영향 안줌)
 const tempTransactionTypes = ref(props.selectedTransactionType ? [...props.selectedTransactionType] : []);
@@ -91,7 +97,6 @@ watch(() => props.selectedTransactionType, val => {
 watch(() => props.minPyeong, val => { tempMinPyeong.value = val })
 watch(() => props.maxPyeong, val => { tempMaxPyeong.value = val })
 
-const sheetOpen = ref(false)
 const sheetType = ref('transaction')
 
 // 거래유형 FilterOptionList에서 옵션 변경시
@@ -103,7 +108,7 @@ function onTransactionTypeChange(val) {
 // "확인" 눌렀을 때 상위로 emit
 function applyTransaction() {
   emit('update:transactionType', [...tempTransactionTypes.value])
-  sheetOpen.value = false
+  emit('update:sheetOpen', false) // 시트 닫기
 }
 function resetTransaction() {
   tempTransactionTypes.value = []
@@ -114,7 +119,7 @@ function resetTransaction() {
 function applyArea() {
   emit('update:minPyeong', tempMinPyeong.value)
   emit('update:maxPyeong', tempMaxPyeong.value)
-  sheetOpen.value = false
+  emit('update:sheetOpen', false) // 시트 닫기
 }
 
 // FilterButton에 보여줄 거래유형 라벨
@@ -135,7 +140,10 @@ const areaLabel = computed(() =>
 
 function openSheet(type) {
   sheetType.value = type
-  sheetOpen.value = true
+  emit('update:sheetOpen', true)
+}
+function closeSheet() {
+  emit('update:sheetOpen', false)
 }
 </script>
 
