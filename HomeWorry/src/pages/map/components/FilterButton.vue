@@ -1,6 +1,6 @@
 <template>
   <button
-    class="btn-med-wrapper bodyMedium14px"
+    class="btn-med-wrapper bodyMedium12px"
     @click="$emit('click')"
   >
     <p class="text"> {{ text }} </p>
@@ -24,7 +24,7 @@ defineEmits(['click']);
   width: auto;
   height: 35px;
   padding: 0 10px;
-  border: 1px solid var(--color-mediumgray);
+  border: 1.2px solid var(--color-mediumgray);
   background: #fff;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
