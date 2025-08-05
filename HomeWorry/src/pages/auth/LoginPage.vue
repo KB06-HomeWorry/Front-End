@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter, useRoute  } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import InputSimple from '@/components/input/InputSimple.vue';
 import BtnMed from '@/components/button/BtnMed.vue';
@@ -63,6 +63,7 @@ const password = ref('');
 const isAlertVisible = ref(false);
 const alertMessage = ref('');
 let loginSuccess = false;
+let autoRedirectTimer = null;
 
 async function onLogin() {
   if (!username.value || !password.value) {
@@ -79,7 +80,6 @@ async function onLogin() {
 
     const token = response.data.token;
     const userData = response.data.user;
-    console.log('로그인 성공:', userData);
 
     if (token && userData) {
       authStore.login(userData, token);
@@ -90,12 +90,11 @@ async function onLogin() {
       isAlertVisible.value = true;
       loginSuccess = true;
 
-      const redirectPath = route.query.redirect || '/'
-      router.push(redirectPath);
-    
-      setTimeout(() => {
+      if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
+      autoRedirectTimer = setTimeout(() => {
         isAlertVisible.value = false;
-        router.push('/');
+        const redirectPath = route.query.redirect || '/';
+        router.push(redirectPath);
       }, 1000);
     } else {
       alertMessage.value = '로그인 정보가 올바르지 않습니다.';
@@ -115,7 +114,9 @@ async function onLogin() {
 function handleAlertConfirm() {
   isAlertVisible.value = false;
   if (loginSuccess) {
-    router.push('/');
+    if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
+    const redirectPath = route.query.redirect || '/';
+    router.push(redirectPath);
   }
 }
 
