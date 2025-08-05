@@ -3,7 +3,7 @@
     <!-- 헤더 -->
     <div class="location-header">
       <div class="location-title">
-        <span class="titleBold16px">위치정보</span>
+        <span class="titleBold20px">위치정보</span>
       </div>
     </div>
 

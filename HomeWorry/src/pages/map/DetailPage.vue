@@ -1,11 +1,9 @@
 <template>
   <div>
-    <!-- <button @click="goBackToMap"><</button> -->
     <img :src="roomImg" alt="매물 이미지" style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"/>
     <section>
-        <div><span class="title-text">{{ buildingName }}</span></div>
-        <div><span class="price-text">{{ price }}</span></div>
-
+        <div><span class="buildname bodyMedium16px">{{ buildingName }}</span></div>
+        <div><span class="price titleBold20px">{{ price }}</span></div>
     </section>
     <!-- <section>
         <h2>실거래가</h2>
@@ -13,50 +11,41 @@
     </section> -->
 
     <div class="section-bar">
-      <!-- <button @click="scrollTo('deal')" :class="['section-btn', { active: activeSection === 'deal' }]">거래정보</button> -->
-      <button @click="scrollTo('listing')" :class="['section-btn', { active: activeSection === 'listing' }]">매물정보</button>
-      <button @click="scrollTo('location')" :class="['section-btn', { active: activeSection === 'location' }]">위치정보</button>
+      <button @click="scrollTo('listing')" :class="['section-btn titleBold14px', { active: activeSection === 'listing' }]">매물정보</button>
+      <button @click="scrollTo('location')" :class="['section-btn titleBold14px', { active: activeSection === 'location' }]">위치정보</button>
     </div>
-    <!-- <section ref="deal">
-      <h3 style="font-size: 20px; font-weight: bold;">거래정보</h3>
-      <h3>거래방식 {{ price }}</h3>
-      <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;" />
-    </section> -->
 
-    <!-- code1 -->
 <section ref="listing">
   <div class="location-info-card">
-    <h3 class="titleBold16px">매물정보</h3>
+    <div class="menu-list titleBold20px">매물정보</div>
 
     <div class="info-row">
-      <div class="info-label">거래방식</div>
-      <div class="info-value">{{ price }}</div>
+      <div class="info-label bodyMedium16px">거래방식</div>
+      <div class="info-value bodyMedium14px">{{ price }}</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">건물형태</div>
-      <div class="info-value">{{ housingType }}</div>
+      <div class="info-label bodyMedium16px">건물형태</div>
+      <div class="info-value bodyMedium14px">{{ housingType }}</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">전용/계약면적</div>
-      <div class="info-value">{{ areaInfo }}</div>
+      <div class="info-label bodyMedium16px">전용/계약면적</div>
+      <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">해당층/전체층</div>
-      <div class="info-value">{{ floorInfo }}</div>
+      <div class="info-label bodyMedium16px">해당층/전체층</div>
+      <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
     </div>
 
     <div class="info-row">
-      <div class="info-label">방향</div>
-      <div class="info-value">{{ direction }}</div>
+      <div class="info-label bodyMedium16px">방향</div>
+      <div class="info-value bodyMedium14px">{{ direction }}</div>
     </div>
   </div>
-
-  <hr class="full-width-hr" />
 </section>
-
+<hr class="full-width-hr" />
     <section ref="location">
       <DetailLocation/>
     </section>
@@ -71,7 +60,6 @@
 </KakaoMap>
   </div>
     <section ref="agency">
-    
   </section>
 </template>
 
@@ -150,7 +138,6 @@ onMounted(async () => {
   }
 });
 
-//
 const deal = ref(null)
 const listing = ref(null)
 const location = ref(null)
@@ -166,8 +153,6 @@ function scrollTo(section) {
 
   targetRef?.value?.scrollIntoView({ behavior: 'smooth' });
 }
-
-
 </script>
 
 <style scoped>
@@ -175,21 +160,17 @@ function scrollTo(section) {
   display: flex;
   justify-content: space-around;
   padding: 12px 8px;
-  border-bottom: 1px solid #ccc;}
-
-.section-btn {
- background: white;
-  border: none;
-  padding: 6px 12px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 14px;
-  color: #333;
+  border-bottom: 1px solid #bdbdbd;
 }
 
+.section-btn {
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
 .section-btn.active {
-  background-color:#003366;
-  color: white;
+  background-color:var(--color-primary);
+  color: var(--color-white);
   border-radius: 6px;
 }
 
@@ -203,7 +184,7 @@ function scrollTo(section) {
 
 
 .location-info-card {
-  background: #fff;
+  background: var(--color-white);
   padding: 24px 20px 18px 20px;
   max-width: 420px;
   margin: 0 auto;
@@ -212,7 +193,7 @@ function scrollTo(section) {
 .section-title {
   font-size: 20px;
   font-weight: bold;
-  color: #111f5c;
+  color: var(--color-primary);
   margin-bottom: 8px;
 }
 
@@ -223,21 +204,19 @@ function scrollTo(section) {
   justify-content: space-between;
   padding: 12px 0;
   gap: 12px;
-  border-top: 1px solid #f4f4f4;  /* 각 행 구분선 (첫 행은 아래 규칙으로 제거) */
+  border-top: 1px solid #f4f4f4;
 }
 .info-row:first-of-type {
   border-top: none;
 }
 
 .info-label {
-  color: #666;
-  font-size: 14px;
+  color: var(--color-mediumgray);
   min-width: 96px;           /* 라벨 폭 고정 → 간격 일정 */
   flex-shrink: 0;
 }
 
 .info-value {
-  font-size: 14px;
   font-weight: 600;
   text-align: right;
   flex: 1;                   /* 남은 공간 사용 → 오른쪽 정렬 */
@@ -246,7 +225,7 @@ function scrollTo(section) {
 
 /* 카드 너비(원하면 전체 너비로) */
 .location-info-card {
-  background: #fff;
+  background-color:var(--color-white);
   padding: 24px 20px 18px 20px;
   width: 100%;
   margin: 0;
@@ -256,38 +235,13 @@ function scrollTo(section) {
 /* 아래 구분선 */
 .full-width-hr {
   border: none;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid;
+  color:var(--color-mediumgray);
   margin: 16px 0;
   width: 100%;
 }
-.titleBold16px {
-  font-size: 16px;
-  font-weight: bold;
-  color: #111f5c;
-}
 
-.bodyMedium12px {
-  font-size: 12px;
-  font-weight: 500;
-  color: #333;
-}
-
-.bodyMedium14px {
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-}
-
-.title-text {
-  font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
-  color: #000;
-}
-
-.price-text {
-  font-family: 'Pretendard', sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  color: #000;
+.menu-list{
+  color:var(--color-primary);
 }
 </style>
