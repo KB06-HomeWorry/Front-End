@@ -117,7 +117,7 @@ const isBottomSheetOpen = ref(false);
 
 const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435);
 const lng = ref(route.query.center?.split(',').map(Number)[1] || 127.0812);
-const level = ref(Number(route.query.zoomLevel) || 8);
+const level = ref(Number(route.query.zoomLevel) || 6);
 const mapInstance = ref(null);
 const currentLocation = ref(null);
 const currentDong = ref('');
