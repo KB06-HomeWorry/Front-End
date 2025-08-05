@@ -14,18 +14,26 @@
 
     <BottomSheet :visible="props.sheetOpen" @close="closeSheet">
       <template #title>
-        <div class="sheet-title-row bodyMedium14px">
+        <div class="sheet-title-row titleBold16px">
           <span>
             {{ sheetType === 'transaction' ? '거래유형' : '평수' }}
           </span>
-          <!-- 평수일 때만 오른쪽 상단에 확인 버튼 -->
-          <button
-            v-if="sheetType === 'area'"
-            class="apply-btn top"
-            @click="applyArea"
-          >
-            확인
-          </button>
+          <div class="action-btns">
+            <button
+              class="reset-btn-title bodyMedium12px"
+              @click="resetTransaction"
+              v-if="sheetType === 'transaction' || sheetType === 'area'"
+            >
+              <img src="@/assets/icons/reset_circle.png" class="reset-icon" alt="초기화" />
+              초기화
+            </button>
+            <button
+              class="apply-btn top bodyMedium12px"
+              @click="sheetType === 'area' ? applyArea() : applyTransaction()"
+            >
+              확인
+            </button>
+          </div>
         </div>
       </template>
       <!-- 거래유형: FilterOptionList 적용 (복수 선택 가능) -->
@@ -35,10 +43,6 @@
           :modelValue="tempTransactionTypeLabels"
           @update:modelValue="onTransactionTypeChange"
         />
-        <div class="btn-row">
-          <button class="reset-btn bodyMedium14px" @click="resetTransaction">초기화</button>
-          <button class="apply-btn bodyMedium14px" @click="applyTransaction">확인</button>
-        </div>
       </template>
       <!-- 평수 -->
       <template v-if="sheetType === 'area'">
@@ -151,21 +155,17 @@ function closeSheet() {
 
 <style scoped>
 .search-bar {
-  width: 100%;
+  width: 393px;
   display: flex;
   align-items: center;
   height: 50px;
-  gap: 10px;
+  gap: 8px;
   padding: 0 8px;
   border-bottom: 1px solid var(--color-lightgray);
   background: var(--color-white);
 }
-.btn-row {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  margin-top: 15px;
-}
+
+
 .sheet-title-row {
   width: 100%;
   display: flex;
@@ -185,8 +185,8 @@ function closeSheet() {
 }
 
 .apply-btn.top {
-  margin-right: -8px;
-  margin-top: -3px;
+  margin-right: -3px;
+  margin-top: -1px;
 }
 
 .reset-btn {
@@ -197,5 +197,36 @@ function closeSheet() {
   border-radius: 12px;
   border: none;
   cursor: pointer;
+}
+
+.sheet-title-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reset-btn-title {
+  border: none;
+  background: none;
+  color: var(--color-mediumgray);
+  display: flex;
+  align-items: center;
+  padding: 0 8px 0 0;
+  cursor: pointer;
+}
+
+.reset-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 3px;
+  margin-bottom: 3px;
+  vertical-align: middle;
 }
 </style>

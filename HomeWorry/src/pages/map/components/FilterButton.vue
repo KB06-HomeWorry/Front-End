@@ -38,6 +38,9 @@ defineEmits(['click']);
     color: var(--color-mediumgray);
     line-height: 35px;
     margin-top: 2px;
+      white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .down-arrow{

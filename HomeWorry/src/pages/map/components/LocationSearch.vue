@@ -6,7 +6,7 @@
         class="search-input bodyMedium12px"
         v-model="searchText"
         @keyup.enter="onSearch"
-        placeholder="단지명, 역명, 지역명 검색"
+        placeholder="단지명, 역명, 지역명"
       />
       <button class="icon-btn" @click="onSearch" aria-label="검색">
         <img src="@/assets/icons/search_light.png" alt="검색" class="search-icon" />
@@ -28,7 +28,7 @@ function onSearch() {
 <style scoped>
 .map-search-bar {
   flex: 1 0 160px; 
-  max-width: 190px; 
+  min-width: 160px; 
   background: #fff;
   padding: 0;
   display: flex;
