@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute  } from 'vue-router';
 import axios from 'axios';
 import InputSimple from '@/components/input/InputSimple.vue';
 import BtnMed from '@/components/button/BtnMed.vue';
@@ -56,6 +56,7 @@ const authStore = useAuthStore();
 const checklistStore = useChecklistStore();
 
 const router = useRouter();
+const route = useRoute();
 const username = ref('');
 const password = ref('');
 
@@ -89,6 +90,9 @@ async function onLogin() {
       isAlertVisible.value = true;
       loginSuccess = true;
 
+      const redirectPath = route.query.redirect || '/'
+      router.push(redirectPath);
+    
       setTimeout(() => {
         isAlertVisible.value = false;
         router.push('/');

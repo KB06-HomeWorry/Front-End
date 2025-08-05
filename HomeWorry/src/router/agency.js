@@ -24,5 +24,8 @@ export default [
     path: '/agency/:agencyId/review-write',
     name: 'agencyReviewWrite',
     component: () => import('../pages/agency/AgencyReviewWrite.vue'),
+    meta: {
+      requiresAuth: true
+    }
   },
 ];
