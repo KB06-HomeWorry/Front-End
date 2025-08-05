@@ -92,7 +92,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
 import FilterBar from '@/pages/map/components/FilterBar.vue';
-import ListingToggle from '@/pages/map/ListingToggle.vue';
+import ListingToggle from '@/pages/map/components/ListingToggle.vue';
 import MarketPrice from '@/pages/map/components/MarketPrice.vue';
 import MarkerPriceDetail from '@/pages/map/components/MarkerPriceDetail.vue';
 import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
@@ -112,7 +112,7 @@ const dongMarkers = ref([]);
 const listingMarkers = ref([]);
 const isListingsVisible = ref(true);
 
-// 👇 시트 오픈 상태, 플로팅 버튼 제어용
+// 시트 오픈 상태, 플로팅 버튼 제어용
 const isBottomSheetOpen = ref(false);
 
 const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435);

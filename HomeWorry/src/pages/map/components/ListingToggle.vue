@@ -1,6 +1,6 @@
 <template>
   <button
-    class="listing-btn"
+    class="listing-btn bodyMedium12px"
     :class="{ active: visible }"
     @click="toggle"
   >
@@ -24,21 +24,22 @@ function toggle() {
 
 <style scoped>
 .listing-btn {
+  height: 30px;
+  line-height: 16px;
   position: relative;
-  top: 60px;
+  top: 20px;
   left: 330px;
   z-index: 10;
   background-color: white;
-  color: black;
-  border: 1px solid #007BFF;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
   padding: 8px 14px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 .listing-btn.active {
-  background-color: #007BFF;
+  background-color: var(--color-primary);
   color: white;
 }
 </style>
