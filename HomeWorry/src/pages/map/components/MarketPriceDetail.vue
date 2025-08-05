@@ -1,6 +1,6 @@
 <template>
   <div class="price-box" @click="$emit('click')">
-    <div class="top-section bodyMedium12px">
+    <div class="top-section bodyMedium10px">
       <span class="top-text">{{ housingType || '-' }}</span>
     </div>
     <div class="divider"></div>
@@ -23,20 +23,19 @@ const formattedPrice = computed(() => formatKoreanPrice(props.price));
 function formatKoreanPrice(price) {
   const num = Number(String(price).replace(/[^0-9]/g, ''));
   if (isNaN(num) || num === 0) return '-';
-  const eok = Math.floor(num / 100000000);
-  const man = Math.floor((num % 100000000) / 10000);
-  if (eok && man) return `${eok}억 ${man}만`;
-  if (eok) return `${eok}억`;
-  if (man) return `${man}만`;
-  return num.toLocaleString();
+  const eok = num / 100000000;
+  // 정수면 .0 안 붙임, 소수는 첫째 자리까지 표시
+  if (eok % 1 === 0) return `${eok}억`;
+  return `${parseFloat(eok.toFixed(1))}억`;
 }
 </script>
 
 <style scoped>
 .price-box {
-  width: 75px;
-  height: 55px;
-  border: 1.5px solid var(--color-primary);
+  width: auto;
+  min-width: 65px;
+  height: 45px;
+  border: 1.3px solid var(--color-primary);
   border-radius: 12px 12px 12px 0;
   background: var(--color-white);
   overflow: hidden;
@@ -47,7 +46,7 @@ function formatKoreanPrice(price) {
 }
 
 .top-section {
-  background: var(--color-primary);
+  background: rgba(17, 31, 92, 0.1);
   height: 40%;
   display: flex;
   align-items: center;
@@ -56,7 +55,7 @@ function formatKoreanPrice(price) {
 }
 
 .divider {
-  height: 1.5px;
+  height: 1.3px;
   width: 100%;
   background: var(--color-primary);
   margin: 0;
@@ -72,7 +71,7 @@ function formatKoreanPrice(price) {
 }
 
 .top-text {
-  color: var(--color-white);
+  color: var(--color-primary);
 }
 
 .bottom-text {

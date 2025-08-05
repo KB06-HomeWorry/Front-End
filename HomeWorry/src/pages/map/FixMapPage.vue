@@ -41,7 +41,7 @@
           :lng="marker.lng"
           :y-anchor="1.4"
         >
-          <MarkerPriceDetail
+          <MarketPriceDetail
             :price="marker.price"
             :housingType="marker.housingType"
           />
@@ -94,7 +94,7 @@ import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
 import FilterBar from '@/pages/map/components/FilterBar.vue';
 import ListingToggle from '@/pages/map/components/ListingToggle.vue';
 import MarketPrice from '@/pages/map/components/MarketPrice.vue';
-import MarkerPriceDetail from '@/pages/map/components/MarkerPriceDetail.vue';
+import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue';
 import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
 
 const route = useRoute();
