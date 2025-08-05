@@ -39,13 +39,14 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute  } from 'vue-router';
 import axios from 'axios';
 import InputSimple from '@/components/input/InputSimple.vue';
 import BtnMed from '@/components/button/BtnMed.vue';
 import { useChecklistStore } from '@/stores/checklist';
 
 const router = useRouter();
+const route = useRoute();
 const username = ref('');
 const password = ref('');
 const checklistStore = useChecklistStore();
@@ -72,7 +73,9 @@ async function onLogin() {
     console.log('사용자 ID:', checklistStore.checklistData.userId);
 
     alert('로그인에 성공했습니다!');
-    router.push('/');
+
+    const redirectPath = route.query.redirect || '/'
+    router.push(redirectPath);
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
