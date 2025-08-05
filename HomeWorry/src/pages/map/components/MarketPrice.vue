@@ -4,7 +4,7 @@
       <span class="top-text">{{ location }}</span>
     </div>
     <div class="divider"></div>
-    <div class="bottom-section titleBold16px">
+    <div class="bottom-section titleBold14px">
       <span class="bottom-text">{{ price }}</span>
     </div>
   </div>
@@ -21,10 +21,10 @@ defineEmits(['click']);
 
 <style scoped>
 .price-box {
-  width: 75px;
-  height: 55px;
+  width: 65px;
+  height: 50px;
   border: 1.5px solid var(--color-primary);
-  border-radius: 12px 12px 12px 0;
+  border-radius: 12px;
   background: var(--color-white);
   overflow: hidden;
   display: flex;
