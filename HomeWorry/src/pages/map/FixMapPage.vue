@@ -55,7 +55,9 @@
           :lng="marker.lng"
           :y-anchor="1.4"
         >
-          <div
+        <ListingMarkers :marker="marker"/>
+
+          <!-- <div
             class="custom-overlay text-white"
             style="background-color: var(--color-primary)"
             @click="console.log(marker.areaInfo2)"
@@ -63,7 +65,7 @@
             {{ marker.areaInfo2 || '-' }}평
             <span v-if="marker.transactionType">| {{ marker.transactionType }}</span>
             <span v-if="marker.housingType">| {{ marker.housingType }}</span>
-          </div>
+          </div> -->
         </KakaoMapCustomOverlay>
       </template>
     </KakaoMap>
@@ -96,6 +98,7 @@ import ListingToggle from '@/pages/map/components/ListingToggle.vue';
 import MarketPrice from '@/pages/map/components/MarketPrice.vue';
 import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue';
 import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
+import ListingMarkers from '@/pages/map/components/ListingMarkers.vue';
 
 const route = useRoute();
 const router = useRouter();
