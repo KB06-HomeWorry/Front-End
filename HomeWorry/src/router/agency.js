@@ -21,6 +21,11 @@ export default [
     component: () => import('../pages/agency/AgencyListPage.vue'),
   },
   {
+    path: '/agency/ListingAll',
+    name: 'agencyListingAll',
+    component: () => import('../pages/agency/ListingPage.vue'),
+  },
+  {
     path: '/agency/:agencyId/review-write',
     name: 'agencyReviewWrite',
     component: () => import('../pages/agency/AgencyReviewWrite.vue'),

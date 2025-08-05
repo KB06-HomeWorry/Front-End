@@ -1,13 +1,13 @@
 <template>
-  <div class="listing-card">
+  <div class="listing-card" @click="goDetail">
     <div class="listing-header">
       <div class="listing-summary">
         <div class="deal-info bodyMedium14px">
-          <span class="deal-type">{{ transactionType }} </span>
+          <span class="deal-type">{{ transactionType }}</span>
           <span v-if="deposit" class="deal-detail titleBold16px"> {{ deposit }} </span>
           <span v-if="monthlyRent" class="deal-detail titleBold16px"> / {{ monthlyRent }}</span>
         </div>
-        <div class="address bodyLight12px">{{ addressShort }}</div>
+        <div class="address bodyLight12px">{{ address }}</div>
         <div class="specs bodyMedium12px">
           <span>{{ housingType }}</span>
           <span v-if="areaInfo"> · {{ areaInfo }}</span>
@@ -21,10 +21,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 import roomImg from '@/assets/icons/home_villa.png';
 
+const router = useRouter();
+
 const props = defineProps({
+  id: [String, Number],   
   transactionType: String,
   deposit: String,
   monthlyRent: String,
@@ -35,8 +38,12 @@ const props = defineProps({
   direction: String,
 });
 
-
-const addressShort = computed(() => props.address || '');
+function goDetail() {
+  router.push({
+    path: '/api/listing', 
+    query: { id: props.id, source: 'listing' }
+  });
+}
 </script>
 
 <style scoped>
@@ -46,6 +53,11 @@ const addressShort = computed(() => props.address || '');
   max-width: 393px;
   box-sizing: border-box;
   border-bottom: 1px solid var(--color-lightgray);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.listing-card:hover {
+  background: #f7f8fa;
 }
 
 .listing-header {
@@ -63,8 +75,8 @@ const addressShort = computed(() => props.address || '');
   min-width: 0;
 }
 
-.deal-type{
-    margin-right: 6px;
+.deal-type {
+  margin-right: 6px;
 }
 
 .deal-info {
@@ -72,7 +84,7 @@ const addressShort = computed(() => props.address || '');
 }
 
 .deal-detail {
-    color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .address {
