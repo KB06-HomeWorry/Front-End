@@ -37,7 +37,7 @@
       />
     </div>
 
-    <div class="slider-marks bodyLight14px">
+    <div class="slider-marks bodyLight12px">
       <span>최소</span>
       <span>8평</span>
       <span>12평</span>

@@ -28,9 +28,10 @@ function close() { emit('close') }
 
 .bs-sheet {
   width: 393px;            
-  height: 400px;
+  height: 250px;
   margin-bottom: 70px;   
-  background: #fff;
+  background: var(--color-white);
+  color:var(--color-primary);
   border-radius: 12px 12px 0 0;
   max-height: calc(80vh - 60px);
   box-sizing: border-box;

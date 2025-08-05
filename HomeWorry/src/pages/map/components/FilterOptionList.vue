@@ -59,7 +59,7 @@ function toggle(option) {
   border-radius: 12px;
   width: auto;
   min-width: 80px;
-  height: 30px;
+  height: 35px;
   text-align: center;
   padding: 0 20px;
   line-height: 30px;
