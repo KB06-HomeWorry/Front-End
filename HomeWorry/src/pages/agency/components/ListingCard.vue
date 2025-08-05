@@ -39,10 +39,10 @@ const props = defineProps({
 });
 
 function goDetail() {
-  router.push({
-    path: '/api/listing', 
-    query: { id: props.id, source: 'listing' }
-  });
+  // 상세페이지 route로 이동 (ex: /listing/15)
+  router.push(`/listing/${props.id}`);
+  // 또는 name 기반이 더 안전하다면
+  // router.push({ name: 'listingDetail', params: { listingId: props.id } });
 }
 </script>
 

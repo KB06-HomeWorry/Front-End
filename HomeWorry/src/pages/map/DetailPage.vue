@@ -5,62 +5,57 @@
         <div><span class="buildname bodyMedium16px">{{ buildingName }}</span></div>
         <div><span class="price titleBold20px">{{ price }}</span></div>
     </section>
-    <!-- <section>
-        <h2>실거래가</h2>
-        <h3>계약일 층 거래 정보</h3>
-    </section> -->
 
     <div class="section-bar">
       <button @click="scrollTo('listing')" :class="['section-btn titleBold14px', { active: activeSection === 'listing' }]">매물정보</button>
       <button @click="scrollTo('location')" :class="['section-btn titleBold14px', { active: activeSection === 'location' }]">위치정보</button>
     </div>
 
-<section ref="listing">
-  <div class="location-info-card">
-    <div class="menu-list titleBold20px">매물정보</div>
+    <section ref="listing">
+      <div class="location-info-card">
+        <div class="menu-list titleBold20px">매물정보</div>
 
-    <div class="info-row">
-      <div class="info-label bodyMedium16px">거래방식</div>
-      <div class="info-value bodyMedium14px">{{ price }}</div>
-    </div>
+        <div class="info-row">
+          <div class="info-label bodyMedium16px">거래방식</div>
+          <div class="info-value bodyMedium14px">{{ price }}</div>
+        </div>
 
-    <div class="info-row">
-      <div class="info-label bodyMedium16px">건물형태</div>
-      <div class="info-value bodyMedium14px">{{ housingType }}</div>
-    </div>
+        <div class="info-row">
+          <div class="info-label bodyMedium16px">건물형태</div>
+          <div class="info-value bodyMedium14px">{{ housingType }}</div>
+        </div>
 
-    <div class="info-row">
-      <div class="info-label bodyMedium16px">전용/계약면적</div>
-      <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
-    </div>
+        <div class="info-row">
+          <div class="info-label bodyMedium16px">전용/계약면적</div>
+          <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
+        </div>
 
-    <div class="info-row">
-      <div class="info-label bodyMedium16px">해당층/전체층</div>
-      <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
-    </div>
+        <div class="info-row">
+          <div class="info-label bodyMedium16px">해당층/전체층</div>
+          <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
+        </div>
 
-    <div class="info-row">
-      <div class="info-label bodyMedium16px">방향</div>
-      <div class="info-value bodyMedium14px">{{ direction }}</div>
-    </div>
-  </div>
-</section>
-<hr class="full-width-hr" />
+        <div class="info-row">
+          <div class="info-label bodyMedium16px">방향</div>
+          <div class="info-value bodyMedium14px">{{ direction }}</div>
+        </div>
+      </div>
+    </section>
+    <hr class="full-width-hr" />
     <section ref="location">
       <DetailLocation/>
     </section>
     <KakaoMap
-  v-if="lat && lng"
-  :lat="lat"
-  :lng="lng"
-  :level="3"
-  style="width: 100%; height: 300px"
->
- <KakaoMapMarker :lat="lat" :lng="lng" />
-</KakaoMap>
+      v-if="lat && lng"
+      :lat="lat"
+      :lng="lng"
+      :level="3"
+      style="width: 100%; height: 300px"
+    >
+      <KakaoMapMarker :lat="lat" :lng="lng" />
+    </KakaoMap>
   </div>
-    <section ref="agency">
-  </section>
+  <section ref="agency"></section>
 </template>
 
 <script setup>
@@ -80,77 +75,55 @@ const price = ref('');
 const buildingName = ref('');
 const deposit = ref('');
 const rent = ref('');
-const housingType=ref('');
-const floorInfo=ref('');
-const areaInfo=ref('');
-const direction=ref('');
+const housingType = ref('');
+const floorInfo = ref('');
+const areaInfo = ref('');
+const direction = ref('');
 
 const activeSection = ref('deal');
+const currentLocation = ref({ lat: null, lng: null });
 
-const currentLocation = ref({lat:null,lng:null});
-
-
-function goBackToMap() {
-  router.push('/map');
-}
-
+// 쿼리가 아니라 params에서 id 받아오는 것으로 수정
 onMounted(async () => {
-  const id = route.query.id;
-  const source=route.query.source || 'listing';
+  const id = route.params.listingId; // ex) /listing/1 이면 listingId=1
   if (!id) {
     console.error('❌ id 없음');
     return;
   }
 
   try {
-    const endpoint =
-      source === 'pricetrend'
-      ?`/api/pricetrend/${id}`
-      :`/api/listing/${id}`;
-
-
-   const response = await fetch(endpoint);
+    // source 분기 없이 매물 상세 엔드포인트로 단일 처리하였음
+    const endpoint = `/api/listing/${id}`;
+    const response = await fetch(endpoint);
     const data = await response.json();
 
     lat.value = data.latitude;
     lng.value = data.longitude;
 
-    if (source === 'listing') {
-      price.value = data.monthlyRent
-        ? `월세 ${data.deposit}/${data.monthlyRent}`
-        : `전세 ${data.deposit}`;
-      buildingName.value = data.listing;
-      deposit.value = data.deposit;
-      rent.value = data.monthlyRent;
-      housingType.value = data.housingType;
-      floorInfo.value = data.floorInfo;
-      areaInfo.value = data.areaInfo;
-      direction.value = data.direction;
-    } else if (source === 'pricetrend') {
-      price.value = data.price;
-      buildingName.value = data.buildingName || '실거래가'; // 예시
-      housingType.value = data.housingType || '';
-      // 기타 필요 정보 추가
-    }
+    price.value = data.monthlyRent
+      ? `월세 ${data.deposit}/${data.monthlyRent}`
+      : `전세 ${data.deposit}`;
+    buildingName.value = data.listing;
+    deposit.value = data.deposit;
+    rent.value = data.monthlyRent;
+    housingType.value = data.housingType;
+    floorInfo.value = data.floorInfo;
+    areaInfo.value = data.areaInfo;
+    direction.value = data.direction;
 
   } catch (error) {
     console.error('❌ 상세정보 로딩 실패:', error);
   }
 });
 
-const deal = ref(null)
-const listing = ref(null)
-const location = ref(null)
+// section scroll
+const deal = ref(null);
+const listing = ref(null);
+const location = ref(null);
 
 function scrollTo(section) {
   activeSection.value = section;
-
-  const targetRef = {
-    deal,
-    listing,
-    location,
-  }[section];
-
+  const targetRef = { deal, listing, location }[section];
   targetRef?.value?.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
@@ -162,18 +135,16 @@ function scrollTo(section) {
   padding: 12px 8px;
   border-bottom: 1px solid #bdbdbd;
 }
-
 .section-btn {
   border: none;
   padding: 6px 12px;
   cursor: pointer;
 }
 .section-btn.active {
-  background-color:var(--color-primary);
+  background-color: var(--color-primary);
   color: var(--color-white);
   border-radius: 6px;
 }
-
 .location-header {
   display: flex;
   justify-content: space-between;
@@ -181,22 +152,18 @@ function scrollTo(section) {
   margin-bottom: 8px;
   color: var(--color-primary);
 }
-
-
 .location-info-card {
   background: var(--color-white);
   padding: 24px 20px 18px 20px;
   max-width: 420px;
   margin: 0 auto;
 }
-
 .section-title {
   font-size: 20px;
   font-weight: bold;
   color: var(--color-primary);
   margin-bottom: 8px;
 }
-
 /* 좌측 라벨 / 우측 값 2열 배치 */
 .info-row {
   display: flex;
@@ -209,39 +176,34 @@ function scrollTo(section) {
 .info-row:first-of-type {
   border-top: none;
 }
-
 .info-label {
   color: var(--color-mediumgray);
-  min-width: 96px;           /* 라벨 폭 고정 → 간격 일정 */
+  min-width: 96px;
   flex-shrink: 0;
 }
-
 .info-value {
   font-weight: 600;
   text-align: right;
-  flex: 1;                   /* 남은 공간 사용 → 오른쪽 정렬 */
-  word-break: keep-all;      /* 값 줄바꿈 시 단어 단위 */
+  flex: 1;
+  word-break: keep-all;
 }
-
 /* 카드 너비(원하면 전체 너비로) */
 .location-info-card {
-  background-color:var(--color-white);
+  background-color: var(--color-white);
   padding: 24px 20px 18px 20px;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
 }
-
 /* 아래 구분선 */
 .full-width-hr {
   border: none;
   border-top: 1px solid;
-  color:var(--color-mediumgray);
+  color: var(--color-mediumgray);
   margin: 16px 0;
   width: 100%;
 }
-
-.menu-list{
-  color:var(--color-primary);
+.menu-list {
+  color: var(--color-primary);
 }
 </style>
