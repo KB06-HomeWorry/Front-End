@@ -9,7 +9,7 @@
 
 <script setup>
 const props = defineProps({
-  imgSrc: { type: String, required: true },       
+  // imgSrc: { type: String, required: true },       
   level: { type: String, required: true },         // "초급" | "중급" | "고급"
   number: { type: [String, Number], required: true }
 })

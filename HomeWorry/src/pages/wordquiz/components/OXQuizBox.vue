@@ -9,8 +9,8 @@
     </div>
     <!-- OX 버튼 -->
     <div class="quiz-ox-row">
-      <OXBtn imgSrc="/src/assets/icons/quiz_correct.png" @click="() => emit('submit', 'O')" />
-      <OXBtn imgSrc="/src/assets/icons/quiz_wrong.png" @click="() => emit('submit', 'X')" />
+      <OXBtn imgSrc="/src/assets/icons/quiz_correct.png" @click="() => emit('submit', 'o')" />
+      <OXBtn imgSrc="/src/assets/icons/quiz_wrong.png" @click="() => emit('submit', 'x')" />
     </div>
   </div>
 </template>
