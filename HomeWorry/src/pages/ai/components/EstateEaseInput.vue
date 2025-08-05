@@ -94,7 +94,7 @@ function onInput(e) {
   margin-bottom: 2px;
 }
 .warn-msg {
-  color: var(--color-warn);
+  color: var(--color-danger);
   margin-left: 8px;
 }
 </style>

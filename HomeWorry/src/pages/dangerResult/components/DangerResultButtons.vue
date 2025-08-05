@@ -1,24 +1,20 @@
 <template>
   <div class="button-group">
-    <BtnMed
-      v-if="props.moveDefined === 0"
-      text="서류 분석"
+    <BtnMedSlim
+      text="분석 결과 이미지 저장"
       color="#ffffff"
-      @click="handleClick('documentAnalysis')"
+      @click="saveAsImage"
     />
-    <BtnMed
-      text="AI 계약서 분석"
-      color="#ffffff"
-      @click="handleClick('aiContractAnalysis')"
-    />
-    <BtnMed text="점검 다시하기" @click="checklistAgain()" />
+
+    <BtnMedSlim text="점검 다시하기" @click="checklistAgain()" />
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
 import { useChecklistStore } from '@/stores/checklist';
-import BtnMed from '@/components/button/BtnMed.vue';
+import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
+import html2canvas from 'html2canvas';
 
 const router = useRouter();
 const checklistStore = useChecklistStore();
@@ -31,38 +27,33 @@ const props = defineProps({
   moveDefined: Number, // 0: 체크리스트 분석, 1: 서류 분석
 });
 
-const handleClick = (action) => {
-  switch (action) {
-    case 'documentAnalysis':
-      console.log('서류 분석 버튼 클릭됨');
-      router.push('/analysis');
-      break;
+// 이미지 저장 기능 (html2canvas 사용)
+const saveAsImage = async () => {
+  const target = document.querySelector('.result-page'); // 저장할 영역 선택
+  if (!target) return alert('저장할 대상이 존재하지 않습니다.');
 
-    case 'aiContractAnalysis':
-      console.log('AI 계약서 분석 버튼 클릭됨');
-      // 여기에 AI 계약서 분석 관련 로직 추가
-      break;
-    default:
-      console.log('알 수 없는 액션:', action);
+  try {
+    const canvas = await html2canvas(target, { useCORS: true });
+    const image = canvas.toDataURL('image/png');
+
+    const link = document.createElement('a');
+    link.href = image;
+    link.download = 'analysis_result.png';
+    link.click();
+  } catch (e) {
+    console.error('이미지 저장 실패:', e);
+    alert('이미지 저장에 실패했습니다.');
   }
 };
 
 const checklistAgain = () => {
   console.log('점검 다시하기 버튼 클릭');
-  console.log(props.moveDefined);
-
-  if (props.moveDefined == 0) {
-    console.log('체크리스트 분석으로 이동');
+  if (props.moveDefined === 0) {
     router.push({
       path: '/checklist',
-      query: {
-        type,
-        stage,
-        userId,
-      },
+      query: { type, stage, userId },
     });
-  } else if (props.moveDefined == 1) {
-    console.log('서류 분석으로 이동');
+  } else if (props.moveDefined === 1) {
     router.push('/analysis');
   }
 };
