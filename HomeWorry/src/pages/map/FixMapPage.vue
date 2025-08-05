@@ -106,7 +106,7 @@ const router = useRouter();
 const minPyeong = ref(null);
 const maxPyeong = ref(null);
 
-const selectedTransactionType = ref('');
+const selectedTransactionType = ref([]);
 const selectedHousingTypes = ref([]);
 const selectedListingTypes = ref([]);
 
@@ -232,8 +232,10 @@ async function loadListings() {
       (marker.areaInfo2 !== null) &&
       (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
       (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
-      (selectedTransactionType.value === '' ||
-        marker.transactionType === selectedTransactionType.value)
+      (
+        !selectedTransactionType.value.length || 
+        selectedTransactionType.value.includes(marker.transactionType)
+      )
     );
   } catch (error) {
     console.error('❌ API 로딩 실패:', error);
