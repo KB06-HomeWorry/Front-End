@@ -30,22 +30,24 @@
 
     <!-- 초기화 버튼: /checklist일 때만 -->
     <div class="right" v-if="isChecklistPage && !isChecklistStagePage">
-      <button
-        class="action-btn titleBold12px"
-        @click="isConfirmModalVisible = true"
-      >
-        초기화
-      </button>
+      <BtnMini text="초기화" @click="isConfirmModalVisible = true" />
     </div>
 
     <!-- 설명 버튼: /analysis일 때만 -->
-    <div class="right" v-if="isAnalysisPage">
-      <button
-        class="action-btn titleBold12px"
-        @click="isInfoModalVisible = true"
-      >
-        설명
-      </button>
+    <div class="right" v-else-if="isAnalysisPage">
+      <BtnMini text="설명" @click="isInfoModalVisible = true" />
+    </div>
+
+    <!-- 로그인/회원가입 또는 로그아웃 버튼 -->
+    <div class="right" v-else>
+      <template v-if="isHomePage">
+        <template v-if="!isLoggedIn">
+          <BtnTiny text="로그인/회원가입" @click="goToLogin" />
+        </template>
+        <template v-else>
+          <BtnMini text="로그아웃" @click="handleLogout" />
+        </template>
+      </template>
     </div>
 
     <!-- 초기화 확인용 모달 -->
@@ -72,18 +74,33 @@
       confirmText="확인"
       @confirm="isInfoModalVisible = false"
     />
+
+    <!-- 로그아웃 알림용 모달 -->
+    <CustomModal
+      v-model="isLogoutAlertVisible"
+      :message="`로그아웃 되었습니다.`"
+      confirmText="확인"
+      @confirm="onLogoutAlertConfirm"
+    />
   </header>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useChecklistStore } from '@/stores/checklist';
+import { useAuthStore } from '@/stores/auth';
 import CustomModal from '@/components/modal/CustomModal.vue';
 import SimpleHeader from '@/components/layout/SimpleHeader.vue';
+import BtnTiny from '@/components/button/BtnTiny.vue';
+import BtnMini from '@/components/button/BtnMini.vue';
 
 const route = useRoute();
+const router = useRouter();
 const checklistStore = useChecklistStore();
+const authStore = useAuthStore();
+
+const isLoggedIn = computed(() => !!authStore.user);
 
 const isChecklistPage = computed(() => route.path.startsWith('/checklist'));
 const isChecklistStagePage = computed(() =>
@@ -97,6 +114,7 @@ const type = computed(() => route.query.type || '');
 
 const isConfirmModalVisible = ref(false);
 const isAlertModalVisible = ref(false);
+const isLogoutAlertVisible = ref(false);
 
 const resetChecklist = () => {
   checklistStore.resetChecklist();
@@ -112,6 +130,20 @@ const isEstateEasePage = computed(() =>
 const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
 const isHomePage = computed(() => route.path === '/');
 const isAgentPage = computed(() => route.path.startsWith('/agency/list'));
+
+const goToLogin = () => {
+  router.push('/auth/login');
+};
+
+const handleLogout = async () => {
+  await authStore.logout();
+  isLogoutAlertVisible.value = true;
+};
+
+const onLogoutAlertConfirm = () => {
+  isLogoutAlertVisible.value = false;
+  router.push('/');
+};
 </script>
 
 <style scoped>
@@ -149,20 +181,5 @@ const isAgentPage = computed(() => route.path.startsWith('/agency/list'));
   white-space: nowrap;
   margin-top: 5px;
   margin-left: 4px;
-}
-
-.action-btn {
-  border-radius: 12px;
-  width: 58px;
-  height: 24px;
-  line-height: 24px;
-  padding: 0;
-  border: none;
-  color: var(--color-white);
-  background-color: var(--color-primary);
-  transition: var(--transition);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 </style>

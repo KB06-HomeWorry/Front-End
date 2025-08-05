@@ -64,11 +64,29 @@ onMounted(async () => {
     };
   }
 
-  const { data } = await axios.get(
-    "http://localhost:8080/checklist/answers/five"
-  );
-  checklistStore.topFiveAnswers = data;
-  console.log("서버 응답:", checklistStore.topFiveAnswers);
+  try {
+    if (localStorage.getItem("user-token") === null) {
+      // 🔹 토큰이 없으면 로그인 페이지로 리다이렉트
+      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      router.push("/auth/login");
+      return;
+    }
+
+    const { data } = await axios.get(
+      "http://localhost:8080/checklist/answers/five"
+    );
+
+    checklistStore.topFiveAnswers = data;
+    console.log("서버 응답:", checklistStore.topFiveAnswers);
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      // 🔹 401 Unauthorized 처리
+      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+      router.push("/auth/login");
+    } else {
+      console.error("불러오기 오류: ", error);
+    }
+  }
 
   await checklistStore.loadChecklist();
   const { steps: loadedSteps } = useChecklistStep();

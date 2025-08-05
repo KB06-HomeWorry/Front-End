@@ -5,7 +5,6 @@
       src="@/assets/icons/login_logo.png"
       alt="로그인 로고"
     />
-    <!-- <h2 class="login-title titleBold32px">로그인</h2> -->
 
     <form @submit.prevent="onLogin" class="login-form">
       <!-- 이메일 -->
@@ -15,7 +14,6 @@
         placeholder="이메일을 입력하세요."
         autocomplete="username"
       />
-
       <!-- 비밀번호 -->
       <InputSimple
         v-model="password"
@@ -23,9 +21,9 @@
         placeholder="비밀번호를 입력하세요."
         autocomplete="current-password"
       />
-
       <BtnMed class="login-btn" type="submit" text="로그인" />
     </form>
+
     <div class="login-links bodyMedium16px">
       <button class="link-btn bodyMedium14px" @click="onSignup">
         회원가입하기
@@ -34,26 +32,44 @@
         비밀번호찾기
       </button>
     </div>
+
+    <CustomModal
+      v-model="isAlertVisible"
+      :message="alertMessage"
+      confirmText="확인"
+      @confirm="handleAlertConfirm"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter, useRoute  } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import InputSimple from '@/components/input/InputSimple.vue';
 import BtnMed from '@/components/button/BtnMed.vue';
+import CustomModal from '@/components/modal/CustomModal.vue';
+import { useAuthStore } from '@/stores/auth';
 import { useChecklistStore } from '@/stores/checklist';
+
+const authStore = useAuthStore();
+const checklistStore = useChecklistStore();
 
 const router = useRouter();
 const route = useRoute();
 const username = ref('');
 const password = ref('');
-const checklistStore = useChecklistStore();
+
+const isAlertVisible = ref(false);
+const alertMessage = ref('');
+let loginSuccess = false;
+let autoRedirectTimer = null;
 
 async function onLogin() {
   if (!username.value || !password.value) {
-    alert('아이디와 비밀번호를 모두 입력해주세요.');
+    alertMessage.value = '아이디와 비밀번호를 모두 입력해주세요.';
+    isAlertVisible.value = true;
+    loginSuccess = false;
     return;
   }
   try {
@@ -63,24 +79,44 @@ async function onLogin() {
     });
 
     const token = response.data.token;
-    if (token) {
-      localStorage.setItem('user-token', token);
+    const userData = response.data.user;
+
+    if (token && userData) {
+      authStore.login(userData, token);
+      checklistStore.checklistData.userId = userData.userId;
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      alertMessage.value = '로그인에 성공했습니다!';
+      isAlertVisible.value = true;
+      loginSuccess = true;
+
+      if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
+      autoRedirectTimer = setTimeout(() => {
+        isAlertVisible.value = false;
+        const redirectPath = route.query.redirect || '/';
+        router.push(redirectPath);
+      }, 1000);
+    } else {
+      alertMessage.value = '로그인 정보가 올바르지 않습니다.';
+      isAlertVisible.value = true;
+      loginSuccess = false;
     }
-
-    console.log('로그인 성공:', response.data);
-    checklistStore.checklistData.userId = response.data.user.userId;
-    console.log('사용자 ID:', checklistStore.checklistData.userId);
-
-    alert('로그인에 성공했습니다!');
-
-    const redirectPath = route.query.redirect || '/'
-    router.push(redirectPath);
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
-      '로그인에 실패했습니다. 아이디나 비밀번호를 확인해주세요.';
-    alert(errorMessage);
+      '로그인에 실패했습니다.\n아이디나 비밀번호를 확인해주세요.';
+    alertMessage.value = errorMessage;
+    isAlertVisible.value = true;
+    loginSuccess = false;
+  }
+}
+
+function handleAlertConfirm() {
+  isAlertVisible.value = false;
+  if (loginSuccess) {
+    if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
+    const redirectPath = route.query.redirect || '/';
+    router.push(redirectPath);
   }
 }
 
@@ -105,12 +141,6 @@ function onResetPw() {
   object-fit: cover;
   margin: 6rem auto 2.5rem auto;
 }
-/* 
-.login-title {
-  color: var(--color-primary);
-  margin: 32px;
-  text-align: center;
-} */
 
 .login-form {
   display: flex;
