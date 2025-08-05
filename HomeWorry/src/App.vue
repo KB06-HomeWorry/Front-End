@@ -1,27 +1,30 @@
 <template>
   <div class="app-wrapper">
-    <Header v-if="!hideHeader"/>
-    <main
-      class="main-content"
-      :class="{ 'has-header': !hideHeader }"
-    >
+    <Header v-if="!hideHeader" />
+    <main class="main-content" :class="{ 'has-header': !hideHeader }">
       <RouterView />
-    </main> 
-    <Footer v-if="!hideFooter"/>
+    </main>
+    <Footer v-if="!hideFooter" />
   </div>
 </template>
 
 <script setup>
 import Header from './components/layout/Header.vue';
 import Footer from './components/layout/Footer.vue';
-import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { useRoute } from 'vue-router';
+import { computed, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-const route = useRoute()
+const route = useRoute();
 
 // 필요 페이지에서 Header/Footer 숨기기 위해 추가함
-const hideHeader = computed(() => !!route.meta.hideHeader)
-const hideFooter = computed(() => !!route.meta.hideFooter)
+const hideHeader = computed(() => !!route.meta.hideHeader);
+const hideFooter = computed(() => !!route.meta.hideFooter);
+
+const authStore = useAuthStore();
+onMounted(() => {
+  authStore.restore();
+});
 </script>
 
 <style scoped>
