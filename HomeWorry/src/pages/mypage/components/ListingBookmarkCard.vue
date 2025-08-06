@@ -1,5 +1,16 @@
 <template>
   <div class="listing-card" @click="goDetail">
+    <button
+      class="bookmark-btn"
+      @click.stop="onToggleFavorite"
+      :aria-label="isBookmark ? '북마크 해제' : '북마크 등록'"
+    >
+      <img
+        :src="isFavorite ? bookmarkOn : bookmarkOff"
+        class="bookmark-icon"
+        :alt="isBookmark ? '북마크 완료' : '북마크 등록'"
+      />
+    </button>
     <div class="listing-header">
       <div class="listing-summary">
         <div class="deal-info bodyMedium14px">
@@ -21,10 +32,15 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import roomImg from '@/assets/icons/home_villa.png';
+import bookmarkOn from '@/assets/icons/star_filled.png'
+import bookmarkOff from '@/assets/icons/star_outline.png'
 
 const router = useRouter();
+
+const isBookmark = ref(null)
 
 const props = defineProps({
   id: [String, Number],   
@@ -36,7 +52,18 @@ const props = defineProps({
   areaInfo: String,
   floorInfo: String,
   direction: String,
+  isFavorite: Boolean,
+  onToggleFavorite: { type: Function, required: true },
 });
+
+function onToggleFavorite() {
+  props.onToggleFavorite(props.id, isBookmark.value)
+  isBookmark.value = !isBookmark.value
+}
+
+onMounted(() => {
+  isBookmark.value = props.isFavorite
+})
 
 function goDetail() {
   // 상세페이지 route로 이동 (ex: /listing/15)
@@ -56,6 +83,12 @@ function goDetail() {
 }
 .listing-card:hover {
   background: #f7f8fa;
+}
+
+.bookmark-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
 }
 
 .listing-header {

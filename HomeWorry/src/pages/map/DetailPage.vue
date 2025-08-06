@@ -80,6 +80,7 @@
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
 import { ref, onMounted } from 'vue'
 import roomImg from '@/assets/icons/room.png'
@@ -113,9 +114,9 @@ const listingId = route.params.listingId
 // 북마크 여부 조회
 async function fetchFavoriteStatus() {
   try {
-    const res = await fetch(`/api/listing/${userToken}/isFavorite/${listingId}`)
-    isFavorite.value = await res.json()
-  } catch {
+    const res = await axios.get(`/api/listing/${listingId}/isFavorite/${userToken}`)
+    isFavorite.value = res.data
+  } catch (e) {
     isFavorite.value = false
   }
 }
@@ -130,13 +131,15 @@ async function toggleBookmark() {
 
   try {
     if (isFavorite.value) {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`, { method: 'DELETE' })
+      // [북마크 해제]
+      await axios.delete(`/api/listing/${listingId}/disFavorite/${userToken}`)
       isFavorite.value = false
     } else {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`)
+      // [북마크 등록]
+      await axios.get(`/api/listing/${listingId}/favorite/${userToken}`)
       isFavorite.value = true
     }
-  } catch {
+  } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')
   }
 }
