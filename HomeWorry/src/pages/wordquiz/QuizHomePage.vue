@@ -1,145 +1,387 @@
 <template>
-  <div class="quiz-main-area">
-    <div class="quiz-grid">
-      <template v-for="(row, rowIdx) in quizRows" :key="rowIdx">
-        <div class="quiz-row ">
-          <template v-for="(cell, colIdx) in row" :key="colIdx">
-            <div class="quiz-cell-wrap">
-              <!-- 가로 점선 -->
-              <div
-                v-if="cell.rightLine"
-                class="quiz-dash-horizontal"
-              ></div>
-              <!-- 세로 점선 -->
-              <div
-                v-if="cell.downLine"
-                class="quiz-dash-vertical"
-              ></div>
-              <router-link
-                class="quiz-cell titleBold16px"
-                :to="'/quiz/' + cell.number"
-              >
-                {{ cell.number }}
-              </router-link>
-            </div>
-          </template>
+  <div class="quiz-root">
+    <!-- 전체 퀴즈 상태 -->
+    <section class="quiz-summary" v-if="quizList.length">
+      <div class="icon-container">
+        <img :src="quiz" alt="퀴즈 아이콘" class="quiz-icon" />
+      </div>
+      <div class="summary-text">
+        <div class="completed-steps bodyLight12px">
+          {{ completedSteps }}칸 완료
         </div>
-      </template>
-    </div>
+        <div class="remaining-puzzles bodyMedium18px">
+          퀴즈 {{ totalRemaining }}개 남음
+        </div>
+        <div class="progress-bar">
+          <div
+            class="progress-bar-fill"
+            :style="{ width: progressPercent + '%' }"
+          ></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 레벨별 퀴즈 -->
+    <section class="quiz-levels" v-if="quizList.length">
+      <div v-for="level in levels" :key="level.key" class="level-group">
+        <div class="level-header">
+          <div class="icon-wrapper">
+            <img
+              :src="levelIcons[level.key]"
+              alt=""
+              class="level-icon"
+              draggable="false"
+            />
+          </div>
+          <div class="level-texts">
+            <div class="level-title bodyMedium16px">
+              {{ level.name }} 퀴즈 맞히기
+            </div>
+            <div class="level-subtitle bodyLight12px">
+              정답률 {{ getCorrectRate(level.key) }}% · 남은 퀴즈
+              {{ getRemainingCount(level.key) }}개
+            </div>
+          </div>
+        </div>
+        <button class="btn-quiz bodyMedium16px" @click="goToLevel(level.key)">
+          퀴즈 풀기
+        </button>
+      </div>
+    </section>
+
+    <!-- 완료한 퀴즈-->
+    <section v-if="completedSteps > 0" class="quiz-completed">
+      <div class="completed-header">
+        <div class="icon-wrapper completed-icon">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle cx="12" cy="12" r="12" fill="#cbd5e1" />
+            <path
+              d="M6 12.75L10 16.75L18 8.75"
+              stroke="#475569"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <div class="completed-text bodyMedium14px">
+          완료한 퀴즈 {{ completedSteps }}개
+        </div>
+        <button class="btn-completed" @click="goToRandomCompletedQuiz">
+          &gt;
+        </button>
+      </div>
+    </section>
+
+    <CustomModal
+      :modelValue="modalVisible"
+      :message="modalMessage"
+      confirmText="OK"
+      @update:modelValue="modalVisible = $event"
+      @confirm="modalVisible = false"
+      @cancel="modalVisible = false"
+    />
   </div>
 </template>
 
 <script setup>
-const rowCount = 20;
-const colCount = 5;
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
 
-function createQuizRows() {
-  const rows = [];
-  for (let r = 0; r < rowCount; r++) {
-    const row = [];
-    for (let c = 0; c < colCount; c++) {
-      let number;
-      if (r % 2 === 0) {
-        // 홀수줄은 정방향
-        number = r * colCount + c + 1;
-      } else {
-        // 짝수줄은 역방향
-        number = (r + 1) * colCount - c;
-      }
-      // 가로 점선은 현재 row에서 마지막 칸이 아니면 true
-      const rightLine = c < colCount - 1;
-      // 세로 점선은 홀수줄 마지막칸 or 짝수줄 첫번째칸
-      const downLine = (r < rowCount - 1) &&
-        ((r % 2 === 0 && c === colCount - 1) || (r % 2 === 1 && c === 0));
-      row.push({ number, rightLine, downLine });
-    }
-    rows.push(row);
+import level1 from '@/assets/icons/level_1.png';
+import level2 from '@/assets/icons/level_2.png';
+import level3 from '@/assets/icons/level_3.png';
+
+import quiz from '@/assets/icons/quiz.png';
+
+import CustomModal from '@/components/modal/CustomModal.vue';
+
+const router = useRouter();
+const authStore = useAuthStore();
+const userId = computed(() => authStore.user?.userId || null);
+
+const quizList = ref([]);
+const userQuizStatus = ref([]);
+const modalVisible = ref(false);
+const modalMessage = ref('');
+const isLoading = ref(true);
+
+async function fetchData() {
+  isLoading.value = true;
+  try {
+    const [quizRes, statusRes] = await Promise.all([
+      axios.get('http://localhost:8080/api/quiz/getQuiz'),
+      axios.get(`http://localhost:8080/api/quiz/user/${userId.value}`),
+    ]);
+    quizList.value = quizRes.data;
+    userQuizStatus.value = statusRes.data;
+  } catch (err) {
+    console.error('데이터 불러오기 실패:', err);
+  } finally {
+    isLoading.value = false;
   }
-  return rows;
 }
-const quizRows = createQuizRows();
+
+watch(
+  userId,
+  (val) => {
+    if (val) fetchData();
+  },
+  { immediate: true }
+);
+
+const levels = [
+  { key: '초급', name: '초급' },
+  { key: '중급', name: '중급' },
+  { key: '고급', name: '고급' },
+];
+
+const levelIcons = {
+  초급: level1,
+  중급: level2,
+  고급: level3,
+};
+
+const quizzesByLevel = computed(() => {
+  const grouped = { 초급: [], 중급: [], 고급: [] };
+  quizList.value.forEach((quiz) => {
+    if (grouped[quiz.level]) grouped[quiz.level].push(quiz);
+  });
+  return grouped;
+});
+
+function getCorrectRate(level) {
+  const quizzes = quizzesByLevel.value[level] || [];
+  if (quizzes.length === 0) return 0;
+
+  const solvedQuizzes = quizzes.filter((q) =>
+    userQuizStatus.value.some(
+      (s) => s.quizId === q.number && s.isCorrect === true
+    )
+  );
+
+  return Math.round((solvedQuizzes.length / quizzes.length) * 100);
+}
+
+function getRemainingCount(level) {
+  const quizzes = quizzesByLevel.value[level] || [];
+  if (quizzes.length === 0) return 0;
+
+  const solvedCount = quizzes.filter((q) =>
+    userQuizStatus.value.some((s) => s.quizId === q.number)
+  ).length;
+
+  return quizzes.length - solvedCount;
+}
+
+const totalRemaining = computed(() => {
+  return (
+    quizList.value.length -
+    userQuizStatus.value.filter((s) => s.isSolved).length
+  );
+});
+
+const completedSteps = computed(
+  () => userQuizStatus.value.filter((s) => s.isSolved).length
+);
+
+const progressPercent = computed(() => {
+  if (quizList.value.length === 0) return 0;
+  return Math.round((completedSteps.value / quizList.value.length) * 100);
+});
+
+function showModal(message) {
+  modalMessage.value = message;
+  modalVisible.value = true;
+}
+
+function goToLevel(level) {
+  const quizzes = quizzesByLevel.value[level] || [];
+  if (quizzes.length === 0) {
+    showModal('해당 레벨에 퀴즈가 없습니다.');
+    return;
+  }
+
+  const incompleteQuizzes = quizzes.filter(
+    (quiz) =>
+      !userQuizStatus.value.some(
+        (status) => status.quizId === quiz.number && status.isSolved
+      )
+  );
+
+  if (incompleteQuizzes.length === 0) {
+    showModal('해당 레벨의 퀴즈를 모두 완료했습니다.');
+    return;
+  }
+
+  const randomQuiz =
+    incompleteQuizzes[Math.floor(Math.random() * incompleteQuizzes.length)];
+  router.push(`/quiz/${randomQuiz.number}`);
+}
+
+const completedQuizzes = computed(() =>
+  userQuizStatus.value.filter((s) => s.isSolved)
+);
+
+function goToRandomCompletedQuiz() {
+  if (completedQuizzes.value.length === 0) {
+    showModal('No completed quizzes available.');
+    return;
+  }
+  const randomQuiz =
+    completedQuizzes.value[
+      Math.floor(Math.random() * completedQuizzes.value.length)
+    ];
+  router.push(`/quiz/${randomQuiz.quizId}`);
+}
 </script>
 
 <style scoped>
-.quiz-main-area {
-  min-height: 100vh;
-  background: var(--color-white);
-  box-sizing: border-box;
-  padding: 1.2rem 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
+.quiz-root {
+  max-width: 380px;
+  margin: 10px auto;
+  padding: 16px 24px;
+  background: #fff;
+  border-radius: 20px;
+  color: var(--color-primary);
 }
-.quiz-grid {
+
+.quiz-summary {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 30px;
+  background-color: #f0f4ff;
+  padding: 36px 20px;
+  border-radius: 16px;
+  border: 1px solid #d0d4e6;
+}
+
+.icon-container {
+  width: 48px;
+  height: 48px;
+}
+
+.summary-text {
+  flex-grow: 1;
+}
+
+.completed-steps {
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.remaining-puzzles {
+  margin-bottom: 8px;
+  color: #1b264f;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #d0d4e6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+  border-radius: 8px;
+}
+
+.quiz-levels {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  row-gap: 20px;
-  width: max-content;
-  margin: 0 auto;
+  gap: 2rem;
 }
-.quiz-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  column-gap: 14px;
+
+.level-group {
+  border-left: 4px solid var(--color-primary);
+  padding-left: 1rem;
 }
-.quiz-cell-wrap {
-  position: relative;
+
+.level-header {
   display: flex;
   align-items: center;
+  gap: 1rem;
+  margin-bottom: 20px;
+}
+
+.icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background: #d4d8f2;
+  border-radius: 50%;
+  display: flex;
   justify-content: center;
-  width: 54px;
-  height: 54px;
-  background: none;
-}
-.quiz-cell {
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  background: rgba(17, 31, 92, 0.05);
-  border-radius: 20px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--color-primary);
-  position: relative;
-  z-index: 2;
-  margin: 0 auto;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: box-shadow 0.16s;
   user-select: none;
 }
-.quiz-cell:hover {
+
+.level-icon {
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.btn-quiz {
+  width: 100%;
+  padding: 8px 0;
+  border-radius: 10px;
+  background-color: var(--color-primary);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-quiz:hover {
+  background-color: #0d174b;
+}
+
+.quiz-completed {
+  margin-top: 30px;
+}
+
+.completed-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
   color: var(--color-primary);
-  background: rgba(17, 31, 92, 0.2);
 }
 
-/* 가로 점선: 오른쪽 */
-.quiz-dash-horizontal {
-  position: absolute;
-  right: -14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 14px;
-  height: 0;
-  border-top: 3px dashed var(--color-primary);
-  z-index: 1;
-  pointer-events: none;
+.completed-icon {
+  background: #cbd5e1;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* 세로 점선: 아래 */
-.quiz-dash-vertical {
-  position: absolute;
-  bottom: -19px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 19px;
-  border-left: 3px dashed var(--color-primary);
-  z-index: 1;
-  pointer-events: none;
+.btn-completed {
+  background: none;
+  border: none;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  color: var(--color-primary);
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.btn-completed:hover {
+  color: #111f5c;
 }
 </style>
