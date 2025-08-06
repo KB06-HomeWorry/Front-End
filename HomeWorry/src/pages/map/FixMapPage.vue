@@ -69,15 +69,6 @@
       @zoom-out="zoomOut"
       @move-current-location="moveToCurrentLocation"
     />
-
-    <!-- 현재 동 시세 상단 고정 -->
-    <div style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index:101;">
-      <MarketPrice
-        v-if="currentDong && currentDongPrice && currentDongPrice !== '0'"
-        :location="currentDong"
-        :price="currentDongPrice"
-      />
-    </div>
   </div>
 </template>
 
@@ -349,7 +340,6 @@ const coor2address = (coordinate) => {
 function toggleListings() {
   isListingsVisible.value = !isListingsVisible.value;
 }
-
 const currentDongPrice = computed(() => {
   const found = dongMarkers.value.find(m => m.dongName === currentDong.value);
   return found ? found.price : '0';
