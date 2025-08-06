@@ -47,6 +47,7 @@ import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import bookmarkIcon from '@/assets/icons/my_bookmark.png'
+import listingbookmarkIcon from '@/assets/icons/my_listing.png'
 import noticeIcon from '@/assets/icons/my_notice.png'
 import privacyIcon from '@/assets/icons/my_privacy.png'
 import changepwIcon from '@/assets/icons/my_change_password.png'
@@ -104,7 +105,7 @@ const handleDeleteClick = () => {
 // 메뉴 구성
 const menuList = computed(() => [
   { icon: bookmarkIcon, label: '저장된 중개사무소 목록', onClick: goToAgencyBookmark },
-  { icon: bookmarkIcon, label: '저장된 매물 목록', onClick: goToListingBookmark },
+  { icon: listingbookmarkIcon, label: '저장된 매물 목록', onClick: goToListingBookmark },
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
   { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },

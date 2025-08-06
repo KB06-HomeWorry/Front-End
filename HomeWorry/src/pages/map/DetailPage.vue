@@ -85,8 +85,8 @@ import roomImg from '@/assets/icons/room.png';
 import DetailLocation from '@/pages/map/components/DetailLocation.vue';
 import DetailAgency from '@/pages/map/components//DetailAgency.vue';
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
-import bookmarkOn from '@/assets/icons/star_filled.png'
-import bookmarkOff from '@/assets/icons/star_outline.png'
+import bookmarkOn from '@/assets/icons/heart_filled.png'
+import bookmarkOff from '@/assets/icons/heart_outline.png'
 
 const router = useRouter();
 const route = useRoute();
@@ -191,8 +191,8 @@ function scrollTo(section) {
   padding-right: 2px;
 }
 .bookmark-icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: block;
 }
 
