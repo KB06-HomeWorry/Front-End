@@ -10,15 +10,18 @@
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
           v-for="(listing, idx) in pagedList"
-          :key="listing.listingId"
-          :id="listing.listingId"
-          :title="listing.listingName"
+          :key="listing.id"
+          :id="listing.id"
+          :transactionType="listing.transactionType"
+          :deposit="listing.deposit"
+          :monthlyRent="listing.monthlyRent"
           :address="listing.address"
-          :imgUrl="listing.thumbnail"
-          :price="listing.price"
+          :housingType="listing.housingType"
+          :areaInfo="listing.areaInfo"
+          :floorInfo="listing.floorInfo"
+          :direction="listing.direction"
           :isFavorite="true"
           :onToggleFavorite="toggleFavorite"
-          :img="sampleImgs[idx % sampleImgs.length]"
         />
       </div>
       <div v-else class="empty-msg bodyMedium20px">
@@ -71,7 +74,7 @@ onMounted(() => {
 async function fetchListingList(){
   try {
     // 북마크 된 매물 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/listing/${userToken}/favorite`)
+    const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
     listings.value = res.data
   } catch (e) {
     alert('찜한 매물 목록을 불러오지 못했습니다.')
@@ -98,7 +101,7 @@ const sortedList = computed(() => {
   if (sortBy.value === 'price') {
     return list.sort((a, b) => Number(a.price) - Number(b.price))
   }
-  return list.sort((a, b) => a.listingName.localeCompare(b.listingName, 'ko'))
+  return list.sort((a, b) => a.address.localeCompare(b.address, 'ko'))
 })
 
 const totalPages = computed(() =>
@@ -123,10 +126,10 @@ async function toggleFavorite(id, isFavorite) {
   try {
     if (isFavorite) {
       // [북마크 해제]
-      await axios.delete(`/api/listing/${userToken}/favorite/${id}`)
+      await axios.delete(`/api/listing/${id}/disFavorite/${userToken}`)
     } else {
       // [북마크 등록]
-      await axios.get(`/api/listing/${userToken}/favorite/${id}`)
+      await axios.get(`/api/listing/${id}/favorite/${userToken}`)
     }
   } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')
