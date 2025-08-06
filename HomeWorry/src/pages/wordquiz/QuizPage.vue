@@ -1,6 +1,6 @@
 <template>
   <div class="quiz-root">
-    <div v-if="isLoading" class="quiz-loading">로딩중...</div>
+    <LoadingAnimation v-if="isLoading" />
     <div v-else-if="loadError" class="quiz-error">{{ loadError }}</div>
     <template v-else>
       <OXQuizBox
@@ -33,10 +33,13 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
+
 import OXQuizBox from '@/pages/wordquiz/components/OXQuizBox.vue';
 import SelectQuizBox from '@/pages/wordquiz/components/SelectQuizBox.vue';
 import AnswerModal from '@/pages/wordquiz/components/AnswerModal.vue';
-import { useAuthStore } from '@/stores/auth';
+
+import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -101,11 +104,14 @@ function handleModalClose() {
 <style scoped>
 .quiz-root {
   width: 100%;
-  margin: 7rem 2rem;
-  min-height: 100vh;
+  margin: 7rem 0rem;
   padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
-.quiz-loading,
+
 .quiz-error {
   text-align: center;
   margin-top: 5rem;

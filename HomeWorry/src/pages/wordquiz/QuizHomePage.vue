@@ -1,5 +1,7 @@
 <template>
   <div class="quiz-root">
+    <LoadingAnimation v-if="isLoading" />
+    <div v-else-if="loadError" class="quiz-error">{{ loadError }}</div>
     <!-- 전체 퀴즈 상태 -->
     <section class="quiz-summary" v-if="quizList.length">
       <div class="icon-container">
@@ -99,10 +101,10 @@ import { useAuthStore } from '@/stores/auth';
 import level1 from '@/assets/icons/level_1.png';
 import level2 from '@/assets/icons/level_2.png';
 import level3 from '@/assets/icons/level_3.png';
-
 import quiz from '@/assets/icons/quiz.png';
 
 import CustomModal from '@/components/modal/CustomModal.vue';
+import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -383,5 +385,11 @@ function goToRandomCompletedQuiz() {
 
 .btn-completed:hover {
   color: #111f5c;
+}
+
+.quiz-error {
+  text-align: center;
+  margin-top: 5rem;
+  color: var(--color-primary);
 }
 </style>
