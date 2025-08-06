@@ -42,6 +42,7 @@ export default [
   {
   path: '/listing/:listingId',
   name: 'listingDetail',
-  component: () => import('@/pages/map/DetailPage.vue')
+  component: () => import('@/pages/map/DetailPage.vue'),
+  meta: { hideHeader: true }
 },
 ];

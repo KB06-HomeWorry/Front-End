@@ -5,12 +5,12 @@
         <button
           class="bookmark-btn"
           @click="toggleBookmark"
-          aria-label="찜"
-          :title="isFavorite ? '찜 해제' : '찜하기'"
+          aria-label="북마크"
+          :title="isFavorite ? '북마크 해제' : '북마크 등록'"
         >
           <img
             :src="isFavorite ? bookmarkOn : bookmarkOff"
-            alt="찜"
+            alt="북마크"
             class="bookmark-icon"
           />
         </button>
@@ -127,16 +127,16 @@ async function fetchFavoriteStatus() {
 async function toggleBookmark() {
   try {
     if (isFavorite.value) {
-      // [찜 해제]
+      // [북마크 해제]
       await axios.delete(`/api/agent/${userToken}/favorite/${office_id}`)
       isFavorite.value = false
     } else {
-      // [찜 등록]
+      // [북마크 등록]
       await axios.get(`/api/agent/${userToken}/favorite/${office_id}`)
       isFavorite.value = true
     }
   } catch (e) {
-    alert('찜 처리 중 오류가 발생했습니다.')
+    alert('북마크 처리 중 오류가 발생했습니다.')
   }
 }
 
@@ -170,7 +170,7 @@ onMounted(async () => {
     const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
     reviews.value = res_reviews.data
 
-    // 중개사 찜 여부 조회
+    // 중개사 북마크 여부 조회
     await fetchFavoriteStatus()    
   } catch (e) {
     alert('중개사무소 정보를 불러오지 못했습니다.')
@@ -283,7 +283,7 @@ const goToReviewPage = () => {
 
 .hashtags {
   display: flex;
-  justify-content: center;    /* 중앙정렬 */
+  justify-content: center; 
   gap: 6px;
   margin-top: 12px;
   flex-wrap: wrap;    

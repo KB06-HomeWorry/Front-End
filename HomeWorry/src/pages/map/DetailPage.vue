@@ -1,9 +1,33 @@
 <template>
   <div>
-    <img :src="roomImg" alt="매물 이미지" style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"/>
+    <SimpleHeader title="매물 상세페이지">
+      <template #action>
+        <button
+          class="bookmark-btn"
+          @click="toggleBookmark"
+          aria-label="북마크"
+          :title="isFavorite ? '북마크 해제' : '북마크 등록'"
+        >
+          <img
+            :src="isFavorite ? bookmarkOn : bookmarkOff"
+            alt="북마크"
+            class="bookmark-icon"
+          />
+        </button>
+      </template>
+    </SimpleHeader>    
+    <img
+      :src="roomImg"
+      alt="매물 이미지"
+      style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"
+    />
     <section>
-        <div><span class="buildname bodyMedium16px">{{ buildingName }}</span></div>
-        <div><span class="price titleBold20px">{{ price }}</span></div>
+      <div>
+        <span class="buildname bodyMedium16px">{{ buildingName }}</span>
+      </div>
+      <div>
+        <span class="price titleBold20px">{{ price }}</span>
+      </div>
     </section>
 
     <div class="section-bar">
@@ -14,27 +38,22 @@
     <section ref="listing">
       <div class="location-info-card">
         <div class="menu-list titleBold20px">매물정보</div>
-
         <div class="info-row">
           <div class="info-label bodyMedium16px">거래방식</div>
           <div class="info-value bodyMedium14px">{{ price }}</div>
         </div>
-
         <div class="info-row">
           <div class="info-label bodyMedium16px">건물형태</div>
           <div class="info-value bodyMedium14px">{{ housingType }}</div>
         </div>
-
         <div class="info-row">
           <div class="info-label bodyMedium16px">전용/계약면적</div>
           <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
         </div>
-
         <div class="info-row">
           <div class="info-label bodyMedium16px">해당층/전체층</div>
           <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
         </div>
-
         <div class="info-row">
           <div class="info-label bodyMedium16px">방향</div>
           <div class="info-value bodyMedium14px">{{ direction }}</div>
@@ -43,7 +62,7 @@
     </section>
     <hr class="full-width-hr" />
     <section ref="location">
-      <DetailLocation/>
+      <DetailLocation />
     </section>
     <KakaoMap
       v-if="lat && lng"
@@ -55,7 +74,7 @@
       <KakaoMapMarker :lat="lat" :lng="lng" />
     </KakaoMap>
   </div>
-  <section ref="agency"></section>
+  <section ref="agency"> </section>
 </template>
 
 <script setup>
@@ -63,8 +82,11 @@ import { useRoute, useRouter } from 'vue-router';
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
 import { ref, onMounted } from 'vue';
 import roomImg from '@/assets/icons/room.png';
-import DetailLocation from './components/DetailLocation.vue';
-import DetailAgency from './components/DetailAgency.vue';
+import DetailLocation from '@/pages/map/components/DetailLocation.vue';
+import DetailAgency from '@/pages/map/components//DetailAgency.vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import bookmarkOn from '@/assets/icons/star_filled.png'
+import bookmarkOff from '@/assets/icons/star_outline.png'
 
 const router = useRouter();
 const route = useRoute();
@@ -81,25 +103,52 @@ const areaInfo = ref('');
 const direction = ref('');
 
 const activeSection = ref('deal');
-const currentLocation = ref({ lat: null, lng: null });
+const isFavorite = ref(false);
+const userToken = localStorage.getItem('user-token');
+
+// 매물 id는 params로 받아옴
+const listingId = route.params.listingId;
+
+// 북마크 여부 조회
+async function fetchFavoriteStatus() {
+  try {
+    const res = await fetch(`/api/listing/${userToken}/isFavorite/${listingId}`);
+    isFavorite.value = await res.json();
+  } catch {
+    isFavorite.value = false;
+  }
+}
+
+// 북마크 토글
+async function toggleBookmark() {
+  try {
+    if (isFavorite.value) {
+      await fetch(`/api/listing/${userToken}/favorite/${listingId}`, { method: 'DELETE' });
+      isFavorite.value = false;
+    } else {
+      await fetch(`/api/listing/${userToken}/favorite/${listingId}`);
+      isFavorite.value = true;
+    }
+  } catch {
+    alert('북마크 처리 중 오류가 발생했습니다.');
+  }
+}
 
 // 쿼리가 아니라 params에서 id 받아오는 것으로 수정
 onMounted(async () => {
-  const id = route.params.listingId; // ex) /listing/1 이면 listingId=1
+  const id = listingId;
   if (!id) {
     console.error('❌ id 없음');
     return;
   }
 
   try {
-    // source 분기 없이 매물 상세 엔드포인트로 단일 처리하였음
     const endpoint = `/api/listing/${id}`;
     const response = await fetch(endpoint);
     const data = await response.json();
 
     lat.value = data.latitude;
     lng.value = data.longitude;
-
     price.value = data.monthlyRent
       ? `월세 ${data.deposit}/${data.monthlyRent}`
       : `전세 ${data.deposit}`;
@@ -111,6 +160,8 @@ onMounted(async () => {
     areaInfo.value = data.areaInfo;
     direction.value = data.direction;
 
+    // 북마크 상태 불러오기
+    await fetchFavoriteStatus();
   } catch (error) {
     console.error('❌ 상세정보 로딩 실패:', error);
   }
@@ -129,6 +180,22 @@ function scrollTo(section) {
 </script>
 
 <style scoped>
+.bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 2px;
+}
+.bookmark-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
 .section-bar {
   display: flex;
   justify-content: space-around;
@@ -145,6 +212,7 @@ function scrollTo(section) {
   color: var(--color-white);
   border-radius: 6px;
 }
+
 .location-header {
   display: flex;
   justify-content: space-between;
@@ -158,12 +226,8 @@ function scrollTo(section) {
   max-width: 420px;
   margin: 0 auto;
 }
-.section-title {
-  font-size: 20px;
-  font-weight: bold;
-  color: var(--color-primary);
-  margin-bottom: 8px;
-}
+
+
 /* 좌측 라벨 / 우측 값 2열 배치 */
 .info-row {
   display: flex;
@@ -182,11 +246,11 @@ function scrollTo(section) {
   flex-shrink: 0;
 }
 .info-value {
-  font-weight: 600;
   text-align: right;
   flex: 1;
   word-break: keep-all;
 }
+
 /* 카드 너비(원하면 전체 너비로) */
 .location-info-card {
   background-color: var(--color-white);
@@ -195,6 +259,7 @@ function scrollTo(section) {
   margin: 0;
   box-sizing: border-box;
 }
+
 /* 아래 구분선 */
 .full-width-hr {
   border: none;
