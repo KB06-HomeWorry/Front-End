@@ -49,7 +49,7 @@
             <div
               v-for="(result, sectionIndex) in pageResults"
               :key="sectionIndex"
-              @click="handleSectionClick(result)"
+              @click="handleSectionClick(result, pageIndex)"
               :class="[
                 'zone-mark',
                 result.isRisky ? 'danger-zone' : 'safe-zone',
@@ -119,8 +119,9 @@ const totalRiskySectionsCount = computed(() =>
 );
 const pageRiskCount = (pageResults) =>
   pageResults.filter((r) => r.isRisky).length;
-const handleSectionClick = (result) => {
-  emit('selectSection', result);
+
+const handleSectionClick = (result, pageIndex) => {
+  emit('selectSection', result, pageIndex);
 };
 </script>
 

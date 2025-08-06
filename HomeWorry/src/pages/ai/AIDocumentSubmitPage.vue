@@ -141,11 +141,14 @@ const handleReset = () => {
   );
 };
 
-const selectSection = (result) => {
+const selectSection = (result, pageIndex) => {
   if (result.isRisky) {
     selectedSection.value = {
       ...result,
       details: result.text,
+      page: pageIndex + 1,
+      title: '',
+      recommendation: '',
     };
   }
 };
