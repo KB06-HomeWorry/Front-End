@@ -22,4 +22,13 @@ export default [
       requiresAuth: true
      }
   },
+  {
+    path: '/my/listing/bookmark',
+    name: 'my-map-bookmark',
+    component: () => import('../pages/mypage/ListingBookmark.vue'),
+    meta: { 
+      hideHeader: true,
+      requiresAuth: true
+     }
+  },
 ];

@@ -39,4 +39,10 @@ export default [
     name: 'mapdetail',
     component: () => import('../pages/map/DetailPage.vue'),
   },
+  {
+  path: '/listing/:listingId',
+  name: 'listingDetail',
+  component: () => import('@/pages/map/DetailPage.vue'),
+  meta: { hideHeader: true }
+},
 ];
