@@ -9,7 +9,7 @@
       </div>
 
       <div v-if="pagedList.length > 0" class="agency-list-grid">
-        <BookmarkCard
+        <AgencyBookmarkCard
           v-for="(agency, idx) in pagedList"
           :key="agency.officeId"
           :id="agency.officeId"
@@ -21,7 +21,7 @@
           :img="sampleImgs[idx % sampleImgs.length]"
         />
       </div>
-      <div v-else class="empty-msg">
+      <div v-else class="empty-msg bodyMedium20px">
         북마크 된 중개사무소가 없습니다.
       </div>
 
@@ -46,7 +46,7 @@
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
-import BookmarkCard from '@/pages/mypage/components/BookmarkCard.vue'
+import AgencyBookmarkCard from '@/pages/mypage/components/AgencyBookmarkCard.vue'
 import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
 import SortSelect from '@/pages/agency/components/SortSelect.vue'
 import profile1 from '@/assets/icons/sample_profile1.png'
@@ -71,11 +71,11 @@ onMounted(() => {
 
 async function fetchAgencyList(){
   try {
-    // 찜 목록 조회
+    // 북마크 목록 조회
     const res = await axios.get(`http://localhost:8080/api/agent/${userToken}/favorite`)
     agencies.value = res.data
   } catch (e) {
-    alert('찜 목록을 불러오지 못했습니다.')
+    alert('북마크 목록을 불러오지 못했습니다.')
   }
 }
 
@@ -120,14 +120,14 @@ function goToPage(p) {
 async function toggleFavorite(id, isFavorite) {
   try {
     if (isFavorite) {
-      // [찜 해제]
+      // [북마크 해제]
       await axios.delete(`/api/agent/${userToken}/favorite/${id}`)
     } else {
-      // [찜 등록]
+      // [북마크 등록]
       await axios.get(`/api/agent/${userToken}/favorite/${id}`)
     }
   } catch (e) {
-    alert('찜 처리 중 오류가 발생했습니다.')
+    alert('북마크 처리 중 오류가 발생했습니다.')
   } finally {
     fetchAgencyList()
   }
@@ -162,9 +162,8 @@ async function toggleFavorite(id, isFavorite) {
 }
 .empty-msg {
   text-align: center;
-  color: var(--color-mediumgray, #a7a7a7);
+  color: var(--color-mediumgray);
   margin: 50px 0 0 0;
-  font-size: 16px;
 }
 
 .pagination {
