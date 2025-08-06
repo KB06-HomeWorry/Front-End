@@ -12,6 +12,8 @@
             ? '서류 분석'
             : showChecklistTitle
             ? `${type} 계약 체크리스트`
+            : isQuizPage
+            ? '부동산 용어 퀴즈'
             : '집걱정단'
         "
       />
@@ -130,6 +132,7 @@ const isEstateEasePage = computed(() =>
 const isAnalysisPage = computed(() => route.path.startsWith('/analysis'));
 const isHomePage = computed(() => route.path === '/');
 const isAgentPage = computed(() => route.path.startsWith('/agency/list'));
+const isQuizPage = computed(() => route.path.startsWith('/quiz'));
 
 const goToLogin = () => {
   router.push('/auth/login');
