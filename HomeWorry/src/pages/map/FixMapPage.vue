@@ -56,16 +56,6 @@
           :y-anchor="1.4"
         >
         <ListingMarkers :marker="marker"/>
-
-          <!-- <div
-            class="custom-overlay text-white"
-            style="background-color: var(--color-primary)"
-            @click="console.log(marker.areaInfo2)"
-          >
-            {{ marker.areaInfo2 || '-' }}평
-            <span v-if="marker.transactionType">| {{ marker.transactionType }}</span>
-            <span v-if="marker.housingType">| {{ marker.housingType }}</span>
-          </div> -->
         </KakaoMapCustomOverlay>
       </template>
     </KakaoMap>
@@ -374,15 +364,5 @@ function zoomOut() {
 }
 </script>
 
-<style>
-.custom-overlay {
-  padding: 5px 10px;
-  background-color: var(--color-secondarylight);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-  pointer-events: auto;
-}
+<style scoped>
 </style>
