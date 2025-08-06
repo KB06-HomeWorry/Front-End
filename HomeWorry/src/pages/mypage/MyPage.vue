@@ -88,7 +88,8 @@ const showPwModal = ref(false)
 const deleteMode = ref(false)
 
 // 메뉴 클릭 핸들러
-const goToBookmark = () => router.push('/my/agency/bookmark')
+const goToAgencyBookmark = () => router.push('/my/agency/bookmark')
+const goToListingBookmark = () => router.push('/my/listing/bookmark')
 const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/my/privacy')
 const handleChangePwClick = () => {
@@ -100,40 +101,10 @@ const handleDeleteClick = () => {
   deleteMode.value = true
 }
 
-// // 회원탈퇴 처리
-// const handleDeleteClick = async () => {
-//   if (loading.value) return
-//   loading.value = true
-//   const ok = confirm('정말로 회원을 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제됩니다.')
-//   if (!ok) {
-//     loading.value = false
-//     return
-//   }
-
-//   try {
-//     await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
-//     alert('회원탈퇴가 완료되었습니다.');
-//     // 사용자 인증정보 제거 후, 로그인 페이지 또는 메인으로 이동
-//     router.replace('/auth/login');
-//   } catch (err) {
-//     alert(
-//       err.response?.data?.message ||
-//       '회원탈퇴에 실패했습니다. 잠시 후 다시 시도해주세요.'
-//     )
-//   } finally {
-//     loading.value = false
-//   }
-// }
-
-// // 모달에서 인증 성공시 콜백
-// function onPwModalSuccess(token) {
-//   // 토큰 받아서 change-password로 이동 (token 쿼리로 전달)
-//   router.push(`/auth/change-password?token=${encodeURIComponent(token)}`)
-// }
-
 // 메뉴 구성
 const menuList = computed(() => [
-  { icon: bookmarkIcon, label: '저장된 중개사무소 목록', onClick: goToBookmark },
+  { icon: bookmarkIcon, label: '저장된 중개사무소 목록', onClick: goToAgencyBookmark },
+  { icon: bookmarkIcon, label: '저장된 매물 목록', onClick: goToListingBookmark },
   { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
   { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
