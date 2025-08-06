@@ -10,12 +10,13 @@
         >
           <img
             :src="isFavorite ? bookmarkOn : bookmarkOff"
+            :class="['bookmark-icon', { pop: heartAnim }]"
+            @animationend="heartAnim = false"
             alt="북마크"
-            class="bookmark-icon"
           />
         </button>
       </template>
-    </SimpleHeader>    
+    </SimpleHeader>
     <img
       :src="roomImg"
       alt="매물 이미지"
@@ -78,104 +79,110 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
-import { ref, onMounted } from 'vue';
-import roomImg from '@/assets/icons/room.png';
-import DetailLocation from '@/pages/map/components/DetailLocation.vue';
-import DetailAgency from '@/pages/map/components//DetailAgency.vue';
+import { useRoute, useRouter } from 'vue-router'
+import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
+import { ref, onMounted } from 'vue'
+import roomImg from '@/assets/icons/room.png'
+import DetailLocation from '@/pages/map/components/DetailLocation.vue'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import bookmarkOn from '@/assets/icons/heart_filled.png'
 import bookmarkOff from '@/assets/icons/heart_outline.png'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
-const lat = ref(null);
-const lng = ref(null);
-const price = ref('');
-const buildingName = ref('');
-const deposit = ref('');
-const rent = ref('');
-const housingType = ref('');
-const floorInfo = ref('');
-const areaInfo = ref('');
-const direction = ref('');
+const lat = ref(null)
+const lng = ref(null)
+const price = ref('')
+const buildingName = ref('')
+const deposit = ref('')
+const rent = ref('')
+const housingType = ref('')
+const floorInfo = ref('')
+const areaInfo = ref('')
+const direction = ref('')
 
-const activeSection = ref('deal');
-const isFavorite = ref(false);
-const userToken = localStorage.getItem('user-token');
+const activeSection = ref('deal')
+const isFavorite = ref(false)
+const heartAnim = ref(false) // 애니메이션용 변수
+const userToken = localStorage.getItem('user-token')
 
 // 매물 id는 params로 받아옴
-const listingId = route.params.listingId;
+const listingId = route.params.listingId
 
 // 북마크 여부 조회
 async function fetchFavoriteStatus() {
   try {
-    const res = await fetch(`/api/listing/${userToken}/isFavorite/${listingId}`);
-    isFavorite.value = await res.json();
+    const res = await fetch(`/api/listing/${userToken}/isFavorite/${listingId}`)
+    isFavorite.value = await res.json()
   } catch {
-    isFavorite.value = false;
+    isFavorite.value = false
   }
 }
 
 // 북마크 토글
 async function toggleBookmark() {
+  // 애니메이션
+  heartAnim.value = false
+  // 강제 reflow로 연속클릭시에도 애니 재생
+  void heartAnim.value
+  heartAnim.value = true
+
   try {
     if (isFavorite.value) {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`, { method: 'DELETE' });
-      isFavorite.value = false;
+      await fetch(`/api/listing/${userToken}/favorite/${listingId}`, { method: 'DELETE' })
+      isFavorite.value = false
     } else {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`);
-      isFavorite.value = true;
+      await fetch(`/api/listing/${userToken}/favorite/${listingId}`)
+      isFavorite.value = true
     }
   } catch {
-    alert('북마크 처리 중 오류가 발생했습니다.');
+    alert('북마크 처리 중 오류가 발생했습니다.')
   }
 }
 
 // 쿼리가 아니라 params에서 id 받아오는 것으로 수정
 onMounted(async () => {
-  const id = listingId;
+  const id = listingId
   if (!id) {
-    console.error('❌ id 없음');
-    return;
+    console.error('❌ id 없음')
+    return
   }
 
   try {
-    const endpoint = `/api/listing/${id}`;
-    const response = await fetch(endpoint);
-    const data = await response.json();
+    const endpoint = `/api/listing/${id}`
+    const response = await fetch(endpoint)
+    const data = await response.json()
 
-    lat.value = data.latitude;
-    lng.value = data.longitude;
+    lat.value = data.latitude
+    lng.value = data.longitude
     price.value = data.monthlyRent
       ? `월세 ${data.deposit}/${data.monthlyRent}`
-      : `전세 ${data.deposit}`;
-    buildingName.value = data.listing;
-    deposit.value = data.deposit;
-    rent.value = data.monthlyRent;
-    housingType.value = data.housingType;
-    floorInfo.value = data.floorInfo;
-    areaInfo.value = data.areaInfo;
-    direction.value = data.direction;
+      : `전세 ${data.deposit}`
+    buildingName.value = data.listing
+    deposit.value = data.deposit
+    rent.value = data.monthlyRent
+    housingType.value = data.housingType
+    floorInfo.value = data.floorInfo
+    areaInfo.value = data.areaInfo
+    direction.value = data.direction
 
     // 북마크 상태 불러오기
-    await fetchFavoriteStatus();
+    await fetchFavoriteStatus()
   } catch (error) {
-    console.error('❌ 상세정보 로딩 실패:', error);
+    console.error('❌ 상세정보 로딩 실패:', error)
   }
-});
+})
 
 // section scroll
-const deal = ref(null);
-const listing = ref(null);
-const location = ref(null);
+const deal = ref(null)
+const listing = ref(null)
+const location = ref(null)
 
 function scrollTo(section) {
-  activeSection.value = section;
-  const targetRef = { deal, listing, location }[section];
-  targetRef?.value?.scrollIntoView({ behavior: 'smooth' });
+  activeSection.value = section
+  const targetRef = { deal, listing, location }[section]
+  targetRef?.value?.scrollIntoView({ behavior: 'smooth' })
 }
 </script>
 
@@ -191,16 +198,26 @@ function scrollTo(section) {
   padding-right: 2px;
 }
 .bookmark-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   display: block;
+  transition: filter 0.15s;
+}
+/* 애니메이션 */
+@keyframes pop {
+  0%   { transform: scale(1); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.bookmark-icon.pop {
+  animation: pop 0.28s cubic-bezier(.4,2,.6,1) both;
 }
 
 .section-bar {
   display: flex;
   justify-content: space-around;
   padding: 12px 8px;
-  border-bottom: 1px solid #bdbdbd;
+  border-bottom: 1px solid var(--color-mediumgray);
 }
 .section-btn {
   border: none;
@@ -226,7 +243,6 @@ function scrollTo(section) {
   max-width: 420px;
   margin: 0 auto;
 }
-
 
 /* 좌측 라벨 / 우측 값 2열 배치 */
 .info-row {

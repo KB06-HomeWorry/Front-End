@@ -10,8 +10,9 @@
         >
           <img
             :src="isFavorite ? bookmarkOn : bookmarkOff"
+            :class="['bookmark-icon', { pop: heartAnim }]"
+            @animationend="heartAnim = false"
             alt="북마크"
-            class="bookmark-icon"
           />
         </button>
       </template>
@@ -200,9 +201,19 @@ const goToReviewPage = () => {
   padding-right: 2px;
 }
 .bookmark-icon {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
   display: block;
+  transition: filter 0.15s;
+}
+/* 팡! 애니메이션 */
+@keyframes pop {
+  0%   { transform: scale(1); }
+  60%  { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+.bookmark-icon.pop {
+  animation: pop 0.28s cubic-bezier(.4,2,.6,1) both;
 }
 
 .agency-profile-wrap {
