@@ -11,6 +11,7 @@
         @update:minPyeong="val => minPyeong = val"
         @update:maxPyeong="val => maxPyeong = val"
         @update:sheet-open="val => isBottomSheetOpen = val"
+        @search="onSearchLocation"
       />
       <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
     </div>
@@ -348,6 +349,7 @@ const coor2address = (coordinate) => {
 function toggleListings() {
   isListingsVisible.value = !isListingsVisible.value;
 }
+
 const currentDongPrice = computed(() => {
   const found = dongMarkers.value.find(m => m.dongName === currentDong.value);
   return found ? found.price : '0';
@@ -363,6 +365,30 @@ function zoomOut() {
     mapInstance.value.setLevel(mapInstance.value.getLevel() + 1);
   }
 }
+
+function onSearchLocation(keyword) {
+  if (!keyword) return;
+  const geocoder = new window.kakao.maps.services.Places();
+  geocoder.keywordSearch(keyword, (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+      const place = result[0];
+      const latNum = parseFloat(place.y);
+      const lngNum = parseFloat(place.x);
+      if (mapInstance.value) {
+        const center = new window.kakao.maps.LatLng(latNum, lngNum);
+        mapInstance.value.setCenter(center);
+        mapInstance.value.setLevel(4); 
+        lat.value = latNum;
+        lng.value = lngNum;
+        mapCenter.value = { lat: latNum, lng: lngNum };
+        coor2address({ lat: latNum, lng: lngNum });
+      }
+    } else {
+      alert('검색 결과가 없습니다.');
+    }
+  });
+}
+
 </script>
 
 <style scoped>
