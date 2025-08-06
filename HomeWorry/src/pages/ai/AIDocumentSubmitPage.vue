@@ -25,7 +25,10 @@
           <div class="upload-btns">
             <button
               class="btn-sub bodyMedium14px"
-              @click="additionalFileInputRef.value.click()"
+              @click="
+                additionalFileInputRef.value &&
+                  additionalFileInputRef.value.click()
+              "
               type="button"
             >
               <Plus :size="16" class="btn-icon" />
@@ -38,14 +41,6 @@
             >
               전체 삭제
             </button>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              class="hidden"
-              ref="additionalFileInputRef"
-              @change="handleImageChange"
-            />
           </div>
         </div>
 
@@ -72,6 +67,14 @@
           @selectSection="selectSection"
         />
       </template>
+      <input
+        type="file"
+        accept="image/*"
+        multiple
+        class="hidden"
+        ref="additionalFileInputRef"
+        @change="handleImageChange"
+      />
 
       <div v-if="error" class="error-msg bodyLight12px">{{ error }}</div>
     </div>
@@ -85,139 +88,66 @@
 <script setup>
 import { ref } from 'vue';
 import { Plus } from 'lucide-vue-next';
-import { getMockResults } from './mock/analysisMock.js';
+
 import AIFileUpload from './components/AIFileUploadButton.vue';
 import AIUploadList from './components/AIUploadList.vue';
 import AIButtonGroup from './components/AIButtonGroup.vue';
 import AIAnalysisResult from './components/AIAnalysisResult.vue';
 import AIAnalysisDetailModal from './components/AIAnalysisDetailModal.vue';
 
-const images = ref([]);
-const imagePreviews = ref([]);
+import { useOcrAndAnalyze } from './composables/useOcrAndAnalyze';
+import { useFileUpload } from './composables/useFileUpload';
+
+const { isImageFile, isPdfFile, pdfToImages, preprocessImage, analyzeImages } =
+  useOcrAndAnalyze();
+const {
+  images,
+  imagePreviews,
+  error,
+  handleImageChange,
+  removeImage,
+  resetAll,
+  fileInputRef,
+  additionalFileInputRef,
+} = useFileUpload();
+
 const analysisResults = ref([]);
 const isLoading = ref(false);
-const error = ref('');
-const fileInputRef = ref(null);
-const additionalFileInputRef = ref(null);
 const selectedSection = ref(null);
 
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
-
-function isImageFile(file) {
-  return file.type.startsWith('image/');
-}
-
-function isPdfFile(file) {
-  return file.type === 'application/pdf';
-}
-
-async function pdfToImages(file) {
-  const images = [];
-  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() })
-    .promise;
-  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-    const page = await pdf.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.5 });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    await page.render({ canvasContext: context, viewport }).promise;
-    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
-    images.push({
-      file: new File([blob], `${file.name}_page${pageNum}.png`, {
-        type: 'image/png',
-      }),
-      url: URL.createObjectURL(blob),
-    });
-  }
-  return images;
-}
-
-const handleImageChange = async (e) => {
-  const files = Array.from(e.target.files || []);
-  const imageFiles = [];
-  let hasPdf = false;
-  for (const file of files) {
-    if (isImageFile(file)) {
-      imageFiles.push({ file, url: URL.createObjectURL(file) });
-    } else if (isPdfFile(file)) {
-      hasPdf = true;
-      try {
-        const pdfImages = await pdfToImages(file);
-        imageFiles.push(...pdfImages);
-      } catch {
-        error.value = 'PDF 파일 처리 중 오류가 발생했습니다.';
-        continue;
-      }
-    }
-  }
-
-  if (imageFiles.length === 0) {
-    error.value = '이미지 파일(jpg, png 등) 또는 PDF를 선택해주세요.';
-    return;
-  }
-  if (hasPdf) {
-    error.value = '';
-  }
-
-  for (const img of imageFiles) {
-    images.value.push(img.file);
-    imagePreviews.value.push(img.url);
-  }
-  analysisResults.value = [];
-  e.target.value = '';
-};
-
-const removeImage = (index) => {
-  if (imagePreviews.value[index]) {
-    URL.revokeObjectURL(imagePreviews.value[index]);
-  }
-  images.value.splice(index, 1);
-  imagePreviews.value.splice(index, 1);
-  if (analysisResults.value.length > index) {
-    analysisResults.value.splice(index, 1);
-  }
-  error.value = '';
-};
-
 const handleAnalyze = async () => {
-  if (images.value.length === 0) {
-    error.value = '먼저 분석할 계약서 이미지 파일을 업로드해주세요.';
-    return;
-  }
-  isLoading.value = true;
-  analysisResults.value = [];
-  error.value = '';
-  await new Promise((resolve) =>
-    setTimeout(resolve, 2500 + images.value.length * 1000)
+  await analyzeImages(
+    images.value,
+    imagePreviews.value,
+    (errMsg) => {
+      error.value = errMsg;
+    },
+    (results) => {
+      analysisResults.value = results;
+    },
+    (loading) => {
+      isLoading.value = loading;
+    }
   );
-  const allResults = [];
-  for (let i = 0; i < images.value.length; i++) {
-    allResults.push(getMockResults(i));
-  }
-  analysisResults.value = allResults;
-  analysisResults.value = allResults;
-  isLoading.value = false;
 };
 
 const handleReset = () => {
-  imagePreviews.value.forEach((url) => {
-    if (url) URL.revokeObjectURL(url);
-  });
-  images.value = [];
-  imagePreviews.value = [];
-  analysisResults.value = [];
-  isLoading.value = false;
-  error.value = '';
-  selectedSection.value = null;
-  if (fileInputRef.value) fileInputRef.value.value = '';
-  if (additionalFileInputRef.value) additionalFileInputRef.value.value = '';
+  resetAll(
+    fileInputRef,
+    additionalFileInputRef,
+    analysisResults,
+    selectedSection,
+    isLoading
+  );
 };
 
 const selectSection = (result) => {
-  if (result.isRisky) selectedSection.value = result;
+  if (result.isRisky) {
+    selectedSection.value = {
+      ...result,
+      details: result.text,
+    };
+  }
 };
 
 const closeModal = () => {
@@ -313,7 +243,12 @@ const closeModal = () => {
 }
 
 .hidden {
-  display: none;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .error-msg {
