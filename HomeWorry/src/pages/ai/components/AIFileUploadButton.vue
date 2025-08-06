@@ -8,7 +8,7 @@
     </div>
     <input
       type="file"
-      accept="image/*"
+      accept="image/*,application/pdf"
       multiple
       class="hidden"
       ref="fileInputRef"

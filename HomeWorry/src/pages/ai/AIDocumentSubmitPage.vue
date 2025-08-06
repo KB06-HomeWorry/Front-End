@@ -101,26 +101,75 @@ const fileInputRef = ref(null);
 const additionalFileInputRef = ref(null);
 const selectedSection = ref(null);
 
-const handleImageChange = (e) => {
+import * as pdfjsLib from 'pdfjs-dist/build/pdf';
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+
+function isImageFile(file) {
+  return file.type.startsWith('image/');
+}
+
+function isPdfFile(file) {
+  return file.type === 'application/pdf';
+}
+
+async function pdfToImages(file) {
+  const images = [];
+  const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() })
+    .promise;
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const viewport = page.getViewport({ scale: 1.5 });
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: context, viewport }).promise;
+    const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+    images.push({
+      file: new File([blob], `${file.name}_page${pageNum}.png`, {
+        type: 'image/png',
+      }),
+      url: URL.createObjectURL(blob),
+    });
+  }
+  return images;
+}
+
+const handleImageChange = async (e) => {
   const files = Array.from(e.target.files || []);
-  const imageFiles = files.filter((file) => file.type.startsWith('image/'));
+  const imageFiles = [];
+  let hasPdf = false;
+  for (const file of files) {
+    if (isImageFile(file)) {
+      imageFiles.push({ file, url: URL.createObjectURL(file) });
+    } else if (isPdfFile(file)) {
+      hasPdf = true;
+      try {
+        const pdfImages = await pdfToImages(file);
+        imageFiles.push(...pdfImages);
+      } catch {
+        error.value = 'PDF 파일 처리 중 오류가 발생했습니다.';
+        continue;
+      }
+    }
+  }
 
   if (imageFiles.length === 0) {
-    error.value = '이미지 파일(jpg, png 등)을 선택해주세요.';
+    error.value = '이미지 파일(jpg, png 등) 또는 PDF를 선택해주세요.';
     return;
   }
-  if (imageFiles.length !== files.length) {
-    error.value = '이미지 파일이 아닌 파일은 제외되었습니다.';
-  } else {
+  if (hasPdf) {
     error.value = '';
   }
-  imageFiles.forEach((file) => {
-    images.value.push(file);
-    imagePreviews.value.push(URL.createObjectURL(file));
-  });
+
+  for (const img of imageFiles) {
+    images.value.push(img.file);
+    imagePreviews.value.push(img.url);
+  }
   analysisResults.value = [];
   e.target.value = '';
 };
+
 const removeImage = (index) => {
   if (imagePreviews.value[index]) {
     URL.revokeObjectURL(imagePreviews.value[index]);
@@ -132,6 +181,7 @@ const removeImage = (index) => {
   }
   error.value = '';
 };
+
 const handleAnalyze = async () => {
   if (images.value.length === 0) {
     error.value = '먼저 분석할 계약서 이미지 파일을 업로드해주세요.';
@@ -151,6 +201,7 @@ const handleAnalyze = async () => {
   analysisResults.value = allResults;
   isLoading.value = false;
 };
+
 const handleReset = () => {
   imagePreviews.value.forEach((url) => {
     if (url) URL.revokeObjectURL(url);
@@ -164,9 +215,11 @@ const handleReset = () => {
   if (fileInputRef.value) fileInputRef.value.value = '';
   if (additionalFileInputRef.value) additionalFileInputRef.value.value = '';
 };
+
 const selectSection = (result) => {
   if (result.isRisky) selectedSection.value = result;
 };
+
 const closeModal = () => {
   selectedSection.value = null;
 };
@@ -177,11 +230,13 @@ const closeModal = () => {
   margin: 0 auto 18px auto;
   padding: 34px 18px 0 18px;
 }
+
 .ai-title {
   color: var(--color-primary);
   letter-spacing: -0.01em;
   text-align: center;
 }
+
 .main-card {
   max-width: 360px;
   width: 100%;
@@ -192,6 +247,7 @@ const closeModal = () => {
   border: 1px solid #edeef2;
   margin-bottom: 32px;
 }
+
 .uploaded-bar {
   display: flex;
   align-items: center;
@@ -200,17 +256,21 @@ const closeModal = () => {
   border-bottom: 1px solid #eff1f6;
   margin-bottom: 10px;
 }
+
 .uploaded-bar-left {
   color: #222;
 }
+
 .text-blue {
   color: #2956b6;
 }
+
 .upload-btns {
   display: flex;
   gap: 8px;
   align-items: center;
 }
+
 .btn-sub {
   background: #f4f6fa;
   color: #2956b6;
@@ -225,13 +285,16 @@ const closeModal = () => {
   transition: background 0.16s, border 0.16s;
   cursor: pointer;
 }
+
 .btn-sub .btn-icon {
   margin-right: 7px;
 }
+
 .btn-sub:hover {
   background: #eaf1ff;
   border-color: #a5c8ff;
 }
+
 .btn-sub-danger {
   background: #ffe8e6;
   color: #d32f2f;
@@ -243,13 +306,16 @@ const closeModal = () => {
   transition: background 0.14s, border 0.14s;
   cursor: pointer;
 }
+
 .btn-sub-danger:hover {
   background: #ffd8d3;
   border-color: #ffb5b5;
 }
+
 .hidden {
   display: none;
 }
+
 .error-msg {
   color: #e11d48;
   margin-top: 13px;
