@@ -74,8 +74,16 @@
     >
       <KakaoMapMarker :lat="lat" :lng="lng" />
     </KakaoMap>
+    <DetailAgency
+      v-if="agency"
+      :id="agency.id"
+      :name="agency.name"
+      :address="agency.address"
+      :phone="agency.phone"
+      :img="agency.img"
+      :profile-idx="agency.profileIdx"
+    />
   </div>
-  <section ref="agency"> </section>
 </template>
 
 <script setup>
@@ -85,6 +93,7 @@ import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
 import { ref, onMounted } from 'vue'
 import roomImg from '@/assets/icons/room.png'
 import DetailLocation from '@/pages/map/components/DetailLocation.vue'
+import DetailAgency from '@/pages/map/components/DetailAgency.vue'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import bookmarkOn from '@/assets/icons/heart_filled.png'
 import bookmarkOff from '@/assets/icons/heart_outline.png'
@@ -107,6 +116,8 @@ const activeSection = ref('deal')
 const isFavorite = ref(false)
 const heartAnim = ref(false) // 애니메이션용 변수
 const userToken = localStorage.getItem('user-token')
+
+const agency = ref(null) // 중개사 정보 추가
 
 // 매물 id는 params로 받아옴
 const listingId = route.params.listingId
@@ -144,7 +155,6 @@ async function toggleBookmark() {
   }
 }
 
-// 쿼리가 아니라 params에서 id 받아오는 것으로 수정
 onMounted(async () => {
   const id = listingId
   if (!id) {
@@ -153,6 +163,7 @@ onMounted(async () => {
   }
 
   try {
+    // 매물 상세 정보 요청
     const endpoint = `/api/listing/${id}`
     const response = await fetch(endpoint)
     const data = await response.json()
@@ -169,6 +180,21 @@ onMounted(async () => {
     floorInfo.value = data.floorInfo
     areaInfo.value = data.areaInfo
     direction.value = data.direction
+
+    // 중개사무소 이름으로 정보 조회
+    if (data.agencyName) {
+      try {
+        // 예시: /api/agency/by-name?name=중개사이름
+        const agencyRes = await axios.get('/api/agency/by-name', {
+          params: { name: data.agencyName }
+        })
+        agency.value = agencyRes.data
+      } catch (e) {
+        agency.value = null
+      }
+    } else {
+      agency.value = null
+    }
 
     // 북마크 상태 불러오기
     await fetchFavoriteStatus()
