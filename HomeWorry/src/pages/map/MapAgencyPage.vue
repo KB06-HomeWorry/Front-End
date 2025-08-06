@@ -4,27 +4,169 @@
       :lat="lat"
       :lng="lng"
       :level="level"
+      :markerCluster="{
+        customOverlayProps: agencies,
+        calculator: [10, 30, 50],
+
+        texts: ['군자역', '세종대', '김원관', '세종대왕릉'],
+
+        styles: [
+          {
+            width: '30px',
+
+            height: '30px',
+
+            background: 'rgba(80, 240, 195, 0.8)',
+
+            borderRadius: '15px',
+
+            color: '#000',
+
+            textAlign: 'center',
+
+            fontWeight: 'bold',
+
+            lineHeight: '31px',
+          },
+
+          {
+            width: '40px',
+
+            height: '40px',
+
+            background: 'rgba(0, 173, 255, 0.35)',
+
+            borderRadius: '20px',
+
+            color: '#000',
+
+            textAlign: 'center',
+
+            fontWeight: 'bold',
+
+            lineHeight: '41px',
+          },
+
+          {
+            width: '50px',
+
+            height: '50px',
+
+            background: 'rgba(19, 182, 68, 0.71)',
+
+            borderRadius: '25px',
+
+            color: '#000',
+
+            textAlign: 'center',
+
+            fontWeight: 'bold',
+
+            lineHeight: '51px',
+          },
+
+          {
+            width: '60px',
+
+            height: '60px',
+
+            background: 'rgba(236, 163, 221, 0.58)',
+
+            borderRadius: '30px',
+
+            color: '#000',
+
+            textAlign: 'center',
+
+            fontWeight: 'bold',
+
+            lineHeight: '61px',
+          },
+        ],
+      }"
       @onLoadKakaoMap="onMapReady"
       style="width: 100%; height: 100%"
     >
+      <template v-if="level < 3">
+        <template v-for="(marker, index) in agencies" :key="marker.officeId">
+          <KakaoMapMarker
+            :lat="marker.lat"
+            :lng="marker.lng"
+            :clickable="true"
+            :image="{
+              imageSrc: '/map_agency_pin.png',
+              imageWidth: 43,
+              imageHeight: 43,
+              imageOption: {},
+            }"
+            @onClickKakaoMapMarker="() => onMarkerClick(marker)"
+          />
+          <template v-if="selectedAgency && selectedAgency.officeId === marker.officeId">
+            <KakaoMapCustomOverlay :lat="marker.lat" :lng="marker.lng">
+              <div
+                style="
+                  padding: 10px;
+                  background-color: white;
+                  border: 1px solid #ccc;
+                  border-radius: 5px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <!-- <div style="font-weight: bold; margin-bottom: 5px">카카오 스페이스닷원</div> -->
+                <!-- <div style="font-weight: bold; margin-bottom: 5px">
+                  {{ selectedAgency }}
+                </div> -->
+                <div style="font-weight: bold; margin-bottom: 5px">
+                  {{ selectedAgency.officeName }}
+                </div>
+
+                <div style="display: flex">
+                  <div style="margin-right: 10px">
+                    <img
+                      src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png"
+                      width="73"
+                      height="70"
+                    />
+                  </div>
+                  <div style="display: flex; flex-direction: column; align-items: flex-start">
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                      {{ selectedAgency.agentName }}
+                    </div>
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                      {{ selectedAgency.address }}
+                    </div>
+                    <div>
+                      <a
+                        href="https://www.kakaocorp.com/main"
+                        target="_blank"
+                        style="color: blue"
+                        >{{ selectedAgency.phone }}</a
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </KakaoMapCustomOverlay>
+          </template>
+        </template>
+      </template>
     </KakaoMap>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay } from 'vue3-kakao-maps'
-import axios from 'axios'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const initialCenter = route.query.center?.split(',').map(Number) || [
-  37.5435, 127.0812,
-];
-const lat = ref(initialCenter[0]);
-const lng = ref(initialCenter[1]);
+const initialCenter = route.query.center?.split(',').map(Number) || [37.5435, 127.0812]
+const lat = ref(initialCenter[0])
+const lng = ref(initialCenter[1])
 
 const level = ref(Number(route.query.zoomLevel) || 8)
 const agency_map = ref(null)
@@ -32,88 +174,68 @@ const customOverlay = ref(null)
 
 // api에서 불러온 중개사 배열
 const agencies = ref([])
+const selectedAgency = ref(null)
 
-async function fetchAgencies() {
-  try {
-  const res = await axios.get('http://localhost:8080/api/agent/geo/list')
-  agencies.value = res.data
+onMounted(() => {
+  loadAgencies()
+})
 
-  return new Promise((resolve) => {
-    if (agencies.value.length > 0 && agency_map.value != null) {
-      makeMarker()
-      resolve()
-    } else {
-      const interval = setInterval(() => {
-        if (agencies.value.length > 0 && agency_map.value != null) {
-          clearInterval(interval)
-          makeMarker()
-          resolve()
-        }
-      }, 100)
+const map = ref()
+const onLoadKakaoMap = (mapRef) => {
+  map.value = mapRef
+}
+
+// KakaoMap 내부의 clusterer 객체를 가져와 이벤트 핸들러를 등록해줍니다.
+const clusterer = ref()
+const onLoadKakaoMapMarkerCluster = (clustererRef) => {
+  clusterer.value = clustererRef
+
+  kakao.maps.event.addListener(clusterer.value, 'clusterclick', function (cluster) {
+    const currentLevel = map?.value?.getLevel()
+    console.log('클러스터 클릭:', cluster, '현재 레벨:', currentLevel)
+    if (currentLevel !== undefined && !isNaN(currentLevel)) {
+      const newLevel = currentLevel - 1 //클러스터 클릭시 1레벨 zoom in
+      map.value?.setLevel(newLevel, { anchor: cluster.getCenter() })
     }
   })
-  } catch (e) {
-    alert("중개사무소 위치 정보를 불러오지 못했습니다.")
-  }
 }
 
-// 마커 생성
-function makeMarker(){
-  const imageSrc = "/map_agency_pin.png"
-  const imageSize = new kakao.maps.Size(36, 42)
-  const imageOption = { offset: new kakao.maps.Point(18, 36) }
-
-  const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-
-  customOverlay.value = new kakao.maps.CustomOverlay({
-    map: null,
-    position: null,
-    content: null,
-    xAnchor: 0.5,
-    yAnchor: 1.1,
-  })
-
-  agencies.value.forEach(agency => {
-    const marker = new kakao.maps.Marker({
-      map: agency_map.value,
-      position: new kakao.maps.LatLng(agency.lat, agency.lng),
-      image: markerImage
-    })
-
-    kakao.maps.event.addListener(marker, 'click', () => {
-      updateCustomOverlay(agency, marker.getPosition())
-    })
-  })
-}
-
-async function updateCustomOverlay (data, position) {
+async function loadAgencies() {
   try {
-    const sel_agency = await axios.get(`http://localhost:8080/api/agent/${data.officeId}`)
-    
-    const content = `
-    <div class="custom-overlay">
-      <div class="close-btn" title="닫기">X</div>
-      <div class="title">${sel_agency.data.officeName}</div>
-      <div>${sel_agency.data.agentName}</div>
-      <div>${sel_agency.data.address}</div>
-      <div>${sel_agency.data.phone}</div>
-    </div>`
+    const response = await fetch('http://localhost:8080/api/agent/geo/list') // ✅ API 호출
+    const data = await response.json() // ✅ JSON 파싱
 
-    customOverlay.value.setContent(content);
-    customOverlay.value.setPosition(position);
-    customOverlay.value.setMap(agency_map.value);
+    const loadedagencies = data.map((item) => ({
+      officeId: item.officeId,
+      gu: item.gu,
+      dong: item.dong, // 상황에 따라 적절한 필드 사용
+      id: item.id,
+      lat: item.lat,
+      lng: item.lng,
+    }))
 
-    document.querySelector('.custom-overlay .close-btn').onclick = () => {
-    closeCustomOverlay();
-  };
-  } catch (e) {
-    alert("중개사무소 정보를 불러오지 못했습니다.")
+    agencies.value = loadedagencies
+  } catch (error) {
+    console.error('❌ API 로딩 실패:', error)
   }
 }
 
-const closeCustomOverlay = () => {
-  customOverlay.value.setMap(null);
-};
+// 마커 클릭 오버레이 (fetch 사용)
+async function onMarkerClick(agency) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/agent/${agency.officeId}`)
+    if (!response.ok) throw new Error('Network response was not ok')
+    const data = await response.json()
+    selectedAgency.value = {
+      ...data,
+      lat: agency.lat,
+      lng: agency.lng,
+    }
+    console.log(selectedAgency.value)
+  } catch (e) {
+    alert('중개사무소 정보를 불러오지 못했습니다.')
+  }
+}
 
 // 지도 이벤트 기반 쿼리 동기화
 function onMapReady(map) {
@@ -130,51 +252,33 @@ function updateURL(map) {
       ...route.query,
       center: `${center.getLat()},${center.getLng()}`,
       zoomLevel: zoom,
-    }
+    },
   })
   lat.value = center.getLat()
   lng.value = center.getLng()
   level.value = zoom
 }
-
-// SDK 준비 후 실행
-function waitKakaoReady() {
-  return new Promise((resolve) => {
-    if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
-      fetchAgencies()
-      resolve()
-    } else {
-      const interval = setInterval(() => {
-        if (window.kakao && window.kakao.maps && window.kakao.maps.services) {
-          clearInterval(interval)
-          fetchAgencies()
-          resolve()
-        }
-      }, 100)
-    }
-  })
-}
-
-onMounted(async () => {
-  await waitKakaoReady()
-})
-
-watch(agencies, (newVal) => {
-  console.log('agencies changed:', newVal)
-})
 </script>
 
 <style>
 .custom-overlay {
-  padding: 8px 12px;
-  background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-  font-size: 14px;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  position: relative;
+  min-width: 200px;
 }
-
-.title {
+.custom-overlay .title {
   font-weight: bold;
-  margin-bottom: 4px;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+.custom-overlay .close-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>
