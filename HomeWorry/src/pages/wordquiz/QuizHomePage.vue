@@ -82,7 +82,7 @@
     <CustomModal
       :modelValue="modalVisible"
       :message="modalMessage"
-      confirmText="OK"
+      confirmText="확인"
       @update:modelValue="modalVisible = $event"
       @confirm="modalVisible = false"
       @cancel="modalVisible = false"
