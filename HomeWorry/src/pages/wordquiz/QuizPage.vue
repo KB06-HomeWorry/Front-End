@@ -30,62 +30,78 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import axios from 'axios'
-import OXQuizBox from '@/pages/wordquiz/components/OXQuizBox.vue'
-import SelectQuizBox from '@/pages/wordquiz/components/SelectQuizBox.vue'
-import AnswerModal from '@/pages/wordquiz/components/AnswerModal.vue'
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import axios from 'axios';
+import OXQuizBox from '@/pages/wordquiz/components/OXQuizBox.vue';
+import SelectQuizBox from '@/pages/wordquiz/components/SelectQuizBox.vue';
+import AnswerModal from '@/pages/wordquiz/components/AnswerModal.vue';
+import { useAuthStore } from '@/stores/auth';
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
 
-const quizList = ref([])
+const quizList = ref([]);
 
-const isLoading = ref(true)
-const loadError = ref(null)
+const isLoading = ref(true);
+const loadError = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8080/api/quiz/getQuiz')
-    quizList.value = res.data
-    isLoading.value = false
+    const res = await axios.get('http://localhost:8080/api/quiz/getQuiz');
+    quizList.value = res.data;
+    isLoading.value = false;
   } catch (err) {
-    loadError.value = '퀴즈를 불러오지 못했습니다.'
-    isLoading.value = false
-    console.error(err)
+    loadError.value = '퀴즈를 불러오지 못했습니다.';
+    isLoading.value = false;
+    console.error(err);
   }
-})
+});
 
-const currentNumber = computed(() => Number(route.params.number))
+const currentNumber = computed(() => Number(route.params.number));
 const currentQuiz = computed(() =>
-  quizList.value.find(q => q.number === currentNumber.value)
-)
+  quizList.value.find((q) => q.number === currentNumber.value)
+);
 
-const showModal = ref(false)
-const answerResult = ref('') // 'correct' or 'wrong'
+const showModal = ref(false);
+const answerResult = ref(''); // 'correct' or 'wrong'
 
-// 사용자가 답변 제출했을 때
-function onSubmit(answer) {
+const userId = computed(() => authStore.user?.userId || null);
+
+async function onSubmit(answer) {
   answerResult.value =
-    answer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong'
-  showModal.value = true
+    answer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong';
+  showModal.value = true;
+
+  // 정답 제출 요청
+  try {
+    await axios.post('http://localhost:8080/api/quiz/user/submit', {
+      userId: userId.value,
+      quizId: currentQuiz.value.number,
+      answer,
+      correct: answer === currentQuiz.value.correctAnswer,
+    });
+  } catch (e) {
+    alert('정답 제출에 실패했습니다.');
+    console.error(e);
+  }
 }
 
 // 모달 닫기 핸들러
 function handleModalClose() {
-  showModal.value = false
+  showModal.value = false;
   if (answerResult.value === 'correct') {
     // 정답일 때만 /quiz로 이동
-    router.push('/quiz')
+    router.push('/quiz');
   }
 }
 </script>
 
 <style scoped>
 .quiz-root {
-    width: 100%;
-    margin: 7rem 2rem;
+  width: 100%;
+  margin: 7rem 2rem;
   min-height: 100vh;
   padding: 0;
 }
