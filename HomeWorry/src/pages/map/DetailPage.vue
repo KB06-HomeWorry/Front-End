@@ -76,12 +76,11 @@
     </KakaoMap>
     <DetailAgency
       v-if="agency"
-      :id="agency.id"
-      :name="agency.name"
+      :id="agency.officeId"
+      :name="agency.officeName"
       :address="agency.address"
       :phone="agency.phone"
-      :img="agency.img"
-      :profile-idx="agency.profileIdx"
+      :img="agency.profileImage"
     />
   </div>
 </template>
@@ -181,27 +180,25 @@ onMounted(async () => {
     areaInfo.value = data.areaInfo
     direction.value = data.direction
 
-    // 중개사무소 이름으로 정보 조회
-    if (data.agencyName) {
-      try {
-        // 예시: /api/agency/by-name?name=중개사이름
-        const agencyRes = await axios.get('/api/agency/by-name', {
-          params: { name: data.agencyName }
-        })
-        agency.value = agencyRes.data
-      } catch (e) {
-        agency.value = null
-      }
-    } else {
-      agency.value = null
-    }
-
     // 북마크 상태 불러오기
     await fetchFavoriteStatus()
+
+    // 중개사 정보 불러오기
+    await fetchAgency()
   } catch (error) {
     console.error('❌ 상세정보 로딩 실패:', error)
   }
 })
+
+async function fetchAgency(){
+  try {
+    const res = await axios.get(`/api/listing/getAgency/${listingId}`)
+    agency.value = res.data
+
+  } catch (error) {
+    alert("중개사무소 데이터를 불러오지 못했습니다.")
+  }
+}
 
 // section scroll
 const deal = ref(null)

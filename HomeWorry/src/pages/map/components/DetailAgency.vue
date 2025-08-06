@@ -27,14 +27,13 @@ const props = defineProps({
   address: String,
   phone: String,
   img: String,
-  profileIdx: { type: Number, default: 0 }
 })
 
 const sampleImgs = [sample1, sample2, sample3]
 
 const computedImg = props.img && props.img.length > 0
   ? props.img
-  : sampleImgs[props.profileIdx % sampleImgs.length]
+  : sampleImgs[props.id % sampleImgs.length]
 </script>
 
 <style scoped>

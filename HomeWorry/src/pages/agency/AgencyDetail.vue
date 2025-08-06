@@ -179,9 +179,7 @@ onMounted(async () => {
 })
 
 const goToListingPage = () => {
-  // 추후 백엔드 연동 시 사용
-  // router.push(`/agency/${agencyId}/listings`)
-  router.push('/agency/listings')
+  router.push(`/agency/${office_id}/listings`)
 }
 
 const goToReviewPage = () => {
