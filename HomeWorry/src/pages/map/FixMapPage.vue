@@ -54,6 +54,7 @@
           :lat="marker.lat"
           :lng="marker.lng"
           :y-anchor="1.4"
+          @click="goDetail(marker.id)"
         >
         <ListingMarkers :marker="marker"/>
         </KakaoMapCustomOverlay>

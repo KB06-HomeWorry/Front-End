@@ -17,11 +17,21 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter(); 
+
 const props = defineProps({
   marker: { type: Object, required: true }
 });
+
 function handleClick() {
-  console.log(props.marker);
+  if (props.marker?.id) {
+    router.push(`/listing/${props.marker.id}`);
+  } else {
+    console.log(props.marker); // 혹시 id가 없는 데이터 로그
+  }
 }
 </script>
 
@@ -38,6 +48,7 @@ function handleClick() {
   align-items: center;
   width: 50px;
   height: 35px;
+  cursor: pointer;
 }
 
 .type {
