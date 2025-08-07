@@ -230,7 +230,7 @@ const onLoadKakaoMapMarkerCluster = (clustererRef) => {
 
 async function loadAgencies() {
   try {
-    const response = await fetch("http://localhost:8080/api/agent/geo/list"); // ✅ API 호출
+    const response = await fetch("http://54.66.153.95:8080/api/agent/geo/list"); // ✅ API 호출
     const data = await response.json(); // ✅ JSON 파싱
 
     const loadedagencies = data.map((item) => ({
@@ -252,7 +252,7 @@ async function loadAgencies() {
 async function onMarkerClick(agency) {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/agent/${agency.officeId}`
+      `http://54.66.153.95:8080/api/agent/${agency.officeId}`
     );
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();

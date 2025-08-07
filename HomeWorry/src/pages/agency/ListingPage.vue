@@ -22,23 +22,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router'
-import axios from 'axios'
-import ListingCard from '@/pages/agency/components/ListingCard.vue'; 
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import ListingCard from "@/pages/agency/components/ListingCard.vue";
 
-const route = useRoute()
+const route = useRoute();
 
 const listings = ref([]);
-const officeId = route.query.agencyId || route.params.agencyId || '1'
+const officeId = route.query.agencyId || route.params.agencyId || "1";
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/listing/getAgencyList/${officeId}`)
-    listings.value = res.data
-    
+    const res = await axios.get(
+      `http://54.66.153.95:8080/api/listing/getAgencyList/${officeId}`
+    );
+    listings.value = res.data;
   } catch (e) {
-    alert("매물 목록 불러오기에 실패했습니다.")
+    alert("매물 목록 불러오기에 실패했습니다.");
   }
 });
 </script>

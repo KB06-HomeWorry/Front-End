@@ -30,16 +30,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
-import OXQuizBox from '@/pages/wordquiz/components/OXQuizBox.vue';
-import SelectQuizBox from '@/pages/wordquiz/components/SelectQuizBox.vue';
-import AnswerModal from '@/pages/wordquiz/components/AnswerModal.vue';
+import OXQuizBox from "@/pages/wordquiz/components/OXQuizBox.vue";
+import SelectQuizBox from "@/pages/wordquiz/components/SelectQuizBox.vue";
+import AnswerModal from "@/pages/wordquiz/components/AnswerModal.vue";
 
-import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
+import LoadingAnimation from "@/components/lottie/LoadingAnimation.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -52,11 +52,11 @@ const loadError = ref(null);
 
 onMounted(async () => {
   try {
-    const res = await axios.get('http://localhost:8080/api/quiz/getQuiz');
+    const res = await axios.get("http://54.66.153.95:8080/api/quiz/getQuiz");
     quizList.value = res.data;
     isLoading.value = false;
   } catch (err) {
-    loadError.value = '퀴즈를 불러오지 못했습니다.';
+    loadError.value = "퀴즈를 불러오지 못했습니다.";
     isLoading.value = false;
     console.error(err);
   }
@@ -68,25 +68,25 @@ const currentQuiz = computed(() =>
 );
 
 const showModal = ref(false);
-const answerResult = ref(''); // 'correct' or 'wrong'
+const answerResult = ref(""); // 'correct' or 'wrong'
 
 const userId = computed(() => authStore.user?.userId || null);
 
 async function onSubmit(answer) {
   answerResult.value =
-    answer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong';
+    answer === currentQuiz.value.correctAnswer ? "correct" : "wrong";
   showModal.value = true;
 
   // 정답 제출 요청
   try {
-    await axios.post('http://localhost:8080/api/quiz/user/submit', {
+    await axios.post("http://54.66.153.95:8080/api/quiz/user/submit", {
       userId: userId.value,
       quizId: currentQuiz.value.number,
       answer,
       correct: answer === currentQuiz.value.correctAnswer,
     });
   } catch (e) {
-    alert('정답 제출에 실패했습니다.');
+    alert("정답 제출에 실패했습니다.");
     console.error(e);
   }
 }
@@ -94,9 +94,9 @@ async function onSubmit(answer) {
 // 모달 닫기 핸들러
 function handleModalClose() {
   showModal.value = false;
-  if (answerResult.value === 'correct') {
+  if (answerResult.value === "correct") {
     // 정답일 때만 /quiz로 이동
-    router.push('/quiz');
+    router.push("/quiz");
   }
 }
 </script>

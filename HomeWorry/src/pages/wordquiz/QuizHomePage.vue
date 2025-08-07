@@ -93,18 +93,18 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-import { useAuthStore } from '@/stores/auth';
+import { ref, computed, watch } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { useAuthStore } from "@/stores/auth";
 
-import level1 from '@/assets/icons/level_1.png';
-import level2 from '@/assets/icons/level_2.png';
-import level3 from '@/assets/icons/level_3.png';
-import quiz from '@/assets/icons/quiz.png';
+import level1 from "@/assets/icons/level_1.png";
+import level2 from "@/assets/icons/level_2.png";
+import level3 from "@/assets/icons/level_3.png";
+import quiz from "@/assets/icons/quiz.png";
 
-import CustomModal from '@/components/modal/CustomModal.vue';
-import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
+import CustomModal from "@/components/modal/CustomModal.vue";
+import LoadingAnimation from "@/components/lottie/LoadingAnimation.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -113,20 +113,20 @@ const userId = computed(() => authStore.user?.userId || null);
 const quizList = ref([]);
 const userQuizStatus = ref([]);
 const modalVisible = ref(false);
-const modalMessage = ref('');
+const modalMessage = ref("");
 const isLoading = ref(true);
 
 async function fetchData() {
   isLoading.value = true;
   try {
     const [quizRes, statusRes] = await Promise.all([
-      axios.get('http://localhost:8080/api/quiz/getQuiz'),
-      axios.get(`http://localhost:8080/api/quiz/user/${userId.value}`),
+      axios.get("http://54.66.153.95:8080/api/quiz/getQuiz"),
+      axios.get(`http://54.66.153.95:8080/api/quiz/user/${userId.value}`),
     ]);
     quizList.value = quizRes.data;
     userQuizStatus.value = statusRes.data;
   } catch (err) {
-    console.error('데이터 불러오기 실패:', err);
+    console.error("데이터 불러오기 실패:", err);
   } finally {
     isLoading.value = false;
   }
@@ -141,9 +141,9 @@ watch(
 );
 
 const levels = [
-  { key: '초급', name: '초급' },
-  { key: '중급', name: '중급' },
-  { key: '고급', name: '고급' },
+  { key: "초급", name: "초급" },
+  { key: "중급", name: "중급" },
+  { key: "고급", name: "고급" },
 ];
 
 const levelIcons = {
@@ -208,7 +208,7 @@ function showModal(message) {
 function goToLevel(level) {
   const quizzes = quizzesByLevel.value[level] || [];
   if (quizzes.length === 0) {
-    showModal('해당 레벨에 퀴즈가 없습니다.');
+    showModal("해당 레벨에 퀴즈가 없습니다.");
     return;
   }
 
@@ -220,7 +220,7 @@ function goToLevel(level) {
   );
 
   if (incompleteQuizzes.length === 0) {
-    showModal('해당 레벨의 퀴즈를 모두 완료했습니다.');
+    showModal("해당 레벨의 퀴즈를 모두 완료했습니다.");
     return;
   }
 
@@ -235,7 +235,7 @@ const completedQuizzes = computed(() =>
 
 function goToRandomCompletedQuiz() {
   if (completedQuizzes.value.length === 0) {
-    showModal('No completed quizzes available.');
+    showModal("No completed quizzes available.");
     return;
   }
   const randomQuiz =

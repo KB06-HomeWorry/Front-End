@@ -90,7 +90,7 @@ const agentList = ref([]);
 async function fetchAgentByAddress(address) {
   try {
     const { data } = await axios.get(
-      "http://localhost:8080/analysis/agent/address",
+      "http://54.66.153.95:8080/analysis/agent/address",
       { params: { houseAddress: address } }
     );
     console.log("중개사 정보 API 응답:", data);

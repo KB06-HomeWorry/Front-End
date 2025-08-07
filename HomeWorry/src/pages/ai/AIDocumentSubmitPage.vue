@@ -66,18 +66,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import { Plus } from 'lucide-vue-next';
+import { ref } from "vue";
+import axios from "axios";
+import { Plus } from "lucide-vue-next";
 
-import AIFileUpload from './components/AIFileUploadButton.vue';
-import AIUploadList from './components/AIUploadList.vue';
-import AIButtonGroup from './components/AIButtonGroup.vue';
-import AIAnalysisResult from './components/AIAnalysisResult.vue';
-import AIAnalysisDetailModal from './components/AIAnalysisDetailModal.vue';
+import AIFileUpload from "./components/AIFileUploadButton.vue";
+import AIUploadList from "./components/AIUploadList.vue";
+import AIButtonGroup from "./components/AIButtonGroup.vue";
+import AIAnalysisResult from "./components/AIAnalysisResult.vue";
+import AIAnalysisDetailModal from "./components/AIAnalysisDetailModal.vue";
 
-import { useOcrAndAnalyze } from './composables/useOcrAndAnalyze';
-import { useFileUpload } from './composables/useFileUpload';
+import { useOcrAndAnalyze } from "./composables/useOcrAndAnalyze";
+import { useFileUpload } from "./composables/useFileUpload";
 
 const { isImageFile, isPdfFile, pdfToImages, preprocessImage, analyzeImages } =
   useOcrAndAnalyze();
@@ -119,18 +119,18 @@ const handleReset = () => {
 
 async function fetchTitleAndRecommendation(details) {
   try {
-    const res = await axios.post('http://localhost:8080/ai/analysis', {
+    const res = await axios.post("http://54.66.153.95:8080/ai/analysis", {
       details,
     });
-    console.log('서버 응답:', res.data);
+    console.log("서버 응답:", res.data);
 
     // 서버가 이미 객체를 반환하므로 바로 반환
     return res.data;
   } catch (e) {
-    console.error('AI 분석 요청 실패:', e);
+    console.error("AI 분석 요청 실패:", e);
     return {
-      title: '분석 실패',
-      recommendation: '권장 조치를 불러올 수 없습니다.',
+      title: "분석 실패",
+      recommendation: "권장 조치를 불러올 수 없습니다.",
     };
   }
 }
@@ -142,8 +142,8 @@ const selectSection = async (result, pageIndex) => {
     ...result,
     details: result.text,
     page: pageIndex + 1,
-    title: '분석 중...',
-    recommendation: '잠시만 기다려주세요.',
+    title: "분석 중...",
+    recommendation: "잠시만 기다려주세요.",
   };
 
   loadingRecommendation.value = true;

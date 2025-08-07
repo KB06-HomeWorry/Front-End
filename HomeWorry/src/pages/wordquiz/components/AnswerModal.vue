@@ -18,12 +18,17 @@
 </template>
 
 <script setup>
+// 이미지 import
+import correctImgUrl from "@/assets/icons/quiz_correct_text.png";
+import wrongImgUrl from "@/assets/icons/quiz_wrong_text.png";
+import hintIconUrl from "@/assets/icons/quiz_lightbulb.png";
+
 const props = defineProps({
   result: { type: String, required: true }, // 'correct' or 'wrong'
   explanation: { type: String, required: true },
-  correctImg: { type: String, default: "@/assets/icons/quiz_correct_text.png" },
-  wrongImg: { type: String, default: "@/assets/icons/quiz_wrong_text.png" },
-  hintIcon: { type: String, default: "@/assets/icons/quiz_lightbulb.png" },
+  correctImg: { type: String, default: correctImgUrl },
+  wrongImg: { type: String, default: wrongImgUrl },
+  hintIcon: { type: String, default: hintIconUrl },
 });
 const emit = defineEmits(["close"]);
 function onClose() {

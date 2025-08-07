@@ -32,35 +32,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
-import AuthTitle from '@/pages/auth/components/AuthTitle.vue';
-import InputField from '@/components/input/InputField.vue';
-import BtnMed from '@/components/button/BtnMed.vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import axios from "axios";
+import AuthTitle from "@/pages/auth/components/AuthTitle.vue";
+import InputField from "@/components/input/InputField.vue";
+import BtnMed from "@/components/button/BtnMed.vue";
 
 const router = useRouter();
 
-const email = ref('');
-const username = ref('');
-const formError = ref('');
+const email = ref("");
+const username = ref("");
+const formError = ref("");
 const loading = ref(false);
 
 // 이름-이메일 일치 확인
 async function onSubmit() {
   if (loading.value) return;
-  formError.value = '';
+  formError.value = "";
   loading.value = true;
 
   if (!username.value.trim() || !email.value.trim()) {
-    formError.value = '이름과 이메일을 모두 입력해주세요.';
+    formError.value = "이름과 이메일을 모두 입력해주세요.";
     loading.value = false;
     return;
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email.value)) {
-    formError.value = '올바른 이메일 주소를 입력해주세요.';
+    formError.value = "올바른 이메일 주소를 입력해주세요.";
     loading.value = false;
     return;
   }
@@ -68,7 +68,7 @@ async function onSubmit() {
   // 백엔드 api에 맞춰서 수정 요망
   try {
     const res = await axios.get(
-      'http://localhost:8080/api/member/checkNameAndEmail',
+      "http://54.66.153.95:8080/api/member/checkNameAndEmail",
       {
         params: {
           email: email.value.trim(),
@@ -79,16 +79,16 @@ async function onSubmit() {
 
     if (res.data) {
       router.push({
-        path: '/auth/reset-password/sent',
+        path: "/auth/reset-password/sent",
         query: { email: email.value.trim() },
       });
     } else {
-      formError.value = '일치하는 회원 정보가 없습니다.';
+      formError.value = "일치하는 회원 정보가 없습니다.";
     }
   } catch (err) {
     formError.value =
       err.response?.data?.message ||
-      '서버 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요.';
+      "서버 오류가 발생했습니다.<br>잠시 후 다시 시도해주세요.";
   } finally {
     loading.value = false;
   }

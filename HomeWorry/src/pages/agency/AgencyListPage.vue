@@ -20,85 +20,95 @@
       </li>
     </ul>
     <!-- 페이지네이션 -->
-<div class="pagination bodyMedium12px" v-if="totalPages > 1">
-  <button :disabled="page === 1" @click="goToPage(1)">≪</button>
-  <button :disabled="page === 1" @click="goToPage(page - 1)">이전</button>
-  <button
-    v-for="p in pageNumbers"
-    :key="p"
-    :class="{ active: page === p }"
-    @click="goToPage(p)"
-  >{{ p }}</button>
-  <button :disabled="page === totalPages" @click="goToPage(page + 1)">다음</button>
-  <button :disabled="page === totalPages" @click="goToPage(totalPages)">≫</button>
-</div>
+    <div class="pagination bodyMedium12px" v-if="totalPages > 1">
+      <button :disabled="page === 1" @click="goToPage(1)">≪</button>
+      <button :disabled="page === 1" @click="goToPage(page - 1)">이전</button>
+      <button
+        v-for="p in pageNumbers"
+        :key="p"
+        :class="{ active: page === p }"
+        @click="goToPage(p)"
+      >
+        {{ p }}
+      </button>
+      <button :disabled="page === totalPages" @click="goToPage(page + 1)">
+        다음
+      </button>
+      <button :disabled="page === totalPages" @click="goToPage(totalPages)">
+        ≫
+      </button>
+    </div>
     <MapFloatingButtonWithModal />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
-import SortSelect from '@/pages/agency/components/SortSelect.vue'
-import AgencyCard from '@/pages/agency/components/AgencyCard.vue'
-import MapFloatingButtonWithModal from '@/pages/agency/components/MapFloatingButtonWithModal.vue'
+import { ref, computed, onMounted } from "vue";
+import AgencySearchBar from "@/pages/agency/components/AgencySearchBar.vue";
+import SortSelect from "@/pages/agency/components/SortSelect.vue";
+import AgencyCard from "@/pages/agency/components/AgencyCard.vue";
+import MapFloatingButtonWithModal from "@/pages/agency/components/MapFloatingButtonWithModal.vue";
 
-import profile1 from '@/assets/icons/sample_profile1.png'
-import profile2 from '@/assets/icons/sample_profile2.png'
-import profile3 from '@/assets/icons/sample_profile3.png'
-import axios from 'axios'
+import profile1 from "@/assets/icons/sample_profile1.png";
+import profile2 from "@/assets/icons/sample_profile2.png";
+import profile3 from "@/assets/icons/sample_profile3.png";
+import axios from "axios";
 
-const sampleImgs = [profile1, profile2, profile3]
+const sampleImgs = [profile1, profile2, profile3];
 
-const agencies = ref([])
+const agencies = ref([]);
 
 // 페이지네이션 상태
-const page = ref(1)
-const pageSize = 20
+const page = ref(1);
+const pageSize = 20;
 
 onMounted(async () => {
   try {
     // 중개사무소 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/agent/list`)
-    agencies.value = res.data
-    
+    const res = await axios.get(`http://54.66.153.95:8080/api/agent/list`);
+    agencies.value = res.data;
   } catch (e) {
-    alert('중개사무소 정보를 불러오지 못했습니다.')
+    alert("중개사무소 정보를 불러오지 못했습니다.");
   }
-})
+});
 
-const searchText = ref('')
-const sortBy = ref('trust') 
+const searchText = ref("");
+const sortBy = ref("trust");
 
 function onSearch(val) {
-  searchText.value = val
-  page.value = 1
+  searchText.value = val;
+  page.value = 1;
 }
 
 const filteredList = computed(() =>
   searchText.value
-    ? agencies.value.filter(a =>
-        a.officeName.toLowerCase().includes(searchText.value.trim().toLowerCase()) ||
-        a.address.toLowerCase().includes(searchText.value.trim().toLowerCase())
+    ? agencies.value.filter(
+        (a) =>
+          a.officeName
+            .toLowerCase()
+            .includes(searchText.value.trim().toLowerCase()) ||
+          a.address
+            .toLowerCase()
+            .includes(searchText.value.trim().toLowerCase())
       )
     : agencies.value
-)
+);
 
 const sortedList = computed(() => {
-  const list = [...filteredList.value]
-  if (sortBy.value === 'trust') {
-    return list.sort((a, b) => b.totalScore - a.totalScore)
+  const list = [...filteredList.value];
+  if (sortBy.value === "trust") {
+    return list.sort((a, b) => b.totalScore - a.totalScore);
   }
-  return list.sort((a, b) => a.officeName.localeCompare(b.officeName, 'ko'))
-})
+  return list.sort((a, b) => a.officeName.localeCompare(b.officeName, "ko"));
+});
 
 const totalPages = computed(() =>
   Math.ceil(sortedList.value.length / pageSize)
-)
+);
 
 const pagedList = computed(() =>
   sortedList.value.slice((page.value - 1) * pageSize, page.value * pageSize)
-)
+);
 
 const maxPageDisplay = 5;
 
@@ -112,12 +122,15 @@ const endPage = computed(() => {
 });
 const pageNumbers = computed(() => {
   // 시작~끝까지 배열 반환
-  return Array.from({ length: endPage.value - startPage.value + 1 }, (_, i) => startPage.value + i);
+  return Array.from(
+    { length: endPage.value - startPage.value + 1 },
+    (_, i) => startPage.value + i
+  );
 });
 
 // 페이지 이동 함수
 function goToPage(p) {
-  if (p >= 1 && p <= totalPages.value) page.value = p
+  if (p >= 1 && p <= totalPages.value) page.value = p;
 }
 </script>
 
@@ -152,8 +165,8 @@ function goToPage(p) {
 }
 
 .agency-list li {
-  padding: 0; 
-  border: none; 
+  padding: 0;
+  border: none;
 }
 
 .pagination {
@@ -172,7 +185,7 @@ function goToPage(p) {
   padding: 0 8px;
   cursor: pointer;
   color: var(--color-primary);
-  transition: background .15s;
+  transition: background 0.15s;
 }
 
 .pagination button.active,
@@ -182,7 +195,7 @@ function goToPage(p) {
 }
 
 .pagination button[disabled] {
-  opacity: .5;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 </style>

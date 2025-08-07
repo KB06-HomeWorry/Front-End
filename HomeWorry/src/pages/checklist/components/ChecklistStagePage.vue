@@ -73,7 +73,7 @@ onMounted(async () => {
     }
 
     const { data } = await axios.get(
-      "http://localhost:8080/checklist/answers/five"
+      "http://54.66.153.95:8080/checklist/answers/five"
     );
 
     checklistStore.topFiveAnswers = data;

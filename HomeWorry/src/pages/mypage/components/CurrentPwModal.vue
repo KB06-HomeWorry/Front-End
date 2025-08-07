@@ -22,53 +22,53 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import axios from 'axios';
-import { useRouter } from 'vue-router';
+import { ref, watch } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
 
 const props = defineProps({ visible: Boolean });
-const emit = defineEmits(['close', 'success']);
+const emit = defineEmits(["close", "success"]);
 
-const currentPw = ref('');
-const error = ref('');
+const currentPw = ref("");
+const error = ref("");
 const router = useRouter();
 
-const usertoken = localStorage.getItem('user-token');
+const usertoken = localStorage.getItem("user-token");
 
 watch(
   () => props.visible,
   (val) => {
     if (val) {
-      currentPw.value = '';
-      error.value = '';
+      currentPw.value = "";
+      error.value = "";
     }
   }
 );
 
 async function submit() {
   if (!currentPw.value) {
-    error.value = '비밀번호를 입력해주세요.';
+    error.value = "비밀번호를 입력해주세요.";
     return;
   }
   try {
     const res = await axios.post(
-      'http://localhost:8080/api/member/verify-password-check',
+      "http://54.66.153.95:8080/api/member/verify-password-check",
       {
         password: currentPw.value,
         token: usertoken,
       }
     );
     if (res.data) {
-      emit('success');
+      emit("success");
     }
     close();
   } catch (e) {
     error.value =
-      e.response?.data?.message || e.message || '비밀번호가 틀렸습니다.';
+      e.response?.data?.message || e.message || "비밀번호가 틀렸습니다.";
   }
 }
 function close() {
-  emit('close');
+  emit("close");
 }
 </script>
 

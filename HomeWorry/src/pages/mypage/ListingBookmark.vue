@@ -2,7 +2,6 @@
   <div>
     <SimpleHeader title="저장된 매물" />
     <div class="bookmark-page">
-
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
           v-for="(listing, idx) in pagedList"
@@ -33,114 +32,97 @@
           :key="p"
           :class="{ active: page === p }"
           @click="goToPage(p)"
-        >{{ p }}</button>
-        <button :disabled="page === totalPages" @click="goToPage(page + 1)">다음</button>
-        <button :disabled="page === totalPages" @click="goToPage(totalPages)">≫</button>
+        >
+          {{ p }}
+        </button>
+        <button :disabled="page === totalPages" @click="goToPage(page + 1)">
+          다음
+        </button>
+        <button :disabled="page === totalPages" @click="goToPage(totalPages)">
+          ≫
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import SimpleHeader from '@/components/layout/SimpleHeader.vue'
-import ListingBookmarkCard from '@/pages/mypage/components/ListingBookmarkCard.vue'
-import SortSelect from '@/pages/agency/components/SortSelect.vue'
-import profile1 from '@/assets/icons/sample_profile1.png'
-import profile2 from '@/assets/icons/sample_profile2.png'
-import profile3 from '@/assets/icons/sample_profile3.png'
+import { ref, computed, onMounted } from "vue";
+import axios from "axios";
+import SimpleHeader from "@/components/layout/SimpleHeader.vue";
+import ListingBookmarkCard from "@/pages/mypage/components/ListingBookmarkCard.vue";
+import SortSelect from "@/pages/agency/components/SortSelect.vue";
+import profile1 from "@/assets/icons/sample_profile1.png";
+import profile2 from "@/assets/icons/sample_profile2.png";
+import profile3 from "@/assets/icons/sample_profile3.png";
 
-const sampleImgs = [profile1, profile2, profile3]
+const sampleImgs = [profile1, profile2, profile3];
 
-const listings = ref([])
-const userToken = localStorage.getItem('user-token')
+const listings = ref([]);
+const userToken = localStorage.getItem("user-token");
 
 // 정렬/페이지네이션 상태
-const sortBy = ref('name')         // 'price', 'date' 등으로 확장 가능
-const page = ref(1)
-const pageSize = 8                 // 1페이지에 8개씩
-const maxPageDisplay = 5           // 하단 페이지버튼 5개씩
+const sortBy = ref("name"); // 'price', 'date' 등으로 확장 가능
+const page = ref(1);
+const pageSize = 8; // 1페이지에 8개씩
+const maxPageDisplay = 5; // 하단 페이지버튼 5개씩
 
 onMounted(() => {
-  fetchListingList()
-})
+  fetchListingList();
+});
 
-async function fetchListingList(){
-  // try {
-  //   // 북마크 된 매물 목록 조회
-  //   const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
-  //   listings.value = res.data
-  // } catch (e) {
-  //   alert('찜한 매물 목록을 불러오지 못했습니다.')
-  // }
-
-  // 목 데이터 삽입
-  listings.value = [
-    {
-      id: 1,
-      listingName: '해피빌 101동',
-      transactionType: '월세',
-      deposit: 1000,
-      monthlyRent: 50,
-      address: '서울특별시 강남구 테헤란로 123',
-      housingType: '오피스텔',
-      areaInfo: '18평',
-      floorInfo: '3층',
-      direction: '남향',
-      isFavorite: true,
-      price: 50000,
-    },
-    {
-      id: 2,
-      listingName: '프라임아파트',
-      transactionType: '전세',
-      deposit: 20000,
-      monthlyRent: 0,
-      address: '서울특별시 송파구 올림픽로 45',
-      housingType: '아파트',
-      areaInfo: '25평',
-      floorInfo: '15층',
-      direction: '동향',
-      isFavorite: true,
-      price: 200000,
-    },
-  ]
+async function fetchListingList() {
+  try {
+    // 북마크 된 매물 목록 조회
+    const res = await axios.get(
+      `http://54.66.153.95:8080/api/listing/favorite/${userToken}`
+    );
+    listings.value = res.data;
+  } catch (e) {
+    alert("찜한 매물 목록을 불러오지 못했습니다.");
+  }
 }
 
-const sortedList = computed(() => listings.value)
+const sortedList = computed(() => listings.value);
 
 const totalPages = computed(() =>
   Math.ceil(sortedList.value.length / pageSize)
-)
+);
 
 const pagedList = computed(() =>
   sortedList.value.slice((page.value - 1) * pageSize, page.value * pageSize)
-)
+);
 
-const startPage = computed(() => Math.floor((page.value - 1) / maxPageDisplay) * maxPageDisplay + 1)
-const endPage = computed(() => Math.min(startPage.value + maxPageDisplay - 1, totalPages.value))
+const startPage = computed(
+  () => Math.floor((page.value - 1) / maxPageDisplay) * maxPageDisplay + 1
+);
+const endPage = computed(() =>
+  Math.min(startPage.value + maxPageDisplay - 1, totalPages.value)
+);
 const pageNumbers = computed(() =>
-  Array.from({ length: endPage.value - startPage.value + 1 }, (_, i) => startPage.value + i)
-)
+  Array.from(
+    { length: endPage.value - startPage.value + 1 },
+    (_, i) => startPage.value + i
+  )
+);
 
 function goToPage(p) {
-  if (p >= 1 && p <= totalPages.value) page.value = p
+  if (p >= 1 && p <= totalPages.value) page.value = p;
 }
 
 async function toggleFavorite(id, isFavorite) {
   try {
     if (isFavorite) {
       // [북마크 해제]
-      await axios.delete(`/api/listing/${id}/disFavorite/${userToken}`)
+      await axios.delete(`/api/listing/${id}/disFavorite/${userToken}`);
     } else {
       // [북마크 등록]
-      await axios.get(`/api/listing/${id}/favorite/${userToken}`)
+      await axios.get(`/api/listing/${id}/favorite/${userToken}`);
     }
   } catch (e) {
-    alert('북마크 처리 중 오류가 발생했습니다.')
+    alert("북마크 처리 중 오류가 발생했습니다.");
   } finally {
-    fetchListingList()
+    fetchListingList();
   }
 }
 </script>
@@ -179,7 +161,7 @@ async function toggleFavorite(id, isFavorite) {
   padding: 0 8px;
   cursor: pointer;
   color: var(--color-primary3);
-  transition: background .15s;
+  transition: background 0.15s;
 }
 .pagination button.active,
 .pagination button:active {
@@ -187,7 +169,7 @@ async function toggleFavorite(id, isFavorite) {
   color: #fff;
 }
 .pagination button[disabled] {
-  opacity: .5;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 </style>

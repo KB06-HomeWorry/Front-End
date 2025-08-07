@@ -22,16 +22,16 @@
 </template>
 
 <script setup>
-import { onMounted, watch } from 'vue';
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useDangerResultStore } from '@/stores/dangerResult';
-import { useAnalysisStore } from '@/stores/analysis.js';
-import axios from 'axios';
+import { onMounted, watch } from "vue";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+import { useDangerResultStore } from "@/stores/dangerResult";
+import { useAnalysisStore } from "@/stores/analysis.js";
+import axios from "axios";
 
-import DangerCard from './components/DangerResultCard.vue';
-import DangerSummery from './components/DangerResultSummery.vue';
-import DangerButtons from './components/DangerResultButtons.vue';
+import DangerCard from "./components/DangerResultCard.vue";
+import DangerSummery from "./components/DangerResultSummery.vue";
+import DangerButtons from "./components/DangerResultButtons.vue";
 
 const dangerResultStore = useDangerResultStore();
 const analysisStore = useAnalysisStore();
@@ -42,11 +42,11 @@ const loadDangerResult = async () => {
   const { type, stage, user_id } = route.query;
 
   try {
-    const { data } = await axios.get(`http://localhost:8080/dangerResult`, {
+    const { data } = await axios.get(`http://54.66.153.95:8080/dangerResult`, {
       params: { type, stage, user_id },
     });
 
-    console.log('서버 응답:', data);
+    console.log("서버 응답:", data);
 
     dangerResultStore.setDangerResult(
       data.grade,
@@ -56,7 +56,7 @@ const loadDangerResult = async () => {
       data.imageUrl
     );
   } catch (error) {
-    console.error('데이터 로딩 중 오류 발생:', error);
+    console.error("데이터 로딩 중 오류 발생:", error);
   }
 };
 
@@ -70,11 +70,11 @@ const loadAnalysisResult = async () => {
 
   try {
     const { data } = await axios.post(
-      'http://localhost:8080/analysis',
+      "http://54.66.153.95:8080/analysis",
       documentData
     );
 
-    console.log('서버 응답:', data);
+    console.log("서버 응답:", data);
 
     dangerResultStore.setDangerResult(
       data.grade,
@@ -84,17 +84,17 @@ const loadAnalysisResult = async () => {
       data.imageUrl
     );
   } catch (error) {
-    console.error('서류 분석 API 호출 중 오류:', error);
+    console.error("서류 분석 API 호출 중 오류:", error);
   }
 };
 
 onMounted(() => {
   if (route.query.type && route.query.stage && route.query.user_id) {
-    console.log('체크리스트 분석 실행됨');
+    console.log("체크리스트 분석 실행됨");
     moveDefined.value = 0;
     loadDangerResult();
   } else {
-    console.log('서류 분석 실행');
+    console.log("서류 분석 실행");
     moveDefined.value = 1;
     loadAnalysisResult();
   }

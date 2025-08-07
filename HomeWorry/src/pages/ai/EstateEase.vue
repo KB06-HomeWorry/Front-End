@@ -59,7 +59,7 @@ async function analyze() {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/ai/estate-ease",
+      "http://54.66.153.95:8080/ai/estate-ease",
       value
     );
     result.value = response.data.result.trim();

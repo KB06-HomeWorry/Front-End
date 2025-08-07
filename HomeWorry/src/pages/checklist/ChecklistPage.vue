@@ -81,7 +81,10 @@ async function handleSaveRequested() {
 
     console.log("저장할 데이터:", answerDTOList);
 
-    await axios.post("http://localhost:8080/checklist/answers", answerDTOList);
+    await axios.post(
+      "http://54.66.153.95:8080/checklist/answers",
+      answerDTOList
+    );
 
     showModal.value = true;
   } catch (error) {

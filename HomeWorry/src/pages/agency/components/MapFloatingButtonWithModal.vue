@@ -92,7 +92,7 @@ onMounted(async () => {
   window.addEventListener('resize', updateFabPosition)
   provincesLoading.value = true
   try {
-    const res = await axios.get('http://localhost:8080/section/')
+    const res = await axios.get('http://54.66.153.95:8080/section/')
     provinceList.value = res.data
 
   } catch (e) {
@@ -115,7 +115,7 @@ async function selectProvince(province) {
   districtList.value = []
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}`)
+    const res = await axios.get(`http://54.66.153.95:8080/section/${selectedProvince.value}`)
     cityList.value = res.data
 
   } catch (e) {
@@ -132,7 +132,7 @@ async function selectCity(city) {
   districtList.value = []
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}`)
+    const res = await axios.get(`http://54.66.153.95:8080/section/${selectedProvince.value}/${selectedCity.value}`)
     districtList.value = res.data
   } catch (e) {
     districtList.value = []
@@ -156,7 +156,7 @@ async function goToMap() {
   if (!selectedDistrict.value || !selectedCity.value || !selectedProvince.value) return
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}/${selectedDistrict.value}`)
+    const res = await axios.get(`http://54.66.153.95:8080/section/${selectedProvince.value}/${selectedCity.value}/${selectedDistrict.value}`)
     const lat = res.data.y
     const lng = res.data.x
 

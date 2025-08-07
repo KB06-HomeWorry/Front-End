@@ -117,7 +117,7 @@ function goToAgency1() {
 
 const handletestClick = async () => {
   const { data } = await axios.get(
-    "http://localhost:8080/checklist/answers/five"
+    "http://54.66.153.95:8080/checklist/answers/five"
   );
 
   console.log("서버 응답:", data);

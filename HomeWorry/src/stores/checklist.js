@@ -17,7 +17,7 @@ export const useChecklistStore = defineStore("checklist", () => {
     const { type, stage, userId } = checklistData.value;
 
     try {
-      const response = await axios.get("http://localhost:8080/checklist", {
+      const response = await axios.get("http://54.66.153.95:8080/checklist", {
         params: { type, stage, user_id: userId },
       });
 
@@ -60,7 +60,7 @@ export const useChecklistStore = defineStore("checklist", () => {
 
     try {
       await axios.post(
-        "http://localhost:8080/checklist/answers",
+        "http://54.66.153.95:8080/checklist/answers",
         answerList.value
       );
       // console.log('서버에 초기화된 답변 저장 완료');
