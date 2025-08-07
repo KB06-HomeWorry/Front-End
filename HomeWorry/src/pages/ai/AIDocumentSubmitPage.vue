@@ -80,6 +80,7 @@
     </div>
     <AIAnalysisDetailModal
       :selectedSection="selectedSection"
+      :loading="loadingRecommendation"
       @close="closeModal"
     />
   </div>
@@ -87,6 +88,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import axios from 'axios';
 import { Plus } from 'lucide-vue-next';
 
 import AIFileUpload from './components/AIFileUploadButton.vue';
@@ -100,6 +102,7 @@ import { useFileUpload } from './composables/useFileUpload';
 
 const { isImageFile, isPdfFile, pdfToImages, preprocessImage, analyzeImages } =
   useOcrAndAnalyze();
+
 const {
   images,
   imagePreviews,
@@ -114,6 +117,7 @@ const {
 const analysisResults = ref([]);
 const isLoading = ref(false);
 const selectedSection = ref(null);
+const loadingRecommendation = ref(false);
 
 const handleAnalyze = async () => {
   await analyzeImages(
@@ -141,16 +145,45 @@ const handleReset = () => {
   );
 };
 
-const selectSection = (result, pageIndex) => {
-  if (result.isRisky) {
-    selectedSection.value = {
-      ...result,
-      details: result.text,
-      page: pageIndex + 1,
-      title: '',
-      recommendation: '',
+async function fetchTitleAndRecommendation(details) {
+  try {
+    const res = await axios.post('http://localhost:8080/ai/analysis', {
+      details,
+    });
+    console.log('서버 응답:', res.data);
+
+    // 서버가 이미 객체를 반환하므로 바로 반환
+    return res.data;
+  } catch (e) {
+    console.error('AI 분석 요청 실패:', e);
+    return {
+      title: '분석 실패',
+      recommendation: '권장 조치를 불러올 수 없습니다.',
     };
   }
+}
+
+const selectSection = async (result, pageIndex) => {
+  if (!result.isRisky) return;
+
+  selectedSection.value = {
+    ...result,
+    details: result.text,
+    page: pageIndex + 1,
+    title: '분석 중...',
+    recommendation: '잠시만 기다려주세요.',
+  };
+
+  loadingRecommendation.value = true;
+
+  const { title, recommendation } = await fetchTitleAndRecommendation(
+    result.text
+  );
+
+  selectedSection.value.title = title;
+  selectedSection.value.recommendation = recommendation;
+
+  loadingRecommendation.value = false;
 };
 
 const closeModal = () => {
@@ -195,7 +228,7 @@ const closeModal = () => {
 }
 
 .text-blue {
-  color: #2956b6;
+  color: var(--color-blue-deep);
 }
 
 .upload-btns {
@@ -206,7 +239,7 @@ const closeModal = () => {
 
 .btn-sub {
   background: #f4f6fa;
-  color: #2956b6;
+  color: var(--color-blue-deep);
   border: 1px solid #e0e7ef;
   border-radius: 10px;
   padding: 8px 16px 8px 13px;
