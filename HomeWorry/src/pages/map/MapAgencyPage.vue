@@ -11,73 +11,45 @@
         styles: [
           {
             width: '30px',
-
             height: '30px',
-
             background: 'rgba(80, 240, 195, 0.8)',
-
             borderRadius: '15px',
-
             color: '#000',
-
             textAlign: 'center',
-
             fontWeight: 'bold',
-
             lineHeight: '31px',
           },
 
           {
             width: '40px',
-
             height: '40px',
-
             background: 'rgba(0, 173, 255, 0.35)',
-
             borderRadius: '20px',
-
             color: '#000',
-
             textAlign: 'center',
-
             fontWeight: 'bold',
-
             lineHeight: '41px',
           },
 
           {
             width: '50px',
-
             height: '50px',
-
             background: 'rgba(19, 182, 68, 0.71)',
-
             borderRadius: '25px',
-
             color: '#000',
-
             textAlign: 'center',
-
             fontWeight: 'bold',
-
             lineHeight: '51px',
           },
 
           {
             width: '60px',
-
             height: '60px',
-
             background: 'rgba(236, 163, 221, 0.58)',
-
             borderRadius: '30px',
-
             color: '#000',
-
             textAlign: 'center',
-
             fontWeight: 'bold',
-
             lineHeight: '61px',
           },
         ],
@@ -232,7 +204,7 @@ async function loadAgencies() {
   try {
     const response = await fetch("http://localhost:8080/api/agent/geo/list"); // ✅ API 호출
     const data = await response.json(); // ✅ JSON 파싱
-
+        console.log("API 데이터:", data);   // ★ 추가
     const loadedagencies = data.map((item) => ({
       officeId: item.officeId,
       gu: item.gu,
