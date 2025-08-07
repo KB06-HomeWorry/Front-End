@@ -81,7 +81,8 @@ const emit = defineEmits([
   'update:transactionType',
   'update:minPyeong',
   'update:maxPyeong',
-  'update:sheetOpen'
+  'update:sheetOpen',
+  'search'
 ])
 
 // 내부 임시 상태 (확인 전까지는 부모에 영향 안줌)
@@ -150,6 +151,10 @@ function openSheet(type) {
 }
 function closeSheet() {
   emit('update:sheetOpen', false)
+}
+
+function onSearch(keyword) {
+  emit('search', keyword)
 }
 </script>
 

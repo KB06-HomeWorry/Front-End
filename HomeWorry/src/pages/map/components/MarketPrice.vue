@@ -1,10 +1,10 @@
 <template>
   <div class="price-box">
-    <div class="top-section bodyMedium12px">
+    <div class="top-section bodyMedium10px">
       <span class="top-text">{{ location }}</span>
     </div>
     <div class="divider"></div>
-    <div class="bottom-section titleBold14px">
+    <div class="bottom-section titleBold12px">
       <span class="bottom-text">{{ price }}</span>
     </div>
   </div>
