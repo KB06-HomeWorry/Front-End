@@ -1,9 +1,9 @@
 <template>
   <div class="estatetext-textarea-wrap">
-<div class="q-text bodyMedium14px">
-  <img src="@/assets/icons/question_book.png" alt="입력 안내" class="q-icon" />
-  이해하기 어려운 부동산 문장을 입력해 주세요.
-</div>
+    <div class="q-text bodyMedium14px">
+      <img :src="questionBookIcon" alt="입력 안내" class="q-icon" />
+      이해하기 어려운 부동산 문장을 입력해 주세요.
+    </div>
 
     <textarea
       :value="modelValue"
@@ -29,19 +29,20 @@
 </template>
 
 <script setup>
+import questionBookIcon from "@/assets/icons/question_book.png";
 const props = defineProps({
-  modelValue: { type: String, default: '' },
+  modelValue: { type: String, default: "" },
   maxlength: { type: Number, default: 300 },
   minlength: { type: Number, default: 10 },
   rows: { type: Number, default: 4 },
   placeholder: {
     type: String,
-    default: '본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.',
+    default: "본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.",
   },
 });
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(["update:modelValue"]);
 function onInput(e) {
-  emit('update:modelValue', e.target.value);
+  emit("update:modelValue", e.target.value);
 }
 </script>
 

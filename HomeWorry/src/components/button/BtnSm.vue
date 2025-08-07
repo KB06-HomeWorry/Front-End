@@ -6,24 +6,25 @@
     @click="$emit('click')"
   >
     <template v-if="iconPosition === 'left'">
-      <img src="@/assets/icons/back.png" class="icon icon-left" />
+      <img :src="backIcon" class="icon icon-left" />
     </template>
 
     <span class="text">{{ text }}</span>
 
     <template v-if="iconPosition === 'right'">
-      <img src="@/assets/icons/back.png" class="icon icon-right flip" />
+      <img :src="backIcon" class="icon icon-right flip" />
     </template>
   </button>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from "vue";
+import backIcon from "@/assets/icons/back.png";
 
 const props = defineProps({
   color: {
     type: String,
-    default: 'var(--color-primary)',
+    default: "var(--color-primary)",
   },
   text: {
     type: String,
@@ -31,15 +32,15 @@ const props = defineProps({
   },
   iconPosition: {
     type: String,
-    default: '',
+    default: "",
   },
 });
 
-defineEmits(['click']);
+defineEmits(["click"]);
 
 const isWhiteBg = computed(() => {
   const c = props.color?.toLowerCase();
-  return c === '#fff' || c === '#ffffff' || c === 'white';
+  return c === "#fff" || c === "#ffffff" || c === "white";
 });
 </script>
 

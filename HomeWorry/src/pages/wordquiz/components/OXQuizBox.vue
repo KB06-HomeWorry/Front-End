@@ -9,26 +9,29 @@
     </div>
     <!-- OX 버튼 -->
     <div class="quiz-ox-row">
-      <OXBtn imgSrc="/src/assets/icons/quiz_correct.png" @click="() => emit('submit', 'o')" />
-      <OXBtn imgSrc="/src/assets/icons/quiz_wrong.png" @click="() => emit('submit', 'x')" />
+      <OXBtn imgsrc="quizRightIcon" @click="() => emit('submit', 'o')" />
+      <OXBtn imgsrc="quizWrongIcon" @click="() => emit('submit', 'x')" />
     </div>
   </div>
 </template>
 
 <script setup>
-import QuizHeader from '@/pages/wordquiz/components/QuizHeader.vue'
-import OXBtn from './OXBtn.vue'
+import QuizHeader from "@/pages/wordquiz/components/QuizHeader.vue";
+import OXBtn from "./OXBtn.vue";
+import quizRightIcon from "@/assets/icons/quiz_correct.png";
+import quizWrongIcon from "@/assets/icons/quiz_wrong.png";
 
 const props = defineProps({
   question: { type: String, required: true },
   level: { type: String, required: true },
-  number: { type: [String, Number], required: true }
-})
-const emit = defineEmits(['select'])
+  number: { type: [String, Number], required: true },
+});
+const emit = defineEmits(["select"]);
 
 function onOXSelect(userAnswer) {
   // 여기서 정답 체크, 모달 show 등 진행!
-  answerResult.value = (userAnswer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong');
+  answerResult.value =
+    userAnswer === currentQuiz.value.correctAnswer ? "correct" : "wrong";
   showModal.value = true;
 }
 </script>
@@ -36,7 +39,7 @@ function onOXSelect(userAnswer) {
 <style scoped>
 .quiz-card {
   width: 393px;
-  background: rgba(17, 31, 92, 0.10);
+  background: rgba(17, 31, 92, 0.1);
   padding: 0 0 56px 0;
   margin-left: -2rem;
   margin-right: -2rem;
@@ -48,7 +51,7 @@ function onOXSelect(userAnswer) {
 .quiz-question {
   display: flex;
   align-items: flex-start;
-  margin: 32px 0 20px 0;  
+  margin: 32px 0 20px 0;
   padding: 0 32px;
 }
 

@@ -8,24 +8,27 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue";
 const props = defineProps({
   modelValue: {
     type: String,
-    default: 'trust'
+    default: "trust",
+  },
+});
+const emit = defineEmits(["update:modelValue", "change"]);
+
+const selected = ref(props.modelValue);
+
+watch(
+  () => props.modelValue,
+  (val) => {
+    selected.value = val;
   }
-})
-const emit = defineEmits(['update:modelValue', 'change'])
-
-const selected = ref(props.modelValue)
-
-watch(() => props.modelValue, (val) => {
-  selected.value = val
-})
+);
 
 function onChange() {
-  emit('update:modelValue', selected.value)
-  emit('change', selected.value)
+  emit("update:modelValue", selected.value);
+  emit("change", selected.value);
 }
 </script>
 
@@ -45,12 +48,11 @@ select {
   outline: none;
   cursor: pointer;
   appearance: none; /* 기본 화살표 숨김 */
-  background-image: url('../src/assets/icons/down_arrow_dark.png');
+  background-image: url("@/assets/icons/down_arrow_dark.png");
   background-repeat: no-repeat;
   background-position: right 14px center;
   background-size: 16px;
 }
-
 
 option {
   font-size: 12px;

@@ -9,13 +9,14 @@
       title="현재 위치로 이동"
       @click="$emit('move-current-location')"
     >
-      <img src="@/assets/icons/Location.png" alt="현재 위치" />
+      <img :src="location" alt="현재 위치" />
     </button>
   </div>
 </template>
 
 <script setup>
 // 부모 MapPage.vue(현재 수정중에는 FixMapPage.vue)에서 이벤트 처리
+import location from "@/assets/icons/Location.png";
 </script>
 
 <style scoped>

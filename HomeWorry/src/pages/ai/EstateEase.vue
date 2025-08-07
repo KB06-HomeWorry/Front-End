@@ -1,6 +1,6 @@
 <template>
   <div class="sentence-simplify-page">
-    <AIExplain class="explain-box"/>
+    <AIExplain class="explain-box" />
     <EstateEaseInput v-model="input" :maxlength="100" :minlength="3" />
 
     <div class="btn-center-wrap">
@@ -15,11 +15,7 @@
 
     <div v-if="result" class="result-card">
       <div class="result-title bodyMedium14px">
-        <img
-          src="@/assets/icons/quiz_lightbulb.png"
-          alt="해석 아이콘"
-          class="result-icon"
-        />
+        <img :src="lightbulbIcon" alt="해석 아이콘" class="result-icon" />
         <span>해석 결과</span>
       </div>
       <div class="result-content bodyLight12px">{{ result }}</div>
@@ -30,15 +26,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import axios from 'axios';
-import AIExplain from '@/pages/ai/components/AIExplain.vue';
-import EstateEaseInput from './components/EstateEaseInput.vue';
-import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
+import { ref } from "vue";
+import lightbulbIcon from "@/assets/icons/quiz_lightbulb.png";
+import axios from "axios";
+import AIExplain from "@/pages/ai/components/AIExplain.vue";
+import EstateEaseInput from "./components/EstateEaseInput.vue";
+import BtnMedSlim from "@/components/button/BtnMedSlim.vue";
 
-const input = ref('');
-const result = ref('');
-const error = ref('');
+const input = ref("");
+const result = ref("");
+const error = ref("");
 const loading = ref(false);
 
 function isMeaninglessInput(text) {
@@ -53,21 +50,21 @@ function isMeaninglessInput(text) {
 async function analyze() {
   const value = input.value.trim();
   if (!value || isMeaninglessInput(value)) {
-    error.value = '실제 부동산 관련 단어나 문장을 입력해 주세요.';
+    error.value = "실제 부동산 관련 단어나 문장을 입력해 주세요.";
     return;
   }
   loading.value = true;
-  error.value = '';
-  result.value = '';
+  error.value = "";
+  result.value = "";
 
   try {
     const response = await axios.post(
-      'http://localhost:8080/ai/estate-ease',
+      "http://localhost:8080/ai/estate-ease",
       value
     );
     result.value = response.data.result.trim();
   } catch (e) {
-    error.value = '서버 오류: ' + (e.response?.data ?? e.message);
+    error.value = "서버 오류: " + (e.response?.data ?? e.message);
   }
   loading.value = false;
 }

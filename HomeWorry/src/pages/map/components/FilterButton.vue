@@ -1,21 +1,19 @@
 <template>
-  <button
-    class="btn-med-wrapper bodyMedium12px"
-    @click="$emit('click')"
-  >
-    <p class="text"> {{ text }} </p>
-    <img src="@/assets/icons/down_arrow.png" alt="아래 화살표" class="down-arrow" />
+  <button class="btn-med-wrapper bodyMedium12px" @click="$emit('click')">
+    <p class="text">{{ text }}</p>
+    <img :src="downArrowIcon" alt="아래 화살표" class="down-arrow" />
   </button>
 </template>
 
 <script setup>
+import downArrowIcon from "@/assets/icons/down_arrow.png";
 const props = defineProps({
   text: {
     type: String,
     required: true,
   },
 });
-defineEmits(['click']);
+defineEmits(["click"]);
 </script>
 
 <style scoped>
@@ -33,18 +31,18 @@ defineEmits(['click']);
   gap: 6px;
 }
 
-.text{
-    text-align: center;
-    color: var(--color-mediumgray);
-    line-height: 35px;
-    margin-top: 2px;
-      white-space: nowrap;
+.text {
+  text-align: center;
+  color: var(--color-mediumgray);
+  line-height: 35px;
+  margin-top: 2px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.down-arrow{
-    width: 11px;
-    height: 11px;
+.down-arrow {
+  width: 11px;
+  height: 11px;
 }
 </style>

@@ -9,26 +9,27 @@
         placeholder="단지명, 역명, 지역명"
       />
       <button class="icon-btn" @click="onSearch" aria-label="검색">
-        <img src="@/assets/icons/search_light.png" alt="검색" class="search-icon" />
+        <img :src="searchLightIcon" alt="검색" class="search-icon" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const emit = defineEmits(['search'])
-const searchText = ref('')
+import searchLightIcon from "@/assets/icons/search_light.png";
+import { ref } from "vue";
+const emit = defineEmits(["search"]);
+const searchText = ref("");
 
 function onSearch() {
-  emit('search', searchText.value.trim())
+  emit("search", searchText.value.trim());
 }
 </script>
 
 <style scoped>
 .map-search-bar {
-  flex: 1 0 160px; 
-  min-width: 160px; 
+  flex: 1 0 160px;
+  min-width: 160px;
   background: #fff;
   padding: 0;
   display: flex;

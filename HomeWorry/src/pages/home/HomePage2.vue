@@ -3,22 +3,22 @@
     <div class="home-btn-row">
       <HomeBtn80px
         text="아파트"
-        icon="/src/assets/icons/home_apartment.png"
+        :icon="homeApartment"
         @click="() => go('/map/apartment')"
       />
       <HomeBtn80px
         text="원.투룸"
-        icon="/src/assets/icons/home_oneroom.png"
+        :icon="homeOneroom"
         @click="() => go('/map/onetwo')"
       />
       <HomeBtn80px
         text="빌라.주택"
-        icon="/src/assets/icons/home_villa.png"
+        :icon="homeVilla"
         @click="() => go('/map/building')"
       />
       <HomeBtn80px
         text="오피스텔"
-        icon="/src/assets/icons/home_officetel.png"
+        :icon="homeOfficetel"
         @click="() => go('/map/officetel')"
       />
     </div>
@@ -26,13 +26,13 @@
     <div class="home-btn-lg-col">
       <HomeBtnLg
         text="AI 계약서 분석"
-        icon="/src/assets/icons/home_ai.png"
+        :icon="homeAi"
         desc="학습된 인공지능으로 거래 계약서에 숨어있는 독소조항을 찾아낼 수 있습니다."
         @click="go('/ai/analysis')"
       />
       <HomeBtnLg
         text="서류 분석"
-        icon="/src/assets/icons/home_analysis.png"
+        :icon="homeAnalysis"
         desc="매물 정보들을 입력하여 해당 매물의 위험도를 확인할 수 있습니다."
         @click="go('/analysis')"
       />
@@ -44,12 +44,12 @@
     <div class="home-btn-row" style="margin-bottom: 10px">
       <HomeBtnMed
         text="전.월세 체크리스트"
-        icon="/src/assets/icons/checklist_rent.png"
+        :icon="checklistRent"
         @click="handleCategoryClick('전.월세 체크리스트')"
       />
       <HomeBtnMed
         text="매매 체크리스트"
-        icon="/src/assets/icons/checklist_sale.png"
+        :icon="checklistSale"
         @click="handleCategoryClick('매매 체크리스트')"
       />
     </div>
@@ -57,17 +57,17 @@
     <div class="home-btn-row">
       <HomeBtnSmall
         text="부동산<br/>용어 해석"
-        icon="/src/assets/icons/home_chatbot.png"
+        :icon="homeChatbot"
         @click="() => go('ai/estate-ease')"
       />
       <HomeBtnSmall
         text="부동산<br/>용어 퀴즈"
-        icon="/src/assets/icons/home_quiz.png"
+        :icon="homeQuiz"
         @click="() => go('/quiz')"
       />
       <HomeBtnSmall
         text="중개수수료<br/>계산기"
-        icon="/src/assets/icons/home_calculator.png"
+        :icon="homeCalculator"
         @click="() => go('/calculator')"
       />
     </div>
@@ -75,29 +75,45 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import HomeBtn80px from '@/pages/home/components/HomeBtn80px.vue';
-import HomeBtnLg from '@/pages/home/components/HomeBtnLg.vue';
-import HomeBtnMed from '@/pages/home/components/HomeBtnMed.vue';
-import HomeBtnSmall from '@/pages/home/components/HomeBtnSmall.vue';
-import { useChecklistStore } from '@/stores/checklist';
+import { useRouter } from "vue-router";
+import HomeBtn80px from "@/pages/home/components/HomeBtn80px.vue";
+import HomeBtnLg from "@/pages/home/components/HomeBtnLg.vue";
+import HomeBtnMed from "@/pages/home/components/HomeBtnMed.vue";
+import HomeBtnSmall from "@/pages/home/components/HomeBtnSmall.vue";
+import { useChecklistStore } from "@/stores/checklist";
+
+// 🔹 이미지 import
+import homeApartment from "@/assets/icons/home_apartment.png";
+import homeOneroom from "@/assets/icons/home_oneroom.png";
+import homeVilla from "@/assets/icons/home_villa.png";
+import homeOfficetel from "@/assets/icons/home_officetel.png";
+
+import homeAi from "@/assets/icons/home_ai.png";
+import homeAnalysis from "@/assets/icons/home_analysis.png";
+
+import checklistRent from "@/assets/icons/checklist_rent.png";
+import checklistSale from "@/assets/icons/checklist_sale.png";
+
+import homeChatbot from "@/assets/icons/home_chatbot.png";
+import homeQuiz from "@/assets/icons/home_quiz.png";
+import homeCalculator from "@/assets/icons/home_calculator.png";
 
 const router = useRouter();
 const go = (path) => router.push(path);
 
 const checklistStore = useChecklistStore();
 const handleCategoryClick = (category) => {
-  if (category === '전.월세 체크리스트' || category === '매매 체크리스트') {
-    const mappedType = category === '전.월세 체크리스트' ? '전/월세' : '매매';
+  if (category === "전.월세 체크리스트" || category === "매매 체크리스트") {
+    const mappedType = category === "전.월세 체크리스트" ? "전/월세" : "매매";
 
     console.log(mappedType);
     const query = {
       type: (checklistStore.checklistData.type = mappedType),
-      stage: '계약 전',
+      stage: "계약 전",
       userId: checklistStore.checklistData.userId,
     };
 
-    router.push({ path: '/checklist-stage', query });
+    router.push({ path: "/checklist-stage", query });
   }
 };
 </script>

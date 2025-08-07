@@ -1,5 +1,5 @@
 <template>
-  <span 
+  <span
     class="tooltip-trigger"
     @mouseenter="isOpen = true"
     @mouseleave="isOpen = false"
@@ -7,12 +7,7 @@
     @blur="isOpen = false"
     tabindex="0"
   >
-    <img
-      class="question-icon"
-      src="@/assets/icons/question_circle_darkgray.png"
-      alt="?"
-      draggable="false"
-    />
+    <img class="question-icon" :src="questionIcon" alt="?" draggable="false" />
     <span v-if="isOpen" class="tooltip-box bodyLight12px">
       <slot />
     </span>
@@ -20,8 +15,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const isOpen = ref(false)
+import questionIcon from "@/assets/icons/question_circle_darkgray.png";
+import { ref } from "vue";
+const isOpen = ref(false);
 </script>
 
 <style scoped>

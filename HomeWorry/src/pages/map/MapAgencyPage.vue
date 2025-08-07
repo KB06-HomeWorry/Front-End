@@ -175,18 +175,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import {
   KakaoMap,
   KakaoMapMarker,
   KakaoMapCustomOverlay,
-} from 'vue3-kakao-maps';
+} from "vue3-kakao-maps";
 
 const route = useRoute();
 const router = useRouter();
 
-const initialCenter = route.query.center?.split(',').map(Number) || [
+const initialCenter = route.query.center?.split(",").map(Number) || [
   37.5435, 127.0812,
 ];
 const lat = ref(initialCenter[0]);
@@ -216,10 +216,10 @@ const onLoadKakaoMapMarkerCluster = (clustererRef) => {
 
   kakao.maps.event.addListener(
     clusterer.value,
-    'clusterclick',
+    "clusterclick",
     function (cluster) {
       const currentLevel = map?.value?.getLevel();
-      console.log('클러스터 클릭:', cluster, '현재 레벨:', currentLevel);
+      console.log("클러스터 클릭:", cluster, "현재 레벨:", currentLevel);
       if (currentLevel !== undefined && !isNaN(currentLevel)) {
         const newLevel = currentLevel - 1; //클러스터 클릭시 1레벨 zoom in
         map.value?.setLevel(newLevel, { anchor: cluster.getCenter() });
@@ -230,7 +230,7 @@ const onLoadKakaoMapMarkerCluster = (clustererRef) => {
 
 async function loadAgencies() {
   try {
-    const response = await fetch('http://localhost:8080/api/agent/geo/list'); // ✅ API 호출
+    const response = await fetch("http://localhost:8080/api/agent/geo/list"); // ✅ API 호출
     const data = await response.json(); // ✅ JSON 파싱
 
     const loadedagencies = data.map((item) => ({
@@ -244,7 +244,7 @@ async function loadAgencies() {
 
     agencies.value = loadedagencies;
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error("❌ API 로딩 실패:", error);
   }
 }
 
@@ -254,7 +254,7 @@ async function onMarkerClick(agency) {
     const response = await fetch(
       `http://localhost:8080/api/agent/${agency.officeId}`
     );
-    if (!response.ok) throw new Error('Network response was not ok');
+    if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     selectedAgency.value = {
       ...data,
@@ -263,14 +263,14 @@ async function onMarkerClick(agency) {
     };
     console.log(selectedAgency.value);
   } catch (e) {
-    alert('중개사무소 정보를 불러오지 못했습니다.');
+    alert("중개사무소 정보를 불러오지 못했습니다.");
   }
 }
 
 // 지도 이벤트 기반 쿼리 동기화
 function onMapReady(map) {
-  kakao.maps.event.addListener(map, 'dragend', () => updateURL(map));
-  kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map));
+  kakao.maps.event.addListener(map, "dragend", () => updateURL(map));
+  kakao.maps.event.addListener(map, "zoom_changed", () => updateURL(map));
   agency_map.value = map;
 }
 
