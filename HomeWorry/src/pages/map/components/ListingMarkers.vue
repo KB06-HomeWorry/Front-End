@@ -59,11 +59,11 @@ function handleClick() {
   opacity: 0.95;
 }
 
-/* 별 아이콘 */
+/* 집 아이콘 */
 .star-icon {
   width: 14px;
   height: 14px;
-  margin-top: 6px;
+  margin-top: 4px;
   display: block;
 }
 </style>
