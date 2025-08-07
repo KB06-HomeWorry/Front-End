@@ -29,7 +29,8 @@
     <div>AI 예측 결과</div>
     <ul>
       <li v-for="(item, index) in predictionResults" :key="index">
-        <strong>{{ item.result }}</strong>: {{ item.text }}
+        <strong>{{ item.result }}</strong
+        >: {{ item.text }}
       </li>
     </ul>
   </div>
@@ -169,24 +170,24 @@ const handleFileChange = async (e) => {
     }
     ocrText.value = text.trim();
 
-// ocr 텍스트 모델로 보내고, 모델 결과값 받아오기
-const lines = text
-  .split('\n')
-  .map(line => line.trim())
-  .filter(line => line);
-console.log("백엔드에 보낼 lines:",lines);
+    // ocr 텍스트 모델로 보내고, 모델 결과값 받아오기
+    const lines = text
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line);
+    console.log('백엔드에 보낼 lines:', lines);
 
-try {
-  const response = await axios.post("http://localhost:8000/predict", {
-    texts: lines
-  });
-  const result = response.data;
-  console.log("AI 예측 결과:", result);
+    try {
+      const response = await axios.post('http://localhost:8000/predict', {
+        texts: lines,
+      });
+      const result = response.data;
+      console.log('AI 예측 결과:', result);
 
-  predictionResults.value = result.predictions || [];
-} catch (error) {
-  console.error("AI 예측 요청 실패:", error);
-}
+      predictionResults.value = result.predictions || [];
+    } catch (error) {
+      console.error('AI 예측 요청 실패:', error);
+    }
   } catch (err) {
     ocrText.value = 'OCR 처리 중 오류가 발생했습니다.';
     console.error(err);
