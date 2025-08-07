@@ -3,7 +3,7 @@
     <BtnMedSlim
       :text="
         isLoading
-          ? `AI가 분석 중... (${totalCount}개 파일)`
+          ? `${totalCount}개 파일 AI 분석중···`
           : `AI로 ${totalCount}개 계약서 분석하기`
       "
       :disabled="isLoading"
