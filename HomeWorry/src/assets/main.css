@@ -28,6 +28,7 @@ body {
   --color-lightgray2: #f4f4f4;
   --color-error: #bf0000;
   --color-danger: #ef4444;
+  --color-blue-deep: #2956b6;
   --transition: all 0.3s ease;
 }
 
