@@ -2,10 +2,6 @@
   <div>
     <SimpleHeader title="저장된 매물" />
     <div class="bookmark-page">
-      <!-- 검색/정렬 -->
-      <div class="search-sort-row">
-        <SortSelect v-model="sortBy" />
-      </div>
 
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
@@ -60,8 +56,7 @@ const sampleImgs = [profile1, profile2, profile3]
 const listings = ref([])
 const userToken = localStorage.getItem('user-token')
 
-// 검색/정렬/페이지네이션 상태
-const searchText = ref('')
+// 정렬/페이지네이션 상태
 const sortBy = ref('name')         // 'price', 'date' 등으로 확장 가능
 const page = ref(1)
 const pageSize = 8                 // 1페이지에 8개씩
@@ -72,37 +67,48 @@ onMounted(() => {
 })
 
 async function fetchListingList(){
-  try {
-    // 북마크 된 매물 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
-    listings.value = res.data
-  } catch (e) {
-    alert('찜한 매물 목록을 불러오지 못했습니다.')
-  }
+  // try {
+  //   // 북마크 된 매물 목록 조회
+  //   const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
+  //   listings.value = res.data
+  // } catch (e) {
+  //   alert('찜한 매물 목록을 불러오지 못했습니다.')
+  // }
+
+  // 목 데이터 삽입
+  listings.value = [
+    {
+      id: 1,
+      listingName: '해피빌 101동',
+      transactionType: '월세',
+      deposit: 1000,
+      monthlyRent: 50,
+      address: '서울특별시 강남구 테헤란로 123',
+      housingType: '오피스텔',
+      areaInfo: '18평',
+      floorInfo: '3층',
+      direction: '남향',
+      isFavorite: true,
+      price: 50000,
+    },
+    {
+      id: 2,
+      listingName: '프라임아파트',
+      transactionType: '전세',
+      deposit: 20000,
+      monthlyRent: 0,
+      address: '서울특별시 송파구 올림픽로 45',
+      housingType: '아파트',
+      areaInfo: '25평',
+      floorInfo: '15층',
+      direction: '동향',
+      isFavorite: true,
+      price: 200000,
+    },
+  ]
 }
 
-function onSearch(val) {
-  searchText.value = val
-  page.value = 1
-}
-
-// 검색어 필터
-const filteredList = computed(() =>
-  searchText.value
-    ? listings.value.filter(l =>
-        l.listingName.toLowerCase().includes(searchText.value.trim().toLowerCase()) ||
-        l.address.toLowerCase().includes(searchText.value.trim().toLowerCase())
-      )
-    : listings.value
-)
-
-const sortedList = computed(() => {
-  const list = [...filteredList.value]
-  if (sortBy.value === 'price') {
-    return list.sort((a, b) => Number(a.price) - Number(b.price))
-  }
-  return list.sort((a, b) => a.address.localeCompare(b.address, 'ko'))
-})
+const sortedList = computed(() => listings.value)
 
 const totalPages = computed(() =>
   Math.ceil(sortedList.value.length / pageSize)
@@ -142,27 +148,15 @@ async function toggleFavorite(id, isFavorite) {
 <style scoped>
 .bookmark-page {
   max-width: 480px;
-  margin: 0 2rem;
+  margin: 0 1.5rem;
   padding: 16px 0 40px 0;
   min-height: 80vh;
 }
-.search-sort-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-}
-.search-sort-row > *:first-child {
-  flex: 1;
-  min-width: 0;
-}
-.search-sort-row > *:last-child {
-  flex-shrink: 0;
-}
+
 .listing-list-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px 12px;
+  grid-template-columns: repeat(1fr);
+  gap: 6px;
 }
 .empty-msg {
   text-align: center;
