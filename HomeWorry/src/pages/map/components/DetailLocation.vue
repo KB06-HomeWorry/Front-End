@@ -9,10 +9,10 @@
 
     <!-- 주소 + 복사 -->
     <div class="location-row">
-      <img src="@/assets/icons/map_location.png" alt="위치" class="icon-location" />
+      <img :src="mapLocationIcon" alt="위치" class="icon-location" />
       <span class="address bodyMedium12px">{{ address }}</span>
       <button class="copy-btn" @click="copyLocation">
-        <img src="@/assets/icons/copy.png" alt="복사" />
+        <img :src="copyIcon" alt="복사" />
         <span class="copy-label bodyMedium10px">복사</span>
       </button>
     </div>
@@ -28,26 +28,28 @@
   >
     <KakaoMapMarker :lat="lat" :lng="lng" />
   </KakaoMap>
-      <img src="@/assets/icons/nav_map_dark.png" alt="지도" class="map-img" />
+      <img src="/assets/icons/nav_map_dark.png" alt="지도" class="map-img" />
     </div> -->
 
     <!-- 하단 신고 버튼 -->
     <!-- <button class="report-row bodyMedium12px" @click="reportItem">
       <span>매물 신고</span>
-      <img src="@/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
+      <img src="/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
     </button> -->
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
+import { ref } from "vue";
+import { KakaoMap, KakaoMapMarker } from "vue3-kakao-maps";
+import mapLocationIcon from "@/assets/icons/map_location.png";
+import copyIcon from "@/assets/icons/copy.png";
 
-const address = ref('서울특별시 광진구');
-const lat = ref(null)
-const lng = ref(null)
+const address = ref("서울특별시 광진구");
+const lat = ref(null);
+const lng = ref(null);
 
-const currentLocation = ref({ lat: null, lng: null })
+const currentLocation = ref({ lat: null, lng: null });
 
 const getCurrentLocation = () => {
   if (navigator.geolocation) {
@@ -57,13 +59,13 @@ const getCurrentLocation = () => {
       currentLocation.value = { lat: latVal, lng: lngVal };
     });
   } else {
-    alert('Geolocation을 지원하지 않는 브라우저입니다.');
+    alert("Geolocation을 지원하지 않는 브라우저입니다.");
   }
 };
 
 const copyLocation = () => {
   if (!navigator.geolocation) {
-    alert('Geolocation을 지원하지 않는 브라우저입니다.');
+    alert("Geolocation을 지원하지 않는 브라우저입니다.");
     return;
   }
 
@@ -72,25 +74,24 @@ const copyLocation = () => {
       const latVal = position.coords.latitude;
       const lngVal = position.coords.longitude;
 
-      lat.value = latVal
-      lng.value = lngVal
+      lat.value = latVal;
+      lng.value = lngVal;
       currentLocation.value = { lat: latVal, lng: lngVal };
 
       const text = `${latVal}, ${lngVal}`;
       try {
         await navigator.clipboard.writeText(text);
-        alert('📌 위치 좌표가 복사되었습니다!');
+        alert("📌 위치 좌표가 복사되었습니다!");
       } catch (err) {
-        alert('❌ 복사 실패: ' + err);
+        alert("❌ 복사 실패: " + err);
       }
     },
     (error) => {
-      alert('❌ 위치 정보를 가져올 수 없습니다.');
+      alert("❌ 위치 정보를 가져올 수 없습니다.");
       console.error(error);
     }
   );
 };
-
 </script>
 
 <style scoped>
@@ -117,7 +118,7 @@ const copyLocation = () => {
 }
 
 .icon-location {
-  width: 16px; 
+  width: 16px;
   height: 16px;
 }
 
@@ -137,7 +138,7 @@ const copyLocation = () => {
   margin-top: 2px;
 }
 .copy-btn img {
-  width: 10px; 
+  width: 10px;
   height: 10px;
   margin-right: 2px;
 }
@@ -154,7 +155,7 @@ const copyLocation = () => {
   overflow: hidden;
   width: 100%;
   height: 170px;
-  box-shadow: 0 2px 8px rgba(44,44,44,0.06);
+  box-shadow: 0 2px 8px rgba(44, 44, 44, 0.06);
   position: relative;
 }
 .map-img {
@@ -182,7 +183,8 @@ const copyLocation = () => {
   margin-top: 6px;
 }
 .alert-img {
-  width: 16px; height: 16px;
+  width: 16px;
+  height: 16px;
   margin-left: 4px;
 }
 </style>

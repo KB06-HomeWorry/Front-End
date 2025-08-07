@@ -2,7 +2,7 @@
   <div class="explain-card">
     <div class="explain-title">
       <div class="icon-wrapper">
-        <img src="@/assets/icons/home_chatbot.png" alt="AI 아이콘" />
+        <img :src="chatbotAiIcon" alt="AI 아이콘" />
       </div>
       <span class="title-text bodyMedium12px"
         >AI가 어려운 문장 또는 단어를 해석해줘요.</span
@@ -29,7 +29,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import chatbotAiIcon from "@/assets/icons/home_chatbot.png";
+</script>
 
 <style scoped>
 .explain-card {
@@ -101,7 +103,7 @@
 }
 
 .caution-list li::before {
-  content: '•';
+  content: "•";
   position: absolute;
   left: 0;
   top: 0;

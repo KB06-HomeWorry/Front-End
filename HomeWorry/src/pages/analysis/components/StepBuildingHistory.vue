@@ -23,7 +23,7 @@ import InputField from "@/components/input/InputField.vue";
 import { openPostcode } from "@/composables/usePostcode.js";
 import { useAnalysisStore } from "@/stores/analysis.js";
 import { storeToRefs } from "pinia";
-import HelpButton from "../../../components/button/HelpButton.vue";
+import HelpButton from "@/components/button/HelpButton.vue";
 
 const analysisStore = useAnalysisStore();
 const { houseAddress } = storeToRefs(analysisStore);

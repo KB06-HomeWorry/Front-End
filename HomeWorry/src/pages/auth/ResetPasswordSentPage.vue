@@ -26,11 +26,7 @@
 
       <div class="plane-row-between">
         <div></div>
-        <img
-          src="@/assets/icons/email_paperplane.png"
-          alt="메일 발송 아이콘"
-          class="plane-illust"
-        />
+        <img :src="mailIcon" alt="메일 발송 아이콘" class="plane-illust" />
       </div>
 
       <BtnMed
@@ -43,31 +39,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
-import AuthTitle from '@/pages/auth/components/AuthTitle.vue';
-import BtnMed from '@/components/button/BtnMed.vue';
-import BtnTiny from '@/components/button/BtnTiny.vue';
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
+import AuthTitle from "@/pages/auth/components/AuthTitle.vue";
+import BtnMed from "@/components/button/BtnMed.vue";
+import BtnTiny from "@/components/button/BtnTiny.vue";
+import mailIcon from "@/assets/icons/email_paperplane.png";
 
 const router = useRouter();
 const route = useRoute();
-const email = ref(route.query.email || '');
+const email = ref(route.query.email || "");
 
 const resendLoading = ref(false);
-const resendError = ref('');
-const resendSuccess = ref('');
+const resendError = ref("");
+const resendSuccess = ref("");
 
 function goToLogin() {
-  router.replace('/auth/login');
+  router.replace("/auth/login");
 }
 
 async function onResend() {
-  resendError.value = '';
-  resendSuccess.value = '';
+  resendError.value = "";
+  resendSuccess.value = "";
   if (resendLoading.value) return;
   if (!email.value) {
-    resendError.value = '❌ 이메일 정보가 없습니다.';
+    resendError.value = "❌ 이메일 정보가 없습니다.";
     return;
   }
   resendLoading.value = true;
@@ -75,11 +72,11 @@ async function onResend() {
     await axios.get(
       `http://localhost:8080/api/member/resetpassword/${email.value}`
     );
-    resendSuccess.value = '📧 이메일이 전송되었습니다!';
+    resendSuccess.value = "📧 이메일이 전송되었습니다!";
   } catch (err) {
     resendError.value =
       err.response?.data?.message ||
-      '이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.';
+      "이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요.";
   } finally {
     resendLoading.value = false;
   }

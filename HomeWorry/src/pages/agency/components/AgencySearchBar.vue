@@ -10,19 +10,20 @@
       />
 
       <button class="icon-btn" @click="onSearch" aria-label="검색">
-        <img src="@/assets/icons/search_dark.png" alt="검색" class="search-icon" />
+        <img :src="searchIcon" alt="검색" class="search-icon" />
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-const emit = defineEmits(['search'])
-const searchText = ref('')
+import searchIcon from "@/assets/icons/search_dark.png";
+import { ref } from "vue";
+const emit = defineEmits(["search"]);
+const searchText = ref("");
 
 function onSearch() {
-  emit('search', searchText.value.trim())
+  emit("search", searchText.value.trim());
 }
 </script>
 
@@ -38,11 +39,11 @@ function onSearch() {
   align-items: center;
   position: relative;
   width: 100%;
-    position: relative;
+  position: relative;
 }
 
 .search-input {
-    width: 100%;
+  width: 100%;
   flex: 1;
   height: 40px;
   border: 1px solid var(--color-lightgray);
@@ -50,7 +51,7 @@ function onSearch() {
   padding: 0 40px 0 14px; /* 오른쪽 아이콘 영역 확보 */
   /* background: #fafbfc; */
   outline: none;
-    line-height: 40px;
+  line-height: 40px;
 }
 
 .search-input::placeholder {

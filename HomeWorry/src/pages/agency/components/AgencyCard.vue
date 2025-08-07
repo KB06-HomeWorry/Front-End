@@ -1,23 +1,20 @@
 <template>
-  <router-link
-    class="agency-card-link"
-    :to="`/agency/${id}`"
-  >
-  <div class="agency-card">
-    <div class="agency-card-left">
-      <img :src="computedImg" alt="프로필" class="agency-profile-img" />
-    </div>
-    <div class="agency-card-main">
-      <div class="agency-header">
-        <div class="agency-name bodyMedium16px">{{ name }}</div>
-        <div class="trust-badge bodyMedium10px">
-          <span class="star bodyMedium10px">★</span> {{ trustScore }}
-        </div>
+  <router-link class="agency-card-link" :to="`/agency/${id}`">
+    <div class="agency-card">
+      <div class="agency-card-left">
+        <img :src="computedImg" alt="프로필" class="agency-profile-img" />
       </div>
-      <div class="agency-address bodyMedium12px">{{ address }}</div>
-      <div class="agency-phone bodyLight12px">{{ phone }}</div>
+      <div class="agency-card-main">
+        <div class="agency-header">
+          <div class="agency-name bodyMedium16px">{{ name }}</div>
+          <div class="trust-badge bodyMedium10px">
+            <span class="star bodyMedium10px">★</span> {{ trustScore }}
+          </div>
+        </div>
+        <div class="agency-address bodyMedium12px">{{ address }}</div>
+        <div class="agency-phone bodyLight12px">{{ phone }}</div>
+      </div>
     </div>
-  </div>
   </router-link>
 </template>
 
@@ -31,19 +28,20 @@ const props = defineProps({
   // 실제 이미지 URL이 있을 때
   img: String,
   // 없을 땐 idx로 sample 돌리기
-  profileIdx: { type: Number, default: 0 }
-})
+  profileIdx: { type: Number, default: 0 },
+});
 
 const sampleImgs = [
-  '@/assets/icons/sample_profile1.png',
-  '@/assets/icons/sample_profile1.png',
-  '@/assets/icons/sample_profile1.png'
-]
+  "@/assets/icons/sample_profile1.png",
+  "@/assets/icons/sample_profile1.png",
+  "@/assets/icons/sample_profile1.png",
+];
 
 // 실 이미지가 props.img로 들어오면 우선, 없으면 sample
-const computedImg = props.img && props.img.length > 0
-  ? props.img
-  : sampleImgs[props.profileIdx % sampleImgs.length]
+const computedImg =
+  props.img && props.img.length > 0
+    ? props.img
+    : sampleImgs[props.profileIdx % sampleImgs.length];
 </script>
 
 <style scoped>
@@ -71,7 +69,7 @@ const computedImg = props.img && props.img.length > 0
   background: #f3f3f3;
   border: 1px solid #eee;
   display: block;
-  margin-left: 4px
+  margin-left: 4px;
 }
 
 .agency-card-main {

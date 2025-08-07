@@ -3,14 +3,14 @@
     <div class="left-column">
       <ApartBtn
         text="에이아이 계약서 분석입니당"
-        icon="/src/assets/icons/home_robot.png"
+        :icon="homeRobot"
         @click="handleAiAnaysisClick"
       />
     </div>
     <div class="right-column">
       <ApartBtn
         text="서류 분석"
-        icon="/src/assets/icons/home_document.png"
+        :icon="homeDocument"
         @click="handleDocumentAnaysisClick"
       />
     </div>
@@ -18,12 +18,12 @@
     <div class="checklist-column">
       <BtnLg
         text="전·월세 체크리스트"
-        icon="/src/assets/icons/checklist_rent.png"
+        :icon="checklistRent"
         @click="handleCategoryClick('전.월세 체크리스트')"
       />
       <BtnLg
         text="매매 체크리스트"
-        icon="/src/assets/icons/checklist_sale.png"
+        :icon="checklistSale"
         @click="handleCategoryClick('매매 체크리스트')"
       />
     </div>
@@ -31,29 +31,29 @@
     <div class="left-column">
       <ApartBtn
         text="아파트"
-        icon="/src/assets/icons/home_apartment.png"
+        :icon="homeApartment"
         @click="handleApartmentClick"
       />
       <BtnLgShort
         text="오피스텔"
-        icon="/src/assets/icons/home_officetel.png"
+        :icon="homeOfficetel"
         @click="handleCategoryClick('오피스텔')"
       />
     </div>
     <div class="right-column">
       <BtnLgShort
         text="원·투룸"
-        icon="/src/assets/icons/home_oneroom.png"
+        :icon="homeOneroom"
         @click="handleCategoryClick('원.투룸')"
       />
       <BtnLgShort
         text="빌라·주택"
-        icon="/src/assets/icons/home_villa.png"
+        :icon="homeVilla"
         @click="handleCategoryClick('빌라.주택')"
       />
       <BtnLgShort
         text="상가·사무실"
-        icon="/src/assets/icons/home_store.png"
+        :icon="homeStore"
         @click="handletestClick"
       />
     </div>
@@ -71,6 +71,17 @@ import BtnLgShort from "@/components/button/BtnLgShort.vue";
 import BtnLg from "@/components/button/BtnLg.vue";
 import BtnTiny from "@/components/button/BtnTiny.vue";
 import { useChecklistStore } from "@/stores/checklist";
+
+// 이미지 import
+import homeRobot from "@/assets/icons/home_robot.png";
+import homeDocument from "@/assets/icons/home_document.png";
+import checklistRent from "@/assets/icons/checklist_rent.png";
+import checklistSale from "@/assets/icons/checklist_sale.png";
+import homeApartment from "@/assets/icons/home_apartment.png";
+import homeOfficetel from "@/assets/icons/home_officetel.png";
+import homeOneroom from "@/assets/icons/home_oneroom.png";
+import homeVilla from "@/assets/icons/home_villa.png";
+import homeStore from "@/assets/icons/home_store.png";
 
 const checklistStore = useChecklistStore();
 const router = useRouter();

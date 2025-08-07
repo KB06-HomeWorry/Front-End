@@ -10,7 +10,7 @@
     <img
       v-if="showCelebrationImage"
       class="celebration-img"
-      src="@/assets/images/celebration.png"
+      :src="celebrationImage"
     />
 
     <div class="fab-btn">
@@ -34,7 +34,7 @@ import axios from "axios";
 import ChecklistQuestion from "./components/ChecklistQuestion.vue";
 import CircleButton from "./components/CircleButton.vue";
 import CustomModal from "@/components/modal/CustomModal.vue";
-
+import celebrationImage from "@/assets/images/celebration.png";
 import { useChecklistStore } from "@/stores/checklist";
 
 const route = useRoute();

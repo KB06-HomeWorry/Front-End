@@ -1,10 +1,6 @@
 <template>
   <div class="login-page">
-    <img
-      class="login-logo-img"
-      src="@/assets/icons/login_logo.png"
-      alt="로그인 로고"
-    />
+    <img class="login-logo-img" :src="loginLogo" alt="로그인 로고" />
 
     <form @submit.prevent="onLogin" class="login-form">
       <!-- 이메일 -->
@@ -43,37 +39,38 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
-import InputSimple from '@/components/input/InputSimple.vue';
-import BtnMed from '@/components/button/BtnMed.vue';
-import CustomModal from '@/components/modal/CustomModal.vue';
-import { useAuthStore } from '@/stores/auth';
-import { useChecklistStore } from '@/stores/checklist';
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import axios from "axios";
+import InputSimple from "@/components/input/InputSimple.vue";
+import BtnMed from "@/components/button/BtnMed.vue";
+import CustomModal from "@/components/modal/CustomModal.vue";
+import { useAuthStore } from "@/stores/auth";
+import { useChecklistStore } from "@/stores/checklist";
+import loginLogo from "@/assets/icons/login_logo.png";
 
 const authStore = useAuthStore();
 const checklistStore = useChecklistStore();
 
 const router = useRouter();
 const route = useRoute();
-const username = ref('');
-const password = ref('');
+const username = ref("");
+const password = ref("");
 
 const isAlertVisible = ref(false);
-const alertMessage = ref('');
+const alertMessage = ref("");
 let loginSuccess = false;
 let autoRedirectTimer = null;
 
 async function onLogin() {
   if (!username.value || !password.value) {
-    alertMessage.value = '아이디와 비밀번호를 모두 입력해주세요.';
+    alertMessage.value = "아이디와 비밀번호를 모두 입력해주세요.";
     isAlertVisible.value = true;
     loginSuccess = false;
     return;
   }
   try {
-    const response = await axios.post('/api/auth/login', {
+    const response = await axios.post("/api/auth/login", {
       username: username.value,
       password: password.value,
     });
@@ -84,27 +81,27 @@ async function onLogin() {
     if (token && userData) {
       authStore.login(userData, token);
       checklistStore.checklistData.userId = userData.userId;
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      alertMessage.value = '로그인에 성공했습니다!';
+      alertMessage.value = "로그인에 성공했습니다!";
       isAlertVisible.value = true;
       loginSuccess = true;
 
       if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
       autoRedirectTimer = setTimeout(() => {
         isAlertVisible.value = false;
-        const redirectPath = route.query.redirect || '/';
+        const redirectPath = route.query.redirect || "/";
         router.push(redirectPath);
       }, 1000);
     } else {
-      alertMessage.value = '로그인 정보가 올바르지 않습니다.';
+      alertMessage.value = "로그인 정보가 올바르지 않습니다.";
       isAlertVisible.value = true;
       loginSuccess = false;
     }
   } catch (error) {
     const errorMessage =
       error.response?.data?.message ||
-      '로그인에 실패했습니다.\n아이디나 비밀번호를 확인해주세요.';
+      "로그인에 실패했습니다.\n아이디나 비밀번호를 확인해주세요.";
     alertMessage.value = errorMessage;
     isAlertVisible.value = true;
     loginSuccess = false;
@@ -115,17 +112,17 @@ function handleAlertConfirm() {
   isAlertVisible.value = false;
   if (loginSuccess) {
     if (autoRedirectTimer) clearTimeout(autoRedirectTimer);
-    const redirectPath = route.query.redirect || '/';
+    const redirectPath = route.query.redirect || "/";
     router.push(redirectPath);
   }
 }
 
 function onSignup() {
-  router.push('/auth/signup-agreement');
+  router.push("/auth/signup-agreement");
 }
 
 function onResetPw() {
-  router.push('/auth/reset-password');
+  router.push("/auth/reset-password");
 }
 </script>
 
