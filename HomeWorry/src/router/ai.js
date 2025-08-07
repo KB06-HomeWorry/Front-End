@@ -8,6 +8,9 @@ export default [
     path: '/ai/analysis',
     name: 'aiAnalysis',
     component: () => import('../pages/ai/AIDocumentSubmitPage.vue'),
+    meta: {
+      hideHeader: true,    // Header 숨김
+    },
   },
   {
     path: '/ai/contract-ocr',
