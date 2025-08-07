@@ -1,5 +1,7 @@
 <template>
-  <div class="ai-doc-page-root">
+  <div>
+    <SimpleHeader title="AI 계약서 분석"></SimpleHeader>
+    <div class="ai-doc-page-root">
       <div class="ai-title-row">
       <div class="ai-header titleBold20px">
         계약서에 숨어 있는 위험, <br>
@@ -72,13 +74,14 @@
       @close="closeModal"
     />
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
 import { Plus } from 'lucide-vue-next';
-
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import AIFileUpload from './components/AIFileUploadButton.vue';
 import AIUploadList from './components/AIUploadList.vue';
 import AIButtonGroup from './components/AIButtonGroup.vue';
@@ -216,7 +219,7 @@ const closeModal = () => {
 }
 
 .uploaded-bar-left {
-  color: #222;
+  color: var(--color-primary);
 }
 
 .text-blue {
