@@ -92,11 +92,9 @@ onMounted(async () => {
   window.addEventListener('resize', updateFabPosition)
   provincesLoading.value = true
   try {
-    const res = await axios.get('/api/regions/provinces')
-    // 무조건 배열만 대입
-    provinceList.value = Array.isArray(res.data.provinces)
-      ? res.data.provinces
-      : (Array.isArray(res.data) ? res.data : [])
+    const res = await axios.get('http://localhost:8080/section/')
+    provinceList.value = res.data
+
   } catch (e) {
     provinceList.value = []
     alert('시/도 데이터를 불러오지 못했습니다.')
@@ -117,10 +115,9 @@ async function selectProvince(province) {
   districtList.value = []
   loading.value = true
   try {
-    const res = await axios.get(`/api/regions/cities`, { params: { province } })
-    cityList.value = Array.isArray(res.data.cities)
-      ? res.data.cities
-      : (Array.isArray(res.data) ? res.data : [])
+    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}`)
+    cityList.value = res.data
+
   } catch (e) {
     cityList.value = []
     alert('시/군/구 데이터를 불러오지 못했습니다.')
@@ -128,18 +125,15 @@ async function selectProvince(province) {
     loading.value = false
   }
 }
+
 async function selectCity(city) {
   selectedCity.value = city
   selectedDistrict.value = null
   districtList.value = []
   loading.value = true
   try {
-    const res = await axios.get(`/api/regions/districts`, {
-      params: { province: selectedProvince.value, city }
-    })
-    districtList.value = Array.isArray(res.data.districts)
-      ? res.data.districts
-      : (Array.isArray(res.data) ? res.data : [])
+    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}`)
+    districtList.value = res.data
   } catch (e) {
     districtList.value = []
     alert('동 데이터를 불러오지 못했습니다.')
@@ -162,16 +156,12 @@ async function goToMap() {
   if (!selectedDistrict.value || !selectedCity.value || !selectedProvince.value) return
   loading.value = true
   try {
-    const res = await axios.get(`/api/regions/latlng`, {
-      params: {
-        province: selectedProvince.value,
-        city: selectedCity.value,
-        district: selectedDistrict.value
-      }
-    })
-    const { lat, lng } = res.data
+    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}/${selectedDistrict.value}`)
+    const lat = res.data.y
+    const lng = res.data.x
+
     if (lat && lng) {
-      window.location.href = `/agency/map/center=${lat},${lng}&zoomLevel=3`
+      window.location.href = `/map/agency?center=${lat},${lng}&zoomLevel=3`
     } else {
       alert('위치 정보를 찾을 수 없습니다.')
     }
