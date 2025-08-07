@@ -19,7 +19,7 @@
     </SimpleHeader>
   <div class="agency-profile-wrap">
     <div class="profile-row">
-      <img :src="agency.profileUrl" alt="프로필" class="profile-img" />
+      <img :src="profileImg" alt="프로필" class="profile-img" />
       <div class="profile-info">
         <div class="agency-name titleBold16px">{{ agency.office_name }}</div>
         <div class="hashtags">
@@ -83,6 +83,13 @@ import { calculateAgencyScore } from '@/pages/agency/composables/useAllTrustScor
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import bookmarkOn from '@/assets/icons/star_filled.png'
 import bookmarkOff from '@/assets/icons/star_outline.png'
+
+import profile1 from '@/assets/icons/sample_profile1.png'
+import profile2 from '@/assets/icons/sample_profile2.png'
+import profile3 from '@/assets/icons/sample_profile3.png'
+
+const sampleImgs=[profile1,profile2,profile3]
+const profileImg=ref(sampleImgs[Math.floor(Math.random()*sampleImgs.length)])
 
 const router = useRouter()
 const route = useRoute()
@@ -151,8 +158,45 @@ onMounted(async () => {
       agent_name: res.data.agentName,
       license_number: res.data.licenseNumber,
       address: res.data.address,
-      phone: res.data.phone
+      phone: res.data.phone,
+      description: res.data.description,
+      hastags:res.data.hashtags || []
     }
+
+    // 공인중개사 소개글
+    if (!agency.value.description || agency.value.description.trim() === '') {
+      const fallbackDescriptions = [
+        "젊은 공인중개사들의 젊은 부동산",
+        "안녕하세요 새롬부동산입니다 엄마의 마음으로 방을 구하는데 최선을 다하겠습니다^^",
+        "최선다해서 금방거래되도록 노력하는 부동산입니다",
+        "공감하며 마음을 함께 하겠습니다! 어떤식으로든 고객들에게 이득을 남겨드리겠습니다. 고객과의 약속 ,신뢰를 최우선으로 생각합니다.",
+        "원하는 집을 찾을때까지~ 구의동 제일부동산 입니다.",
+        "내집을 구하는 마음으로 정성을 다하겠습니다.",
+        "저희 중개법인은 경·공매 전문 부동산학 박사 임원진을 갖추고 있는 사무소입니다.",
+        "중곡1동에 위치한 플러스 공인중개사 사무소 입니다. 평일/공휴일 정상근무, 일요일 휴무일",
+        "언제든 편하게 전화주시면 신의와 성실로 상담해드리겠습니다."
+      ]
+      const randIndex = Math.floor(Math.random() * fallbackDescriptions.length)
+      agency.value.description = fallbackDescriptions[randIndex]
+    }
+
+    //hashtag
+    if (!agency.value.hashtags || agency.value.hashtags.length === 0) {
+  const hashtagPool = [
+    '#상가', '#빌라', '#아파트', '#신축', '#분양', '#매매', '#임대', '#월세', '#전세',
+    '#믿을수있는중개사', '#친절한공인중개사', '#발품중개', '#현장방문', '#정직한부동산',
+    '#풀옵션', '#역세권', '#반려동물가능', '#테라스', '#복층', '#주차가능'
+  ]
+
+  function getRandomHashtags(pool, min = 3, max = 4) {
+    const shuffled = [...pool].sort(() => 0.5 - Math.random())
+    const count = Math.floor(Math.random() * (max - min + 1)) + min
+    return shuffled.slice(0, count)
+  }
+
+  agency.value.hashtags = getRandomHashtags(hashtagPool)
+}
+
 
     // 중개사 신뢰점수 조회
     const res_score = await axios.get(`http://localhost:8080/api/agent/trustScore/${office_id}`)
