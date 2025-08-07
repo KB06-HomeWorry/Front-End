@@ -4,15 +4,16 @@
       <div class="icon-wrapper">
         <img :src="chatbotAiIcon" alt="AI 아이콘" />
       </div>
-      <span class="title-text bodyMedium12px"
+      <span class="title-text bodyMedium14px"
         >AI가 어려운 문장 또는 단어를 해석해줘요.</span
       >
     </div>
-    <div class="explain-sample bodyMedium10px">
+    <div class="explain-sample bodyMedium12px">
       <p>
-        예시 입력 : 본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.
-        <br />→ 이 계약에 따르면, 세입자는 집을 다른 사람에게 빌려줄 수
-        없습니다.
+        ◾  예시 입력
+        <br>
+        본 임대차계약에 따라 임차인은 전대차를 할 수 없습니다.
+        <br />→ 이 계약에 따르면, 세입자는 임대한 집을 다른 사람에게 빌려줄 수 없습니다.
       </p>
     </div>
 
