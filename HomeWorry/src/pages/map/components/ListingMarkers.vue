@@ -1,16 +1,16 @@
 <template>
   <div class="custom-overlay" @click="handleClick">
-    <div class="type bodyMedium10px">{{ marker.housingType || "-" }}</div>
-    <div class="info bodyMedium10px">
+    <div class="type bodyMedium8px">{{ marker.housingType || "-" }}</div>
+    <div class="info bodyMedium8px">
       <span v-if="marker.transactionType">{{ marker.transactionType }}</span>
       <span v-if="marker.areaInfo2">-{{ marker.areaInfo2 }}평</span>
     </div>
-    <img :src="starFilled" class="star-icon" alt="star" />
+    <img :src="housePin" class="house-icon" alt="house" />
   </div>
 </template>
 
 <script setup>
-import starFilled from "@/assets/icons/star_filled.png";
+import housePin from "@/assets/icons/house_pin.png";
 import { useRouter } from 'vue-router';
 
 const router = useRouter(); 
@@ -53,7 +53,7 @@ function handleClick() {
 }
 
 /* 집 아이콘 */
-.star-icon {
+.house-icon {
   width: 14px;
   height: 14px;
   margin-top: 4px;
