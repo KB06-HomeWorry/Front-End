@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <AuthTitle title="개인정보 동의" />
     <div class="agreement-content">
       <p class="agreement-head bodyMedium16px">
@@ -43,6 +43,10 @@ const goNext = () => {
 </script>
 
 <style scoped>
+.root{
+  padding-top: 50px;
+}
+
 .agreement-content {
   margin: 2rem;
 }

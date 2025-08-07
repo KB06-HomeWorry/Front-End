@@ -129,6 +129,7 @@ function onResetPw() {
 <style scoped>
 .login-page {
   margin: 2rem;
+  padding-top: 30px;
 }
 
 .login-logo-img {
