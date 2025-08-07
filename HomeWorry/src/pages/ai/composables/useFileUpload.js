@@ -7,13 +7,13 @@ export function useFileUpload() {
   const imagePreviews = ref([]);
   const error = ref('');
   const fileInputRef = ref(null);
-  const additionalFileInputRef = ref(null);
 
   // 파일 업로드 및 미리보기 처리
   async function handleImageChange(e) {
     const files = Array.from(e.target.files || []);
     const imageFiles = [];
     let hasPdf = false;
+
     for (const file of files) {
       if (isImageFile(file)) {
         imageFiles.push({ file, url: URL.createObjectURL(file) });
@@ -39,6 +39,7 @@ export function useFileUpload() {
       images.value.push(img.file);
       imagePreviews.value.push(img.url);
     }
+
     e.target.value = '';
   }
 
@@ -51,13 +52,7 @@ export function useFileUpload() {
     error.value = '';
   }
 
-  function resetAll(
-    fileInputRef,
-    additionalFileInputRef,
-    analysisResults,
-    selectedSection,
-    isLoading
-  ) {
+  function resetAll(fileInputRef, analysisResults, selectedSection, isLoading) {
     imagePreviews.value.forEach((url) => {
       if (url) URL.revokeObjectURL(url);
     });
@@ -68,8 +63,6 @@ export function useFileUpload() {
     error.value = '';
     if (selectedSection) selectedSection.value = null;
     if (fileInputRef && fileInputRef.value) fileInputRef.value.value = '';
-    if (additionalFileInputRef && additionalFileInputRef.value)
-      additionalFileInputRef.value.value = '';
   }
 
   return {
@@ -80,6 +73,5 @@ export function useFileUpload() {
     removeImage,
     resetAll,
     fileInputRef,
-    additionalFileInputRef,
   };
 }

@@ -22,26 +22,14 @@
               <span class="text-blue"> {{ imagePreviews.length }}개</span>
             </span>
           </div>
-          <div class="upload-btns">
-            <button
-              class="btn-sub bodyMedium14px"
-              @click="
-                additionalFileInputRef.value &&
-                  additionalFileInputRef.value.click()
-              "
-              type="button"
-            >
-              <Plus :size="16" class="btn-icon" />
-              추가
-            </button>
-            <button
-              class="btn-sub-danger bodyMedium14px"
-              @click="handleReset"
-              type="button"
-            >
-              전체 삭제
-            </button>
-          </div>
+
+          <button
+            class="btn-sub-danger bodyMedium14px"
+            @click="handleReset"
+            type="button"
+          >
+            전체 삭제
+          </button>
         </div>
 
         <!-- 썸네일 -->
@@ -67,15 +55,6 @@
           @selectSection="selectSection"
         />
       </template>
-      <input
-        type="file"
-        accept="image/*"
-        multiple
-        class="hidden"
-        ref="additionalFileInputRef"
-        @change="handleImageChange"
-      />
-
       <div v-if="error" class="error-msg bodyLight12px">{{ error }}</div>
     </div>
     <AIAnalysisDetailModal
@@ -111,7 +90,6 @@ const {
   removeImage,
   resetAll,
   fileInputRef,
-  additionalFileInputRef,
 } = useFileUpload();
 
 const analysisResults = ref([]);
@@ -136,13 +114,7 @@ const handleAnalyze = async () => {
 };
 
 const handleReset = () => {
-  resetAll(
-    fileInputRef,
-    additionalFileInputRef,
-    analysisResults,
-    selectedSection,
-    isLoading
-  );
+  resetAll(fileInputRef, analysisResults, selectedSection, isLoading);
 };
 
 async function fetchTitleAndRecommendation(details) {
@@ -229,36 +201,6 @@ const closeModal = () => {
 
 .text-blue {
   color: var(--color-blue-deep);
-}
-
-.upload-btns {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.btn-sub {
-  background: #f4f6fa;
-  color: var(--color-blue-deep);
-  border: 1px solid #e0e7ef;
-  border-radius: 10px;
-  padding: 8px 16px 8px 13px;
-  display: flex;
-  align-items: center;
-  height: 38px;
-  line-height: 1.2;
-  box-shadow: none;
-  transition: background 0.16s, border 0.16s;
-  cursor: pointer;
-}
-
-.btn-sub .btn-icon {
-  margin-right: 7px;
-}
-
-.btn-sub:hover {
-  background: #eaf1ff;
-  border-color: #a5c8ff;
 }
 
 .btn-sub-danger {
