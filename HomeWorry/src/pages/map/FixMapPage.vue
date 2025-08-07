@@ -227,34 +227,17 @@ async function loadListings() {
 
 async function loadMaximumList() {
   try {
-    const response = await fetch('/maximums.csv');
-    const csvText = await response.text();
-    const lines = csvText.split('\n');
-    const headers = lines[0].split(',');
-    const priceIndex = headers.indexOf('THING_AMT_KOR');
-    const latIndex = headers.indexOf('latitude');
-    const lonIndex = headers.indexOf('longitude');
-    const dongName = headers.indexOf('STDG_NM');
-    const loadedMarkers = [];
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-      if (line) {
-        const values = line.split(',');
-        const latitude = parseFloat(values[latIndex]);
-        const longitude = parseFloat(values[lonIndex]);
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          loadedMarkers.push({
-            lat: latitude,
-            lng: longitude,
-            price: values[priceIndex],
-            dongName: values[dongName],
-          });
-        }
-      }
-    }
+    const response = await fetch('/api/pricetrend/max');
+    const data = await response.json();
+    const loadedMarkers = data.map((item) => ({
+      lat: item.latitude,
+      lng: item.longitude,
+      price: item.formattedPrice,
+      dongName: item.dongName,
+    }));
     dongMarkers.value = loadedMarkers;
   } catch (error) {
-    console.error('Error loading or parsing pricelist.csv:', error);
+    console.error('❌ API 로딩 실패:', error);
   }
 }
 
