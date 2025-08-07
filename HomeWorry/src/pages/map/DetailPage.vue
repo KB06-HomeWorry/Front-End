@@ -90,12 +90,21 @@ import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
 import { ref, onMounted } from 'vue'
-import roomImg from '@/assets/icons/room.png'
 import DetailLocation from '@/pages/map/components/DetailLocation.vue'
 import DetailAgency from '@/pages/map/components/DetailAgency.vue'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import bookmarkOn from '@/assets/icons/heart_filled.png'
 import bookmarkOff from '@/assets/icons/heart_outline.png'
+
+
+import room from '@/assets/icons/room/room.png'
+import room1 from '@/assets/icons/room/room1.png'
+import room2 from '@/assets/icons/room/room2.png'
+import room3 from '@/assets/icons/room/room3.png'
+import room4 from '@/assets/icons/room/room4.png'
+import room5 from '@/assets/icons/room/room5.png'
+import room6 from '@/assets/icons/room/room6.png'
+import room7 from '@/assets/icons/room/room7.png'
 
 const router = useRouter()
 const route = useRoute()
@@ -120,6 +129,11 @@ const agency = ref(null) // 중개사 정보 추가
 
 // 매물 id는 params로 받아옴
 const listingId = route.params.listingId
+
+
+// 이미지 정의
+const roomImages=[room1,room2,room3,room4,room5,room6,room7]
+const roomImg=ref(null)
 
 // 북마크 여부 조회
 async function fetchFavoriteStatus() {
@@ -160,6 +174,8 @@ onMounted(async () => {
     console.error('❌ id 없음')
     return
   }
+
+  roomImg.value = roomImages[Math.floor(Math.random() * roomImages.length)]
 
   try {
     // 매물 상세 정보 요청

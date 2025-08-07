@@ -265,8 +265,7 @@ onMounted(async () => {
 
     ✨ 언제든 문의주세요!
     여러분의 만족을 위해 최선을 다하겠습니다. 😊`
-    ];
-
+    ]
       const randIndex = Math.floor(Math.random() * fallbackDescriptions.length)
       agency.value.description = fallbackDescriptions[randIndex]
     }
