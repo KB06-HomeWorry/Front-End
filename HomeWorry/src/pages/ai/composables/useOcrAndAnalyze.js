@@ -136,6 +136,9 @@ export function useOcrAndAnalyze() {
           endIndex >= 0 ? allTextLines.slice(0, endIndex) : allTextLines;
       }
 
+      console.log('[OCR 추출된 전체 텍스트]', allTextLines);
+      console.log('[분석 요청에 사용될 텍스트]', filteredLines);
+
       const response = await axios.post('http://localhost:8000/predict', {
         texts: filteredLines,
       });
