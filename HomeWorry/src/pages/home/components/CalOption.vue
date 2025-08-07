@@ -1,6 +1,6 @@
 <template>
   <div class="input-field">
-    <label class="input-label bodyMedium20px">{{ label }}</label>
+    <label class="input-label bodyMedium18px">{{ label }}</label>
     <div class="select-wrapper">
       <select
         class="input-box bodyMedium16px "
@@ -21,7 +21,6 @@
       </select>
       <!-- 우측 화살표 아이콘 -->
       <span class="dropdown-arrow">
-        <!-- SVG를 인라인으로 사용 -->
         <svg width="20" height="20" viewBox="0 0 20 20">
           <path d="M5 8l5 5 5-5" stroke="#8C8C8C" stroke-width="2" fill="none" stroke-linecap="round"/>
         </svg>
