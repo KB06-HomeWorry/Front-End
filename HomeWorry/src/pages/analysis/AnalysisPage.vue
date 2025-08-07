@@ -45,7 +45,7 @@ import StepBuildingHistory from "./components/StepBuildingHistory.vue";
 import StepAgentTrust from "./components/StepAgentTrust.vue";
 import StepRiskAnalysis from "./components/StepRiskAnalysis.vue";
 
-import StepButton from "@/components/button/BtnMed.vue";
+import StepButton from "@/components/button/BtnMedSlim.vue";
 import CustomModal from "@/components/modal/CustomModal.vue";
 import AgentSelectModal from "@/components/modal/AgentSelectModal.vue";
 
