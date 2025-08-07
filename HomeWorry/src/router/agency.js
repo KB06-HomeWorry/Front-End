@@ -21,8 +21,8 @@ export default [
     component: () => import('../pages/agency/AgencyListPage.vue'),
   },
   {
-    path: '/agency/ListingAll',
-    name: 'agencyListingAll',
+    path: '/agency/:agencyId/listings',
+    name: 'agencyListing',
     component: () => import('../pages/agency/ListingPage.vue'),
   },
   {

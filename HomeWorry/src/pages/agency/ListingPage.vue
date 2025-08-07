@@ -2,17 +2,17 @@
   <div class="listing-page">
     <div class="listing-list">
       <ListingCard
-        v-for="item in listings"
-        :key="item.id"
-        :id="item.id"
-        :transactionType="item.transactionType"
-        :deposit="item.deposit"
-        :monthlyRent="item.monthlyRent"
-        :address="item.address"
-        :housingType="item.housingType"
-        :areaInfo="item.areaInfo"
-        :floorInfo="item.floorInfo"
-        :direction="item.direction"
+        v-for="listing in listings"
+        :key="listing.id"
+        :id="listing.id"
+        :transactionType="listing.transactionType"
+        :deposit="listing.deposit"
+        :monthlyRent="listing.monthlyRent"
+        :address="listing.address"
+        :housingType="listing.housingType"
+        :areaInfo="listing.areaInfo"
+        :floorInfo="listing.floorInfo"
+        :direction="listing.direction"
       />
     </div>
     <div v-if="listings.length === 0" class="empty-msg bodyMedium20px">
@@ -23,28 +23,22 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router'
+import axios from 'axios'
 import ListingCard from '@/pages/agency/components/ListingCard.vue'; 
 
+const route = useRoute()
+
 const listings = ref([]);
+const officeId = route.query.agencyId || route.params.agencyId || '1'
 
 onMounted(async () => {
   try {
-    const response = await fetch('/api/listing');
-    const data = await response.json();
-    listings.value = data.map(item => ({
-      id: item.id,
-      transactionType: item.transactionType,
-      deposit: item.deposit,
-      monthlyRent: item.monthlyRent,
-      address: item.address,
-      housingType: item.housingType,
-      areaInfo: item.areaInfo,
-      floorInfo: item.floorInfo,
-      direction: item.direction
-    }));
+    const res = await axios.get(`http://localhost:8080/api/listing/getAgencyList/${officeId}`)
+    listings.value = res.data
+    
   } catch (e) {
-    console.error('매물 목록 불러오기 실패:', e);
-    listings.value = [];
+    alert("매물 목록 불러오기에 실패했습니다.")
   }
 });
 </script>

@@ -32,6 +32,7 @@
   <button :disabled="page === totalPages" @click="goToPage(page + 1)">다음</button>
   <button :disabled="page === totalPages" @click="goToPage(totalPages)">≫</button>
 </div>
+    <MapFloatingButtonWithModal />
   </div>
 </template>
 
@@ -40,6 +41,7 @@ import { ref, computed, onMounted } from 'vue'
 import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
 import SortSelect from '@/pages/agency/components/SortSelect.vue'
 import AgencyCard from '@/pages/agency/components/AgencyCard.vue'
+import MapFloatingButtonWithModal from '@/pages/agency/components/MapFloatingButtonWithModal.vue'
 
 import profile1 from '@/assets/icons/sample_profile1.png'
 import profile2 from '@/assets/icons/sample_profile2.png'
@@ -121,7 +123,8 @@ function goToPage(p) {
 
 <style scoped>
 .agency-list-page {
-  max-width: 480px;
+  position: relative;
+  max-width: 393px;
   margin: 0 1rem;
   background: #fff;
   padding: 16px 0;

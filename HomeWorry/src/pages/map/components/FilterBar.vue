@@ -170,6 +170,10 @@ function openSheet(type) {
 function closeSheet() {
   emit("update:sheetOpen", false);
 }
+
+function onSearch(keyword) {
+  emit('search', keyword)
+}
 </script>
 
 <style scoped>

@@ -74,16 +74,25 @@
     >
       <KakaoMapMarker :lat="lat" :lng="lng" />
     </KakaoMap>
+    <DetailAgency
+      v-if="agency"
+      :id="agency.officeId"
+      :name="agency.officeName"
+      :address="agency.address"
+      :phone="agency.phone"
+      :img="agency.profileImage"
+    />
   </div>
-  <section ref="agency"> </section>
 </template>
 
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
+import axios from 'axios'
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
 import { ref, onMounted } from 'vue'
 import roomImg from '@/assets/icons/room.png'
 import DetailLocation from '@/pages/map/components/DetailLocation.vue'
+import DetailAgency from '@/pages/map/components/DetailAgency.vue'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import bookmarkOn from '@/assets/icons/heart_filled.png'
 import bookmarkOff from '@/assets/icons/heart_outline.png'
@@ -107,15 +116,17 @@ const isFavorite = ref(false)
 const heartAnim = ref(false) // 애니메이션용 변수
 const userToken = localStorage.getItem('user-token')
 
+const agency = ref(null) // 중개사 정보 추가
+
 // 매물 id는 params로 받아옴
 const listingId = route.params.listingId
 
 // 북마크 여부 조회
 async function fetchFavoriteStatus() {
   try {
-    const res = await fetch(`/api/listing/${userToken}/isFavorite/${listingId}`)
-    isFavorite.value = await res.json()
-  } catch {
+    const res = await axios.get(`/api/listing/${listingId}/isFavorite/${userToken}`)
+    isFavorite.value = res.data
+  } catch (e) {
     isFavorite.value = false
   }
 }
@@ -130,18 +141,19 @@ async function toggleBookmark() {
 
   try {
     if (isFavorite.value) {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`, { method: 'DELETE' })
+      // [북마크 해제]
+      await axios.delete(`/api/listing/${listingId}/disFavorite/${userToken}`)
       isFavorite.value = false
     } else {
-      await fetch(`/api/listing/${userToken}/favorite/${listingId}`)
+      // [북마크 등록]
+      await axios.get(`/api/listing/${listingId}/favorite/${userToken}`)
       isFavorite.value = true
     }
-  } catch {
+  } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')
   }
 }
 
-// 쿼리가 아니라 params에서 id 받아오는 것으로 수정
 onMounted(async () => {
   const id = listingId
   if (!id) {
@@ -150,6 +162,7 @@ onMounted(async () => {
   }
 
   try {
+    // 매물 상세 정보 요청
     const endpoint = `/api/listing/${id}`
     const response = await fetch(endpoint)
     const data = await response.json()
@@ -169,10 +182,23 @@ onMounted(async () => {
 
     // 북마크 상태 불러오기
     await fetchFavoriteStatus()
+
+    // 중개사 정보 불러오기
+    await fetchAgency()
   } catch (error) {
     console.error('❌ 상세정보 로딩 실패:', error)
   }
 })
+
+async function fetchAgency(){
+  try {
+    const res = await axios.get(`/api/listing/getAgency/${listingId}`)
+    agency.value = res.data
+
+  } catch (error) {
+    alert("중개사무소 데이터를 불러오지 못했습니다.")
+  }
+}
 
 // section scroll
 const deal = ref(null)

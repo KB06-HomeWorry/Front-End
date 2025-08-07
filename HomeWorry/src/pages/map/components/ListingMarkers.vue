@@ -11,27 +11,37 @@
 
 <script setup>
 import starFilled from "@/assets/icons/star_filled.png";
+import { useRouter } from 'vue-router';
+
+const router = useRouter(); 
+
 const props = defineProps({
   marker: { type: Object, required: true },
 });
+
 function handleClick() {
-  console.log(props.marker);
+  if (props.marker?.id) {
+    router.push(`/listing/${props.marker.id}`);
+  } else {
+    console.log(props.marker); // id가 없는 데이터 로그
+  }
 }
 </script>
 
 <style scoped>
 .custom-overlay {
-  padding: 6px 12px;
+  padding: 6px 8px;
   background-color: var(--color-primary);
-  border-radius: 12px;
+  border-radius: 8px;
   white-space: nowrap;
   pointer-events: auto;
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 50px;
-  height: 35px;
+  width: 48px;
+  height: 32px;
+  cursor: pointer;
 }
 
 .type {
@@ -42,11 +52,11 @@ function handleClick() {
   opacity: 0.95;
 }
 
-/* 별 아이콘 */
+/* 집 아이콘 */
 .star-icon {
-  width: 12px;
-  height: 12px;
-  margin-top: 2px;
+  width: 14px;
+  height: 14px;
+  margin-top: 4px;
   display: block;
 }
 </style>

@@ -7,9 +7,7 @@
       :markerCluster="{
         customOverlayProps: agencies,
         calculator: [10, 30, 50],
-
-        texts: ['군자역', '세종대', '김원관', '세종대왕릉'],
-
+        minLevel: 3,
         styles: [
           {
             width: '30px',

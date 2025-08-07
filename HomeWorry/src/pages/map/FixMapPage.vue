@@ -11,6 +11,7 @@
         @update:minPyeong="val => minPyeong = val"
         @update:maxPyeong="val => maxPyeong = val"
         @update:sheet-open="val => isBottomSheetOpen = val"
+        @search="onSearchLocation"
       />
       <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
     </div>
@@ -54,18 +55,9 @@
           :lat="marker.lat"
           :lng="marker.lng"
           :y-anchor="1.4"
+          @click="goDetail(marker.id)"
         >
         <ListingMarkers :marker="marker"/>
-
-          <!-- <div
-            class="custom-overlay text-white"
-            style="background-color: var(--color-primary)"
-            @click="console.log(marker.areaInfo2)"
-          >
-            {{ marker.areaInfo2 || '-' }}평
-            <span v-if="marker.transactionType">| {{ marker.transactionType }}</span>
-            <span v-if="marker.housingType">| {{ marker.housingType }}</span>
-          </div> -->
         </KakaoMapCustomOverlay>
       </template>
     </KakaoMap>
@@ -77,15 +69,6 @@
       @zoom-out="zoomOut"
       @move-current-location="moveToCurrentLocation"
     />
-
-    <!-- 현재 동 시세 상단 고정 -->
-    <div style="position: absolute; top: 16px; left: 50%; transform: translateX(-50%); z-index:101;">
-      <MarketPrice
-        v-if="currentDong && currentDongPrice && currentDongPrice !== '0'"
-        :location="currentDong"
-        :price="currentDongPrice"
-      />
-    </div>
   </div>
 </template>
 
@@ -372,17 +355,31 @@ function zoomOut() {
     mapInstance.value.setLevel(mapInstance.value.getLevel() + 1);
   }
 }
+
+function onSearchLocation(keyword) {
+  if (!keyword) return;
+  const geocoder = new window.kakao.maps.services.Places();
+  geocoder.keywordSearch(keyword, (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+      const place = result[0];
+      const latNum = parseFloat(place.y);
+      const lngNum = parseFloat(place.x);
+      if (mapInstance.value) {
+        const center = new window.kakao.maps.LatLng(latNum, lngNum);
+        mapInstance.value.setCenter(center);
+        mapInstance.value.setLevel(4); 
+        lat.value = latNum;
+        lng.value = lngNum;
+        mapCenter.value = { lat: latNum, lng: lngNum };
+        coor2address({ lat: latNum, lng: lngNum });
+      }
+    } else {
+      alert('검색 결과가 없습니다.');
+    }
+  });
+}
+
 </script>
 
-<style>
-.custom-overlay {
-  padding: 5px 10px;
-  background-color: var(--color-secondarylight);
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-  pointer-events: auto;
-}
+<style scoped>
 </style>
