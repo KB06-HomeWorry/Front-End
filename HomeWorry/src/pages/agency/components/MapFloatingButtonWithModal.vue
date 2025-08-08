@@ -161,7 +161,7 @@ async function goToMap() {
     const lng = res.data.x
 
     if (lat && lng) {
-      window.location.href = `/map/agency?center=${lat},${lng}&zoomLevel=3`
+      window.location.href = `/agency/map?center=${lat},${lng}&zoomLevel=3`
     } else {
       alert('위치 정보를 찾을 수 없습니다.')
     }
