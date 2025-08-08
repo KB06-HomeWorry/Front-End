@@ -22,50 +22,57 @@
       alt="매물 이미지"
       style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"
     />
-    <section class="basic_info">
-      <div>
-        <span class="buildname bodyMedium16px">{{ buildingName }}</span>
-      </div>
+
+    <div class="root">
+    <!-- <section class="basic_info">
       <div>
         <span class="price titleBold20px">{{ price }}</span>
       </div>
-    </section>
+      <div>
+        <span class="buildname bodyMedium16px">{{ buildingName }}</span>
+      </div>
+    </section> -->
 
-    <div class="section-bar">
+    <!-- <div class="section-bar">
       <button @click="scrollTo('listing')" :class="['section-btn titleBold14px', { active: activeSection === 'listing' }]">매물정보</button>
       <button @click="scrollTo('location')" :class="['section-btn titleBold14px', { active: activeSection === 'location' }]">위치정보</button>
-    </div>
+    </div> -->
 
     <section ref="listing">
       <div class="location-info-card">
         <div class="menu-list titleBold20px">매물정보</div>
         <div class="info-row">
-          <div class="info-label bodyMedium16px">거래방식</div>
-          <div class="info-value bodyMedium14px">{{ price }}</div>
+          <div class="info-label bodyMedium14px">거래방식</div>
+          <div class="info-value titleBold16px">{{ price }}</div>
         </div>
         <div class="info-row">
-          <div class="info-label bodyMedium16px">건물형태</div>
+          <div class="info-label bodyMedium14px">건물형태</div>
           <div class="info-value bodyMedium14px">{{ housingType }}</div>
         </div>
         <div class="info-row">
-          <div class="info-label bodyMedium16px">전용/계약면적</div>
+          <div class="info-label bodyMedium14px">전용/계약면적</div>
           <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
         </div>
         <div class="info-row">
-          <div class="info-label bodyMedium16px">해당층/전체층</div>
+          <div class="info-label bodyMedium14px">해당층/전체층</div>
           <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
         </div>
         <div class="info-row">
-          <div class="info-label bodyMedium16px">방향</div>
+          <div class="info-label bodyMedium14px">방향</div>
           <div class="info-value bodyMedium14px">{{ direction }}</div>
         </div>
       </div>
     </section>
     <hr class="full-width-hr" />
-    <section ref="location">
-      <DetailLocation />
+    <!-- ListingDetail.vue (예시) -->
+    <section ref="location" v-if="lat != null && lng != null">
+      <DetailLocation
+        :lat="Number(lat)"
+        :lng="Number(lng)"
+        :address="agency?.address || ''"
+      />
     </section>
-    <KakaoMap
+    <!-- <KakaoMap
       v-if="lat && lng"
       :lat="lat"
       :lng="lng"
@@ -73,7 +80,7 @@
       style="width: 100%; height: 300px"
     >
       <KakaoMapMarker :lat="lat" :lng="lng" />
-    </KakaoMap>
+    </KakaoMap> -->
     <DetailAgency
       v-if="agency"
       :id="agency.officeId"
@@ -82,6 +89,7 @@
       :phone="agency.phone"
       :img="agency.profileImage"
     />
+  </div>
   </div>
 </template>
 
@@ -194,6 +202,8 @@ onMounted(async () => {
     housingType.value = data.housingType
     floorInfo.value = data.floorInfo
     areaInfo.value = data.areaInfo
+      ? data.areaInfo.replace(/m$/, 'm²') // 끝의 m만 ㎡로 변경
+      : ''
     direction.value = data.direction
 
     // 북마크 상태 불러오기
@@ -229,8 +239,17 @@ function scrollTo(section) {
 </script>
 
 <style scoped>
-.basic_info{
+.root{
   margin: 0 1.5rem;
+}
+
+.basic_info {
+  display: flex;            
+  justify-content: space-between; 
+  align-items: center;       
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-mediumgray);
+  padding-bottom: 12px;
 }
 
 .bookmark-btn {
@@ -259,12 +278,12 @@ function scrollTo(section) {
   animation: pop 0.28s cubic-bezier(.4,2,.6,1) both;
 }
 
-.section-bar {
+/* .section-bar {
   display: flex;
   justify-content: space-around;
   padding: 12px 8px;
   border-bottom: 1px solid var(--color-mediumgray);
-}
+} */
 .section-btn {
   border: none;
   padding: 6px 12px;
@@ -285,9 +304,7 @@ function scrollTo(section) {
 }
 .location-info-card {
   background: var(--color-white);
-  padding: 24px 20px 18px 20px;
-  max-width: 420px;
-  margin: 0 auto;
+  max-width: 100%;
 }
 
 /* 좌측 라벨 / 우측 값 2열 배치 */
@@ -303,7 +320,7 @@ function scrollTo(section) {
   border-top: none;
 }
 .info-label {
-  color: var(--color-mediumgray);
+  color: var(--color-darkgray);
   min-width: 96px;
   flex-shrink: 0;
 }
@@ -311,12 +328,12 @@ function scrollTo(section) {
   text-align: right;
   flex: 1;
   word-break: keep-all;
+  color: var(--color-primary);
 }
 
-/* 카드 너비(원하면 전체 너비로) */
 .location-info-card {
   background-color: var(--color-white);
-  padding: 24px 20px 18px 20px;
+  padding: 10px 0;
   width: 100%;
   margin: 0;
   box-sizing: border-box;
