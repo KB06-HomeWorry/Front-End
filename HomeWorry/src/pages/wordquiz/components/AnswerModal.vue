@@ -18,16 +18,20 @@
 </template>
 
 <script setup>
+import correctImgSrc from '@/assets/icons/quiz_correct_text.png';
+import wrongImgSrc from '@/assets/icons/quiz_wrong_text.png';
+import hintIconSrc from '@/assets/icons/quiz_lightbulb.png';
+
 const props = defineProps({
-  result: { type: String, required: true }, // 'correct' or 'wrong'
+  result: { type: String, required: true },
   explanation: { type: String, required: true },
-  correctImg: { type: String, default: "@/assets/icons/quiz_correct_text.png" },
-  wrongImg: { type: String, default: "@/assets/icons/quiz_wrong_text.png" },
-  hintIcon: { type: String, default: "@/assets/icons/quiz_lightbulb.png" },
+  correctImg: { type: String, default: correctImgSrc },
+  wrongImg: { type: String, default: wrongImgSrc },
+  hintIcon: { type: String, default: hintIconSrc },
 });
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close']);
 function onClose() {
-  emit("close");
+  emit('close');
 }
 </script>
 

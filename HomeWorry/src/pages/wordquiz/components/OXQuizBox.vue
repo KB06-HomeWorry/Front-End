@@ -9,29 +9,29 @@
     </div>
     <!-- OX 버튼 -->
     <div class="quiz-ox-row">
-      <OXBtn imgsrc="quizRightIcon" @click="() => emit('submit', 'o')" />
-      <OXBtn imgsrc="quizWrongIcon" @click="() => emit('submit', 'x')" />
+      <OXBtn :imgSrc="quizRightIcon" @click="() => emit('submit', 'o')" />
+      <OXBtn :imgSrc="quizWrongIcon" @click="() => emit('submit', 'x')" />
     </div>
   </div>
 </template>
 
 <script setup>
-import QuizHeader from "@/pages/wordquiz/components/QuizHeader.vue";
-import OXBtn from "./OXBtn.vue";
-import quizRightIcon from "@/assets/icons/quiz_correct.png";
-import quizWrongIcon from "@/assets/icons/quiz_wrong.png";
+import QuizHeader from '@/pages/wordquiz/components/QuizHeader.vue';
+import OXBtn from '@/pages/wordquiz/components/OXBtn.vue';
+import quizRightIcon from '@/assets/icons/quiz_correct.png';
+import quizWrongIcon from '@/assets/icons/quiz_wrong.png';
 
 const props = defineProps({
   question: { type: String, required: true },
   level: { type: String, required: true },
   number: { type: [String, Number], required: true },
 });
-const emit = defineEmits(["select"]);
+const emit = defineEmits(['select']);
 
 function onOXSelect(userAnswer) {
   // 여기서 정답 체크, 모달 show 등 진행!
   answerResult.value =
-    userAnswer === currentQuiz.value.correctAnswer ? "correct" : "wrong";
+    userAnswer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong';
   showModal.value = true;
 }
 </script>

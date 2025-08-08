@@ -28,24 +28,29 @@
 </template>
 
 <script setup>
-import { useDangerResultStore } from '@/stores/dangerResult';
-import { ref, computed } from 'vue';
+import { useDangerResultStore } from "@/stores/dangerResult";
+import { ref, computed } from "vue";
+
+import riskHigh from "@/assets/icons/risk_high.png";
+import riskMedium from "@/assets/icons/risk_medium.png";
+import riskLow from "@/assets/icons/risk_low.png";
+import riskVeryHigh from "@/assets/icons/risk_veryhigh.png";
 
 const dangerResultStore = useDangerResultStore();
 const isInfoOpen = ref(false);
 
 const infoText = computed(() => {
   switch (dangerResultStore.grade) {
-    case 'VeryHigh':
-      return '거래에 매우 높은 위험이 감지되었습니다. 계약에 주의가 필요합니다.';
-    case 'High':
-      return '위험도가 높은 편입니다. 계약 조건을 신중히 확인하세요.';
-    case 'Medium':
-      return '일부 유의사항이 있으므로 계약 전 확인이 필요합니다.';
-    case 'Low':
-      return '위험도는 낮지만, 모든 계약은 주의가 필요합니다.';
+    case "VeryHigh":
+      return "거래에 매우 높은 위험이 감지되었습니다. 계약에 주의가 필요합니다.";
+    case "High":
+      return "위험도가 높은 편입니다. 계약 조건을 신중히 확인하세요.";
+    case "Medium":
+      return "일부 유의사항이 있으므로 계약 전 확인이 필요합니다.";
+    case "Low":
+      return "위험도는 낮지만, 모든 계약은 주의가 필요합니다.";
     default:
-      return '위험도 정보를 확인 중입니다.';
+      return "위험도 정보를 확인 중입니다.";
   }
 });
 </script>
