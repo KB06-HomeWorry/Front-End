@@ -42,7 +42,7 @@ const tabs = [
   { name: "my",     label: "마이페이지", iconLight: myLight, iconDark: myDark,    to: "/my" },
 ];
 
-// ✅ 탭 활성화 기준: /map*, /agency*, /my* 전부 활성
+// /map*, /agency*, /my* 전부 활성화
 function isTabActive(tab) {
   const p = route.path || "/";
   switch (tab.name) {
@@ -60,7 +60,6 @@ function isTabActive(tab) {
 }
 
 function onTabClick() {
-  // 원래 하던 로직 유지
   console.log("탭 클릭됨:", checklistStore.checklistData.stage);
   checklistStore.checklistData.stage = "계약 전";
 }
