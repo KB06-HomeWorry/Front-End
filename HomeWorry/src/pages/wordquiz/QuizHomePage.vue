@@ -9,10 +9,10 @@
       </div>
       <div class="summary-text">
         <div class="completed-steps bodyLight12px">
-          {{ completedSteps }}칸 완료
+          현재 {{ completedSteps }}개 완료
         </div>
         <div class="remaining-puzzles bodyMedium18px">
-          퀴즈 {{ totalRemaining }}개 남음
+          남은 퀴즈 {{ totalRemaining }}개
         </div>
         <div class="progress-bar">
           <div
@@ -98,10 +98,10 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
 
-import level1 from '@/assets/icons/level_1.png';
-import level2 from '@/assets/icons/level_2.png';
-import level3 from '@/assets/icons/level_3.png';
-import quiz from '@/assets/icons/quiz.png';
+import level1 from '@/assets/icons/level1.png';
+import level2 from '@/assets/icons/level2.png';
+import level3 from '@/assets/icons/level3.png';
+import quiz from '@/assets/icons/quiz (4).png';
 
 import CustomModal from '@/components/modal/CustomModal.vue';
 import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
@@ -248,28 +248,29 @@ function goToRandomCompletedQuiz() {
 
 <style scoped>
 .quiz-root {
-  max-width: 380px;
-  margin: 10px auto;
-  padding: 16px 24px;
+  max-width: 393px;
+  margin: 1.5rem 2rem;
   background: #fff;
   border-radius: 20px;
   color: var(--color-primary);
 }
 
 .quiz-summary {
+  width: 393px;
   display: flex;
   gap: 20px;
   align-items: center;
-  margin-bottom: 30px;
-  background-color: #f0f4ff;
-  padding: 36px 20px;
-  border-radius: 16px;
-  border: 1px solid #d0d4e6;
+  margin-bottom: 32px;
+  background-color: rgba(17, 31, 92, 0.05);
+  padding: 2rem;
+  margin-left: -2rem;
+  /* border-radius: 16px; */
+  /* border: 1px solid #d0d4e6; */
 }
 
 .icon-container {
-  width: 48px;
-  height: 48px;
+  width: 58px;
+  height: 58px;
 }
 
 .summary-text {
@@ -283,13 +284,13 @@ function goToRandomCompletedQuiz() {
 
 .remaining-puzzles {
   margin-bottom: 8px;
-  color: #1b264f;
+  color: var(--color-primary);
 }
 
 .progress-bar {
   width: 100%;
   height: 8px;
-  background: #d0d4e6;
+  background: var(--color-light);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -304,25 +305,27 @@ function goToRandomCompletedQuiz() {
 .quiz-levels {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 .level-group {
-  border-left: 4px solid var(--color-primary);
-  padding-left: 1rem;
+  border-left: 3.5px solid var(--color-primary);
+  padding: 4px 8px 4px 16px;
+  border-radius: 2px;
 }
 
 .level-header {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  margin-left: 6px;
 }
 
 .icon-wrapper {
-  width: 40px;
-  height: 40px;
-  background: #d4d8f2;
+  width: 45px;
+  height: 45px;
+  background: rgba(17, 31, 92, 0.1);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -331,25 +334,30 @@ function goToRandomCompletedQuiz() {
 }
 
 .level-icon {
-  width: 70%;
-  height: 70%;
+  width: 80%;
+  height: 80%;
   object-fit: cover;
   user-select: none;
 }
 
 .btn-quiz {
   width: 100%;
-  padding: 8px 0;
-  border-radius: 10px;
-  background-color: var(--color-primary);
-  color: #fff;
+  height: 30px;
+  border-radius: 12px;
+  background-color: rgba(17, 31, 92, 0.05);
+  /* background-color: var(--color-primary);
+  color: #fff; */
+  color: var(--color-primary);
+  border: 1.4px solid var(--color-primary);
   cursor: pointer;
   user-select: none;
   transition: background-color 0.2s ease;
 }
 
 .btn-quiz:hover {
-  background-color: #0d174b;
+  /* background: rgba(17, 31, 92, 0.1); */
+  background-color: var(--color-primary);
+  color: #fff;
 }
 
 .quiz-completed {
@@ -364,7 +372,7 @@ function goToRandomCompletedQuiz() {
 }
 
 .completed-icon {
-  background: #cbd5e1;
+  background: rgba(17, 31, 92, 0.1);
   border-radius: 50%;
   padding: 8px;
   display: flex;
