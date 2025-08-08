@@ -39,12 +39,22 @@
       <span>매물 신고</span>
       <img src="@/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
     </button>
+
+    <!-- 📌 신고 모달 -->
+    <Modal
+      v-model="showReportModal"
+      message="신고가 접수되었습니다!"
+      confirmText="확인"
+      @confirm="handleReportConfirm"
+      @cancel="handleReportCancel"
+    />
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
+import Modal from '@/components/modal/CustomModal.vue' 
 import mapLocationIcon from '@/assets/icons/map_location.png'
 import copyIcon from '@/assets/icons/copy.png'
 
@@ -59,6 +69,9 @@ const hasCoord = computed(() => props.lat != null && props.lng != null)
 const addressText = computed(() =>
   props.address?.trim() ? props.address : (hasCoord.value ? '좌표 기반 위치' : '주소 정보 없음')
 )
+
+// 📌 모달 상태
+const showReportModal = ref(false)
 
 async function copyLocation() {
   const text = props.address?.trim();
@@ -76,7 +89,15 @@ async function copyLocation() {
 
 function reportItem() {
   // 신고 로직 연결 필요
-  alert('신고가 접수되었습니다!')
+  showReportModal.value = true // 모달 열기
+}
+
+function handleReportConfirm() {
+  console.log('신고 확인 버튼 클릭됨')
+}
+
+function handleReportCancel() {
+  console.log('모달 닫힘')
 }
 </script>
 
@@ -134,8 +155,6 @@ function reportItem() {
 }
 
 .location-map {
-  /* margin-top: 6px;
-  margin-bottom: 18px; */
   overflow: hidden;
   width: 100%;
   height: 170px;
