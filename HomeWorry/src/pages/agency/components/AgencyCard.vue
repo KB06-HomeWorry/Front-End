@@ -8,7 +8,7 @@
         <div class="agency-header">
           <div class="agency-name bodyMedium16px">{{ name }}</div>
           <div class="trust-badge bodyMedium10px">
-            <span class="star bodyMedium10px">★</span> {{ trustScore }}
+            <span class="star bodyMedium10px">★</span> {{ displayTrustScore }}
           </div>
         </div>
         <div class="agency-address bodyMedium12px">{{ address }}</div>
@@ -19,6 +19,8 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
+
 const props = defineProps({
   id: Number,
   name: String,
@@ -42,13 +44,26 @@ const computedImg =
   props.img && props.img.length > 0
     ? props.img
     : sampleImgs[props.profileIdx % sampleImgs.length];
+
+/** 0~100 또는 0~5 입력을 모두 0~5 스케일로 변환해 1자리 소수로 표시 */
+const displayTrustScore = computed(() => {
+  const raw = Number(props.trustScore);
+  if (Number.isNaN(raw)) return '0.0';
+
+  // 6 이상이면 0~100 스케일로 판단 → 0~5 변환
+  const fiveScale = raw > 5 ? raw / 20 : raw;
+
+  // 안전 범위 클램프 후 표시 포맷
+  const clamped = Math.min(5, Math.max(0, fiveScale));
+  return clamped.toFixed(1);
+});
 </script>
 
 <style scoped>
 .agency-card {
   display: flex;
   gap: 8px;
-  padding: 12px 0 12px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
   align-items: center;
   background: #fff;
@@ -94,20 +109,26 @@ const computedImg =
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .trust-badge {
+  width: 42px;
   height: 16px;
   background: rgba(17, 31, 92, 0.1);
   color: var(--color-primary);
   border-radius: 7px;
-  padding: 3px 8px 3px 5px;
   display: flex;
-  align-items: center;
+  align-items: center; 
+  justify-content: center; 
   gap: 2px;
-  line-height: 8px;
+  line-height: 16px;
+  text-align: center;
+  padding-top: 1px;
+  padding-right: 2px;
 }
 .trust-badge .star {
   margin-right: 1px;
 }
+
 .agency-address {
   color: var(--color-primary);
   white-space: nowrap;
