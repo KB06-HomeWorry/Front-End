@@ -5,7 +5,7 @@
     <div class="mypage-container">
       <!-- 프로필 영역 -->
       <div class="profile-box">
-        <img class="profile-img" :src="user.profileImg" alt="프로필" />
+        <img class="profile-img" :src="profileImageSrc" alt="프로필" />
         <div class="profile-info">
           <div class="profile-name titleBold20px">{{ user.name }}</div>
           <div class="profile-email bodyMedium14px">
@@ -44,6 +44,7 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import basicProfile from '@/assets/icons/ai_title.png'
 import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import bookmarkIcon from '@/assets/icons/my_bookmark.png'
@@ -55,7 +56,7 @@ import deleteLight from '@/assets/icons/my_deleteaccount_light.png'
 import deleteDark from '@/assets/icons/my_deleteaccount_dark.png'
 
 const user = ref({
-  profileImg: 'https://via.placeholder.com/84x84.png?text=User',
+  profileImg: '',
   name: '',
   email: '',
   phone: ''
@@ -78,6 +79,12 @@ onMounted(async () => {
     console.error(err)
   }
 })
+
+const profileImageSrc = computed(() =>
+  user.value.profileImg && user.value.profileImg.trim() !== ''
+    ? user.value.profileImg
+    : basicProfile
+)
 
 const isDeleteHover = ref(false)
 const onDeleteMouseEnter = () => { isDeleteHover.value = true }
@@ -185,11 +192,13 @@ function formatPhone(phone) {
 .profile-img {
   width: 100px;
   height: 100px;
+  border: 2px solid var(--color-primary);
   border-radius: 50%;
-  background: var(--color-primary);
+  background: var(--color-white);
   object-fit: cover;
   margin-left: 2rem;
   margin-right: 1.2rem;
+  padding: 12px;
 }
 
 .profile-info {
