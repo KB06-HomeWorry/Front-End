@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import { reactive } from "vue";
+import riskHigh from "@/assets/icons/risk_high.png";
+import riskMedium from "@/assets/icons/risk_medium.png";
+import riskLow from "@/assets/icons/risk_low.png";
+import riskVeryHigh from "@/assets/icons/risk_veryhigh.png";
 
 export const useDangerResultStore = defineStore("dangerResult", () => {
   const grade = ref("Low");
@@ -8,6 +12,13 @@ export const useDangerResultStore = defineStore("dangerResult", () => {
   const descriptionTitleList = ref([""]);
   const descriptionContentList = ref([""]);
   const imageUrl = ref("");
+
+  const imageMap = {
+    VeryHigh: riskVeryHigh,
+    High: riskHigh,
+    Medium: riskMedium,
+    Low: riskLow,
+  };
 
   function setDangerResult(
     newgrade,
@@ -23,7 +34,7 @@ export const useDangerResultStore = defineStore("dangerResult", () => {
     message.value = newmessage;
     descriptionTitleList.value = newdescriptionTitle;
     descriptionContentList.value = newdescriptionContent;
-    imageUrl.value = newimageUrl;
+    imageUrl.value = imageMap[newgrade] ?? ""; // fallback 처리
   }
 
   return {

@@ -37,15 +37,15 @@
 </template>
 
 <script setup>
-import { ref, onUnmounted } from 'vue';
-import { createWorker } from 'tesseract.js';
-import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+import { ref, onUnmounted } from "vue";
+import { createWorker } from "tesseract.js";
+import BtnMedSlim from "@/components/button/BtnMedSlim.vue";
+import * as pdfjsLib from "pdfjs-dist/build/pdf";
+//pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
 
-import axios from 'axios';
+import axios from "axios";
 
-const ocrText = ref('');
+const ocrText = ref("");
 const ocrLoading = ref(false);
 const fileInput = ref(null);
 const predictionResults = ref([]);
@@ -54,7 +54,7 @@ const predictionResults = ref([]);
 let worker = null;
 async function getWorker() {
   if (!worker) {
-    worker = await createWorker('kor');
+    worker = await createWorker("kor");
     await worker.setParameters({ tessedit_pageseg_mode: 6 });
   }
   return worker;
@@ -70,7 +70,7 @@ onUnmounted(async () => {
 // 파일 선택창 열기
 const openFileDialog = () => {
   if (fileInput.value) {
-    fileInput.value.value = '';
+    fileInput.value.value = "";
     fileInput.value.click();
   }
 };
@@ -84,10 +84,10 @@ async function preprocessImage(file, maxWidth = 2000) {
       img.onload = () => {
         // 원본 이미지가 maxWidth보다 크면 비율 유지해서 리사이즈
         const scale = Math.min(1, maxWidth / img.width);
-        const canvas = document.createElement('canvas');
+        const canvas = document.createElement("canvas");
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // 흑백 변환
@@ -106,7 +106,7 @@ async function preprocessImage(file, maxWidth = 2000) {
         ctx.putImageData(imageData, 0, 0);
 
         // canvas 이미지를 PNG Blob으로 변환해서 반환
-        canvas.toBlob(resolve, 'image/png');
+        canvas.toBlob(resolve, "image/png");
       };
       img.src = e.target.result;
     };
@@ -121,21 +121,21 @@ async function pdfToImageBlobs(file) {
     reader.onload = () => resolve(new Uint8Array(reader.result));
     reader.readAsArrayBuffer(file);
   });
-  console.log('PDF 데이터 변환 완료');
+  console.log("PDF 데이터 변환 완료");
   const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
-  console.log('PDF 페이지 수:', pdf.numPages);
+  console.log("PDF 페이지 수:", pdf.numPages);
   const blobs = [];
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     // console.log(`페이지 렌더링 시작: ${pageNum}`);
     const page = await pdf.getPage(pageNum);
     const viewport = page.getViewport({ scale: 2.5 });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     await page.render({ canvasContext: context, viewport }).promise;
     const blob = await new Promise((resolve) =>
-      canvas.toBlob(resolve, 'image/png')
+      canvas.toBlob(resolve, "image/png")
     );
     // console.log(`canvas to blob 완료: ${pageNum}`);
     blobs.push(blob);
@@ -148,13 +148,13 @@ const handleFileChange = async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
-  ocrText.value = '';
+  ocrText.value = "";
   ocrLoading.value = true;
 
   try {
     let blobs = [];
     // PDF 처리
-    if (file.type === 'application/pdf') {
+    if (file.type === "application/pdf") {
       blobs = await pdfToImageBlobs(file);
     } else {
       // 이미지 처리
@@ -162,7 +162,7 @@ const handleFileChange = async (e) => {
       blobs = [processedBlob];
     }
 
-    let text = '';
+    let text = "";
     const worker = await getWorker();
     for (let i = 0; i < blobs.length; i++) {
       const { data } = await worker.recognize(blobs[i]);
@@ -172,24 +172,24 @@ const handleFileChange = async (e) => {
 
     // ocr 텍스트 모델로 보내고, 모델 결과값 받아오기
     const lines = text
-      .split('\n')
+      .split("\n")
       .map((line) => line.trim())
       .filter((line) => line);
-    console.log('백엔드에 보낼 lines:', lines);
+    console.log("백엔드에 보낼 lines:", lines);
 
     try {
-      const response = await axios.post('http://localhost:8000/predict', {
+      const response = await axios.post("http://54.66.153.95:8080/predict", {
         texts: lines,
       });
       const result = response.data;
-      console.log('AI 예측 결과:', result);
+      console.log("AI 예측 결과:", result);
 
       predictionResults.value = result.predictions || [];
     } catch (error) {
-      console.error('AI 예측 요청 실패:', error);
+      console.error("AI 예측 요청 실패:", error);
     }
   } catch (err) {
-    ocrText.value = 'OCR 처리 중 오류가 발생했습니다.';
+    ocrText.value = "OCR 처리 중 오류가 발생했습니다.";
     console.error(err);
   } finally {
     ocrLoading.value = false;

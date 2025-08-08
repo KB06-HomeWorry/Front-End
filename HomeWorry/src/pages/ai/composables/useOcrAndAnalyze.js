@@ -1,26 +1,28 @@
-import { ref } from 'vue';
-import { createWorker } from 'tesseract.js';
-import * as pdfjsLib from 'pdfjs-dist/build/pdf';
-import axios from 'axios';
+import { ref } from "vue";
+import { createWorker } from "tesseract.js";
+import axios from "axios";
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+import * as pdfjsLib from "pdfjs-dist";
+import pdfWorker from "pdfjs-dist/build/pdf.worker.min?worker";
+
+//pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export function useOcrAndAnalyze() {
   let ocrWorker = null;
 
   async function getOcrWorker() {
     if (!ocrWorker) {
-      ocrWorker = await createWorker('kor');
+      ocrWorker = await createWorker("kor");
       await ocrWorker.setParameters({ tessedit_pageseg_mode: 6 });
     }
     return ocrWorker;
   }
 
   function isImageFile(file) {
-    return file.type.startsWith('image/');
+    return file.type.startsWith("image/");
   }
   function isPdfFile(file) {
-    return file.type === 'application/pdf';
+    return file.type === "application/pdf";
   }
 
   async function pdfToImages(file) {
@@ -30,15 +32,15 @@ export function useOcrAndAnalyze() {
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
       const viewport = page.getViewport({ scale: 1.5 });
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
+      const canvas = document.createElement("canvas");
+      const context = canvas.getContext("2d");
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       await page.render({ canvasContext: context, viewport }).promise;
-      const blob = await new Promise((res) => canvas.toBlob(res, 'image/png'));
+      const blob = await new Promise((res) => canvas.toBlob(res, "image/png"));
       result.push({
         file: new File([blob], `${file.name}_page${pageNum}.png`, {
-          type: 'image/png',
+          type: "image/png",
         }),
         url: URL.createObjectURL(blob),
       });
@@ -53,10 +55,10 @@ export function useOcrAndAnalyze() {
       reader.onload = (e) => {
         img.onload = () => {
           const scale = Math.min(1, maxWidth / img.width);
-          const canvas = document.createElement('canvas');
+          const canvas = document.createElement("canvas");
           canvas.width = img.width * scale;
           canvas.height = img.height * scale;
-          const ctx = canvas.getContext('2d');
+          const ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
           // 흑백
@@ -73,7 +75,7 @@ export function useOcrAndAnalyze() {
                 avg;
           }
           ctx.putImageData(imageData, 0, 0);
-          canvas.toBlob(resolve, 'image/png');
+          canvas.toBlob(resolve, "image/png");
         };
         img.src = e.target.result;
       };
@@ -89,12 +91,12 @@ export function useOcrAndAnalyze() {
     setIsLoading
   ) {
     if (images.length === 0) {
-      setError('먼저 분석할 계약서 이미지 또는 PDF 파일을 업로드해주세요.');
+      setError("먼저 분석할 계약서 이미지 또는 PDF 파일을 업로드해주세요.");
       return;
     }
     setIsLoading(true);
     setAnalysisResults([]);
-    setError('');
+    setError("");
 
     let allTextLines = [];
     try {
@@ -111,7 +113,7 @@ export function useOcrAndAnalyze() {
         for (let i = 0; i < blobs.length; i++) {
           const { data } = await worker.recognize(blobs[i]);
           const pageLines = data.text
-            .split('\n')
+            .split("\n")
             .map((line) => line.trim())
             .filter((line) => line);
           allTextLines = allTextLines.concat(pageLines);
@@ -120,10 +122,10 @@ export function useOcrAndAnalyze() {
 
       // 텍스트 범위 추출
       const startIndex = allTextLines.findIndex((line) =>
-        line.includes('특약사항')
+        line.includes("특약사항")
       );
       const endIndex = allTextLines.findIndex((line) =>
-        line.startsWith('본 계약을 증명하기 위하여')
+        line.startsWith("본 계약을 증명하기 위하여")
       );
       let filteredLines;
       if (startIndex >= 0) {
@@ -136,25 +138,25 @@ export function useOcrAndAnalyze() {
           endIndex >= 0 ? allTextLines.slice(0, endIndex) : allTextLines;
       }
 
-      console.log('[OCR 추출된 전체 텍스트]', allTextLines);
-      console.log('[분석 요청에 사용될 텍스트]', filteredLines);
+      console.log("[OCR 추출된 전체 텍스트]", allTextLines);
+      console.log("[분석 요청에 사용될 텍스트]", filteredLines);
 
-      const response = await axios.post('http://localhost:8000/predict', {
+      const response = await axios.post("http://54.66.153.95:8080/predict", {
         texts: filteredLines,
       });
       const result = response.data;
 
       function cleanText(raw) {
-        let result = raw.replace(/(\d+)(?!(년|개월|일))/g, '');
-        result = result.replace(/[^\uAC00-\uD7A30-9년개월일\s]/g, '');
-        result = result.replace(/\s+/g, ' ').trim();
+        let result = raw.replace(/(\d+)(?!(년|개월|일))/g, "");
+        result = result.replace(/[^\uAC00-\uD7A30-9년개월일\s]/g, "");
+        result = result.replace(/\s+/g, " ").trim();
         return result;
       }
 
       const convertedResults = (result.predictions || []).map((item) => ({
         ...item,
         text: cleanText(item.text),
-        isRisky: item.result === '사기',
+        isRisky: item.result === "사기",
       }));
 
       const pageCount = imagePreviews.length;
@@ -169,7 +171,7 @@ export function useOcrAndAnalyze() {
       setAnalysisResults(pageResults);
     } catch (err) {
       console.error(err);
-      setError('AI 분석 중 오류가 발생했습니다.');
+      setError("AI 분석 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }

@@ -32,3 +32,4 @@ coverage
 db.json
 *.json-server*
 *.env
+*.env.production
