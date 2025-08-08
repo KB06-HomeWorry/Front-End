@@ -41,19 +41,24 @@ import HelpButton from "@/components/button/HelpButton.vue";
 const store = useAnalysisStore();
 const { registerCertifiedCount, checklistAnswers } = storeToRefs(store);
 
+import documentImage from "@/assets/images/documentInformation_image.png";
+import ownerImage from "@/assets/images/ownerInformation_image.png";
+import collateralImage from "@/assets/images/collateralInformation_image.png";
+
 const documentInformationMessage = ref(`
-    <img src="@/assets/images/documentInformation_image.png" alt="표제부 정보 이미지" style="width:auto; height:auto; margin-bottom:8px;" />
-    표제부를 통해 부동산의 기본 정보를 확인하고 위치, 면적, 구조등을 파악합니다.
-  `);
+  <img src="${documentImage}" alt="표제부 정보 이미지" style="width:auto; height:auto; margin-bottom:8px;" />
+  표제부를 통해 부동산의 기본 정보를 확인하고 위치, 면적, 구조등을 파악합니다.
+`);
 
 const ownerInformationMessage = ref(`
-    <img src="@/assets/images/ownerInformation_image.png" alt="소유권 정보 확인" style="width:auto; height:auto; margin-bottom:8px;" />
-    갑구 확인을 통해 매물 소유자 관련 사항과 소유자 변동, 가압류, 경매 개시 여부를 알아봅니다.
-  `);
+  <img src="${ownerImage}" alt="소유권 정보 확인" style="width:auto; height:auto; margin-bottom:8px;" />
+  갑구 확인을 통해 매물 소유자 관련 사항과 소유자 변동, 가압류, 경매 개시 여부를 알아봅니다.
+`);
+
 const collateralInformationMessage = ref(`
-    <img src="@/assets/images/collateralInformation_image.png" alt="권리 관계 확인" style="width:auto; height:auto; margin-bottom:8px;" />
-    을구를 통해 소유권 이외의 권리와 근저당권, 전세권, 임차권 등의 설정 여부를 확인합니다.
-  `);
+  <img src="${collateralImage}" alt="권리 관계 확인" style="width:auto; height:auto; margin-bottom:8px;" />
+  을구를 통해 소유권 이외의 권리와 근저당권, 전세권, 임차권 등의 설정 여부를 확인합니다.
+`);
 
 const answers = reactive(checklistAnswers.value);
 
