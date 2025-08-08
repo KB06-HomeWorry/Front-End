@@ -62,10 +62,15 @@
       </div>
     </section>
     <hr class="full-width-hr" />
-    <section ref="location">
-      <DetailLocation />
+    <!-- ListingDetail.vue (예시) -->
+    <section ref="location" v-if="lat != null && lng != null">
+      <DetailLocation
+        :lat="Number(lat)"
+        :lng="Number(lng)"
+        :address="agency?.address || ''"
+      />
     </section>
-    <KakaoMap
+    <!-- <KakaoMap
       v-if="lat && lng"
       :lat="lat"
       :lng="lng"
@@ -73,7 +78,7 @@
       style="width: 100%; height: 300px"
     >
       <KakaoMapMarker :lat="lat" :lng="lng" />
-    </KakaoMap>
+    </KakaoMap> -->
     <DetailAgency
       v-if="agency"
       :id="agency.officeId"
