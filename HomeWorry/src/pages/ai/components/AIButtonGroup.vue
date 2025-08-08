@@ -3,13 +3,19 @@
     <BtnMedSlim
       :text="
         isLoading
-          ? `AI가 분석 중... (${totalCount}개 파일)`
+          ? `${totalCount}개 파일 AI 분석중···`
           : `AI로 ${totalCount}개 계약서 분석하기`
       "
       :disabled="isLoading"
       @click="emit('analyze')"
+      class="group-btn"
     />
-    <BtnMedSlim text="점검 다시하기" @click="emit('reset')" color="#fff" />
+    <BtnMedSlim
+      text="점검 다시하기"
+      @click="emit('reset')"
+      color="#fff"
+      class="group-btn"
+    />
   </div>
 </template>
 
@@ -29,6 +35,10 @@ const emit = defineEmits(['analyze', 'reset']);
   flex-direction: column;
   align-items: center;
   gap: 13px;
-  margin: 22px 0;
+  width: 100%;
+}
+
+.group-btn {
+  width: 100%;
 }
 </style>

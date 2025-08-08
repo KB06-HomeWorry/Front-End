@@ -61,7 +61,7 @@
         @click="() => go('ai/estate-ease')"
       />
       <HomeBtnSmall
-        text="부동산<br/>용어 퀴즈"
+        text="부동산<br/>지식 퀴즈"
         :icon="homeQuiz"
         @click="() => go('/quiz')"
       />

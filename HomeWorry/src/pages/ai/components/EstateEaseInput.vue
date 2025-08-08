@@ -1,8 +1,8 @@
 <template>
   <div class="estatetext-textarea-wrap">
-    <div class="q-text bodyMedium14px">
+    <div class="q-text bodyMedium16px">
       <img :src="questionBookIcon" alt="입력 안내" class="q-icon" />
-      이해하기 어려운 부동산 문장을 입력해 주세요.
+      부동산 문장 또는 단어를 입력해 주세요.
     </div>
 
     <textarea
@@ -61,8 +61,8 @@ function onInput(e) {
   width: 16px;
   height: 16px;
   vertical-align: middle;
-  margin-right: 4px;
-  margin-top: 1px;
+  margin-right: 8px;
+  margin-top: 2px;
 }
 
 .estatetext-textarea {

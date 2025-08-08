@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <AuthTitle title="비밀번호 찾기" />
     <form class="signup-form" @submit.prevent="onSubmit">
       <!-- 이름 -->
@@ -96,6 +96,10 @@ async function onSubmit() {
 </script>
 
 <style scoped>
+.root{
+  padding-top: 60px;
+}
+
 .signup-form {
   margin: 1.5rem 0;
   box-sizing: border-box;

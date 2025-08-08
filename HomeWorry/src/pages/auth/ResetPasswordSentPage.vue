@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <AuthTitle title="비밀번호 찾기" />
     <div class="resetpw-sent-page">
       <div class="desc-wrap bodyMedium20px">
@@ -86,6 +86,10 @@ onResend();
 </script>
 
 <style scoped>
+.root{
+  padding-top: 60px;
+}
+
 .resetpw-sent-page {
   margin: 1.5rem 0;
   box-sizing: border-box;

@@ -1,9 +1,17 @@
 <template>
-  <div class="ai-doc-page-root">
-    <div class="ai-header">
-      <div class="ai-title titleBold20px">
-        계약서의 숨은 위험, AI가 찾아드립니다.
+  <div>
+    <SimpleHeader title="AI 계약서 분석"></SimpleHeader>
+    <div class="ai-doc-page-root">
+      <div class="ai-title-row">
+      <div class="ai-header titleBold20px">
+        계약서에 숨어 있는 위험, <br>
+        AI가 찾아드립니다.
       </div>
+      <img
+        src="@/assets/icons/ai_title.png"
+        alt="AI 분석"
+        class="ai-title-img"
+      />
     </div>
     <div class="main-card">
       <!-- 업로드 전 -->
@@ -24,7 +32,7 @@
           </div>
 
           <button
-            class="btn-sub-danger bodyMedium14px"
+            class="btn-sub-danger bodyMedium12px"
             @click="handleReset"
             type="button"
           >
@@ -39,12 +47,15 @@
         />
 
         <!-- 버튼 그룹 -->
-        <AIButtonGroup
-          :isLoading="isLoading"
-          :totalCount="imagePreviews.length"
-          @analyze="handleAnalyze"
-          @reset="handleReset"
-        />
+        <div class="btn-group-wrapper">
+          <AIButtonGroup
+            class="ai-button-group"
+            :isLoading="isLoading"
+            :totalCount="imagePreviews.length"
+            @analyze="handleAnalyze"
+            @reset="handleReset"
+          />
+        </div>
 
         <!-- 결과 -->
         <AIAnalysisResult
@@ -63,13 +74,14 @@
       @close="closeModal"
     />
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import axios from 'axios';
 import { Plus } from 'lucide-vue-next';
-
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import AIFileUpload from './components/AIFileUploadButton.vue';
 import AIUploadList from './components/AIUploadList.vue';
 import AIButtonGroup from './components/AIButtonGroup.vue';
@@ -164,25 +176,37 @@ const closeModal = () => {
 </script>
 
 <style scoped>
-.ai-header {
-  margin: 0 auto 18px auto;
-  padding: 34px 18px 0 18px;
+.ai-doc-page-root{
+  margin: 2rem;
 }
 
-.ai-title {
+.ai-header {
   color: var(--color-primary);
-  letter-spacing: -0.01em;
-  text-align: center;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.ai-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ai-title-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+  padding-right: 6px;
 }
 
 .main-card {
-  max-width: 360px;
+  max-width: 359px;
   width: 100%;
-  margin: 0 auto;
-  background: #f7f7fa;
-  border-radius: 18px;
+  background: rgba(17, 31, 92, 0.05);
+  border-radius: 12px;
   padding: 18px;
-  border: 1px solid #edeef2;
+  margin-top: 24px;
   margin-bottom: 32px;
 }
 
@@ -191,12 +215,11 @@ const closeModal = () => {
   align-items: center;
   justify-content: space-between;
   padding-bottom: 10px;
-  border-bottom: 1px solid #eff1f6;
-  margin-bottom: 10px;
+  border-bottom: 1px solid var(--color-mediumgray);
 }
 
 .uploaded-bar-left {
-  color: #222;
+  color: var(--color-primary);
 }
 
 .text-blue {
@@ -205,19 +228,20 @@ const closeModal = () => {
 
 .btn-sub-danger {
   background: #ffe8e6;
-  color: #d32f2f;
+  color: var(--color-error);
   border: 1px solid #ffd2d2;
   border-radius: 10px;
-  padding: 8px 17px;
-  height: 38px;
+  padding: 8px;
+  height: 30px;
   box-shadow: none;
-  transition: background 0.14s, border 0.14s;
+  transition: background 0.1s;
   cursor: pointer;
+  line-height: 14px;
+  letter-spacing: -0.03em;
 }
 
 .btn-sub-danger:hover {
   background: #ffd8d3;
-  border-color: #ffb5b5;
 }
 
 .hidden {
@@ -229,8 +253,12 @@ const closeModal = () => {
   z-index: -1;
 }
 
+.btn-group-wrapper {
+  padding-top: 20px;
+}
+
 .error-msg {
-  color: #e11d48;
+  color: var(--color-error);
   margin-top: 13px;
   text-align: center;
 }

@@ -427,7 +427,7 @@ function handleCalcBtn() {
   margin-top: 2px;
   margin-left: 8px;
   color: var(--color-primary);
-  text-align: right;
+  /* text-align: right; */
 }
 
 .calc-button {

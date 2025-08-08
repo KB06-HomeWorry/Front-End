@@ -41,9 +41,10 @@ const computedImg = props.img && props.img.length > 0
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 0;
+  padding: 32px 0;
   align-items: center;
   background: #fff;
+  border-top: 1px solid var(--color-darkgray);
 }
 
 .agency-card-left {
@@ -52,8 +53,8 @@ const computedImg = props.img && props.img.length > 0
 }
 
 .agency-profile-img {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 12px;
   background: #f3f3f3;

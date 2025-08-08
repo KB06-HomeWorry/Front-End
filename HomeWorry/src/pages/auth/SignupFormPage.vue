@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <AuthTitle title="회원정보 입력" />
     <form class="signup-form" @submit.prevent="onSubmit">
       <!-- 이메일 -->
@@ -240,6 +240,10 @@ function handleAlertConfirm() {
 </script>
 
 <style scoped>
+.root{
+  padding-top: 50px;
+}
+
 .signup-form {
   margin: 1.5rem 1rem;
   box-sizing: border-box;

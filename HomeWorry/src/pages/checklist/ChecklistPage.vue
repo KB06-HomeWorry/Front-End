@@ -120,8 +120,7 @@ function handleProgressFull() {
   padding: 24px 20px 40px;
   background-color: var(--color-white);
   box-sizing: border-box;
-  max-width: 430px;
-  margin: 0 auto;
+  max-width: 393px;
 }
 
 .desc {
