@@ -44,7 +44,7 @@ const computedImg = props.img && props.img.length > 0
   padding: 32px 0;
   align-items: center;
   background: #fff;
-  border-top: 1px solid var(--color-darkgray);
+  border-top: 1px solid var(--color-lightgray);
 }
 
 .agency-card-left {

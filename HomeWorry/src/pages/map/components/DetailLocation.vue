@@ -75,15 +75,14 @@ async function copyLocation() {
 }
 
 function reportItem() {
-  // TODO: 신고 로직 연결
-  alert('신고가 접수되었습니다. (샘플)')
+  // 신고 로직 연결 필요
+  alert('신고가 접수되었습니다!')
 }
 </script>
 
 <style scoped>
 .location-info-card {
   background: #fff;
-  padding: 24px 20px 18px 20px;
   max-width: 420px;
   margin: 0 auto;
   box-sizing: border-box;
@@ -93,7 +92,6 @@ function reportItem() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
   color: var(--color-primary);
 }
 
@@ -136,9 +134,8 @@ function reportItem() {
 }
 
 .location-map {
-  margin-top: 6px;
-  margin-bottom: 18px;
-  border-radius: 10px;
+  /* margin-top: 6px;
+  margin-bottom: 18px; */
   overflow: hidden;
   width: 100%;
   height: 170px;
