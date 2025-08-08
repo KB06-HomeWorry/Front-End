@@ -1,6 +1,5 @@
 <template>
   <div class="explain-card">
-    <!-- ⬆️ 아이콘 + 3줄 설명 -->
     <div class="explain-sample bodyMedium12px">
       <div class="icon-wrapper">
         <img :src="iconSrc" alt="계산기 아이콘" />
@@ -23,7 +22,7 @@
 </template>
 
 <script setup>
-const iconSrc = '/src/assets/icons/ex_calculator.png'; // 프로젝트 경로에 맞게 수정
+const iconSrc = '/src/assets/icons/ex_calculator.png'; 
 </script>
 
 <style scoped>
