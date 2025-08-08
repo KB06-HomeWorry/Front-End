@@ -28,7 +28,7 @@ const removeImage = (idx) => emit('removeImage', idx);
   gap: 12px;
   overflow-x: auto;
   margin-bottom: 16px;
-  padding-top: 12px;
+  padding-top: 16px;
 }
 .img-thumb-box {
   position: relative;
