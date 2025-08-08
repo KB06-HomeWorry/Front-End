@@ -1,16 +1,16 @@
 <template>
-  <div style="width: 100%; height: 100vh; position: relative;">
+  <div style="width: 100%; height: 100vh; position: relative">
     <!-- 필터 영역 (지도 위) -->
-    <div style="position: absolute; left: 0; right: 0; z-index:100;">
+    <div style="position: absolute; left: 0; right: 0; z-index: 100">
       <FilterBar
         :minPyeong="minPyeong"
         :maxPyeong="maxPyeong"
         :selectedTransactionType="selectedTransactionType"
         :sheet-open="isBottomSheetOpen"
-        @update:transactionType="val => selectedTransactionType = val"
-        @update:minPyeong="val => minPyeong = val"
-        @update:maxPyeong="val => maxPyeong = val"
-        @update:sheet-open="val => isBottomSheetOpen = val"
+        @update:transactionType="(val) => (selectedTransactionType = val)"
+        @update:minPyeong="(val) => (minPyeong = val)"
+        @update:maxPyeong="(val) => (maxPyeong = val)"
+        @update:sheet-open="(val) => (isBottomSheetOpen = val)"
         @search="onSearchLocation"
       />
       <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
@@ -25,18 +25,29 @@
       style="width: 100%; height: 100%"
     >
       <!-- Dong 단위 시세(마커) -->
-      <template v-if="level >= 5" v-for="(dongMarker, index) in dongMarkers" :key="index">
+      <template
+        v-if="level >= 5"
+        v-for="(dongMarker, index) in dongMarkers"
+        :key="index"
+      >
         <KakaoMapCustomOverlay
           :lat="dongMarker.lat"
           :lng="dongMarker.lng"
           :y-anchor="1.4"
         >
-          <MarketPrice :location="dongMarker.dongName" :price="dongMarker.price" />
+          <MarketPrice
+            :location="dongMarker.dongName"
+            :price="dongMarker.price"
+          />
         </KakaoMapCustomOverlay>
       </template>
 
       <!-- PriceOnlyBox 단위 마커 -->
-      <template v-if="level < 5" v-for="(marker, index) in markers" :key="'marker-'+index">
+      <template
+        v-if="level < 5"
+        v-for="(marker, index) in markers"
+        :key="'marker-' + index"
+      >
         <KakaoMapCustomOverlay
           :lat="marker.lat"
           :lng="marker.lng"
@@ -50,14 +61,18 @@
       </template>
 
       <!-- 상세 매물 마커 -->
-      <template v-if="level < 5 && isListingsVisible" v-for="(marker, index) in listingMarkers" :key="'listing-' + index">
+      <template
+        v-if="level < 5 && isListingsVisible"
+        v-for="(marker, index) in listingMarkers"
+        :key="'listing-' + index"
+      >
         <KakaoMapCustomOverlay
           :lat="marker.lat"
           :lng="marker.lng"
           :y-anchor="1.4"
           @click="goDetail(marker.id)"
         >
-        <ListingMarkers :marker="marker"/>
+          <ListingMarkers :marker="marker" />
         </KakaoMapCustomOverlay>
       </template>
     </KakaoMap>
@@ -148,7 +163,8 @@ watch(
 );
 
 function applyCategoryFilter() {
-  const conf = categoryConfig[selectedCategory.value] || categoryConfig.apartment;
+  const conf =
+    categoryConfig[selectedCategory.value] || categoryConfig.apartment;
   selectedHousingTypes.value = [...conf.priceTypes];
   selectedListingTypes.value = [...conf.listingTypes];
   loadPricelist();
@@ -202,23 +218,23 @@ async function loadListings() {
         typeof item.areaInfo === 'string' &&
         item.areaInfo.includes('/')
           ? Math.floor(
-              parseFloat(item.areaInfo.split('/')[1].replace('m', '')) / 3.305785
+              parseFloat(item.areaInfo.split('/')[1].replace('m', '')) /
+                3.305785
             )
           : null,
       floorInfo: item.floorInfo,
       direction: item.direction,
       transactionType: item.transactionType,
     }));
-    listingMarkers.value = loaded.filter((marker) =>
-      (selectedListingTypes.value.length > 0 &&
-      selectedListingTypes.value.includes(marker.housingType)) &&
-      (marker.areaInfo2 !== null) &&
-      (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
-      (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
-      (
-        !selectedTransactionType.value.length || 
-        selectedTransactionType.value.includes(marker.transactionType)
-      )
+    listingMarkers.value = loaded.filter(
+      (marker) =>
+        selectedListingTypes.value.length > 0 &&
+        selectedListingTypes.value.includes(marker.housingType) &&
+        marker.areaInfo2 !== null &&
+        (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
+        (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
+        (!selectedTransactionType.value.length ||
+          selectedTransactionType.value.includes(marker.transactionType))
     );
   } catch (error) {
     console.error('❌ API 로딩 실패:', error);
@@ -232,7 +248,11 @@ async function loadMaximumList() {
     const loadedMarkers = data.map((item) => ({
       lat: item.latitude,
       lng: item.longitude,
-      price: item.formattedPrice,
+      price:
+        typeof item.formattedPrice === 'string' &&
+        item.formattedPrice.endsWith('.0억')
+          ? item.formattedPrice.replace('.0억', '억')
+          : item.formattedPrice,
       dongName: item.dongName,
     }));
     dongMarkers.value = loadedMarkers;
@@ -265,7 +285,7 @@ onMounted(() => {
 const getCurrentLocation = (success, fail) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos => success({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => success({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       fail
     );
   } else {
@@ -324,7 +344,7 @@ function toggleListings() {
   isListingsVisible.value = !isListingsVisible.value;
 }
 const currentDongPrice = computed(() => {
-  const found = dongMarkers.value.find(m => m.dongName === currentDong.value);
+  const found = dongMarkers.value.find((m) => m.dongName === currentDong.value);
   return found ? found.price : '0';
 });
 
@@ -350,7 +370,7 @@ function onSearchLocation(keyword) {
       if (mapInstance.value) {
         const center = new window.kakao.maps.LatLng(latNum, lngNum);
         mapInstance.value.setCenter(center);
-        mapInstance.value.setLevel(4); 
+        mapInstance.value.setLevel(4);
         lat.value = latNum;
         lng.value = lngNum;
         mapCenter.value = { lat: latNum, lng: lngNum };
@@ -361,8 +381,6 @@ function onSearchLocation(keyword) {
     }
   });
 }
-
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
