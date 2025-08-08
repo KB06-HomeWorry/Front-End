@@ -6,11 +6,11 @@
         :key="tab.name"
         :to="tab.to"
         class="tab-item bodyLight10px"
-        active-class="active"
+        :class="{ active: isTabActive(tab) }"
         @click="onTabClick()"
       >
         <img
-          :src="route.path === tab.to ? tab.iconDark : tab.iconLight"
+          :src="isTabActive(tab) ? tab.iconDark : tab.iconLight"
           :alt="tab.label"
           class="tab-icon"
         />
@@ -26,49 +26,41 @@ import homeLight from "@/assets/icons/nav_home_light.png";
 import homeDark from "@/assets/icons/nav_home_dark.png";
 import mapLight from "@/assets/icons/nav_map_light.png";
 import mapDark from "@/assets/icons/nav_map_dark.png";
-import analysisLight from "@/assets/icons/nav_analysis_light.png";
-import analysisDark from "@/assets/icons/nav_analysis_dark.png";
-import agencyLight from "@/assets/icons/nav_agency_light.png"
-import agencyDark from "@/assets/icons/nav_agency_dark.png"
+import agencyLight from "@/assets/icons/nav_agency_light.png";
+import agencyDark from "@/assets/icons/nav_agency_dark.png";
 import myLight from "@/assets/icons/nav_my_light.png";
 import myDark from "@/assets/icons/nav_my_dark.png";
 import { useChecklistStore } from "@/stores/checklist";
-const checklistStore = useChecklistStore();
 
+const checklistStore = useChecklistStore();
 const route = useRoute();
 
 const tabs = [
-  {
-    name: "home",
-    label: "홈",
-    iconLight: homeLight,
-    iconDark: homeDark,
-    to: "/",
-  },
-  {
-    name: "map",
-    label: "지도",
-    iconLight: mapLight,
-    iconDark: mapDark,
-    to: "/map",
-  },
-  {
-    name: "agency",
-    label: "중개사",
-    iconLight: agencyLight,
-    iconDark: agencyDark,
-    to: "/agency/list",
-  },
-  {
-    name: "my",
-    label: "마이페이지",
-    iconLight: myLight,
-    iconDark: myDark,
-    to: "/my",
-  },
+  { name: "home",   label: "홈",     iconLight: homeLight,   iconDark: homeDark,   to: "/" },
+  { name: "map",    label: "지도",   iconLight: mapLight,    iconDark: mapDark,    to: "/map" },
+  { name: "agency", label: "중개사", iconLight: agencyLight, iconDark: agencyDark, to: "/agency/list" },
+  { name: "my",     label: "마이페이지", iconLight: myLight, iconDark: myDark,    to: "/my" },
 ];
 
+// ✅ 탭 활성화 기준: /map*, /agency*, /my* 전부 활성
+function isTabActive(tab) {
+  const p = route.path || "/";
+  switch (tab.name) {
+    case "home":
+      return p === "/";
+    case "map":
+      return p.startsWith("/map");
+    case "agency":
+      return p.startsWith("/agency");
+    case "my":
+      return p.startsWith("/my");
+    default:
+      return p === tab.to;
+  }
+}
+
 function onTabClick() {
+  // 원래 하던 로직 유지
   console.log("탭 클릭됨:", checklistStore.checklistData.stage);
   checklistStore.checklistData.stage = "계약 전";
 }
