@@ -129,8 +129,8 @@ const handleSectionClick = (result, pageIndex) => {
 .analysis-result-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  margin-top: 10px;
+  gap: 16px;
+  margin-top: 16px;
 }
 .summary-card {
   display: flex;
@@ -171,7 +171,7 @@ const handleSectionClick = (result, pageIndex) => {
 .page-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 .page-card {
   background: var(--color-white);

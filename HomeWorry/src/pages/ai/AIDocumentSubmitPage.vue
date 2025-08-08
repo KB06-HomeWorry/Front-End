@@ -3,77 +3,77 @@
     <SimpleHeader title="AI 계약서 분석"></SimpleHeader>
     <div class="ai-doc-page-root">
       <div class="ai-title-row">
-      <div class="ai-header titleBold20px">
-        계약서에 숨어 있는 위험, <br>
-        AI가 찾아드립니다.
+        <div class="ai-header titleBold20px">
+          계약서에 숨어 있는 위험, <br />
+          AI가 찾아드립니다.
+        </div>
+        <img
+          src="@/assets/icons/ai_title.png"
+          alt="AI 분석"
+          class="ai-title-img"
+        />
       </div>
-      <img
-        src="@/assets/icons/ai_title.png"
-        alt="AI 분석"
-        class="ai-title-img"
-      />
-    </div>
-    <div class="main-card">
-      <!-- 업로드 전 -->
-      <AIFileUpload
-        v-if="imagePreviews.length === 0"
-        :fileInputRef="fileInputRef"
-        @change="handleImageChange"
-      />
+      <div class="main-card">
+        <!-- 업로드 전 -->
+        <AIFileUpload
+          v-if="imagePreviews.length === 0"
+          :fileInputRef="fileInputRef"
+          @change="handleImageChange"
+        />
 
-      <!-- 업로드 후 -->
-      <template v-else>
-        <div class="uploaded-bar">
-          <div class="uploaded-bar-left">
-            <span class="bodyMedium14px">
-              업로드된 계약서
-              <span class="text-blue"> {{ imagePreviews.length }}개</span>
-            </span>
+        <!-- 업로드 후 -->
+        <template v-else>
+          <div class="uploaded-bar">
+            <div class="uploaded-bar-left">
+              <span class="bodyMedium14px">
+                업로드된 계약서
+                <span class="text-blue"> {{ imagePreviews.length }}개</span>
+              </span>
+            </div>
+
+            <button
+              class="btn-sub-danger bodyMedium12px"
+              @click="handleReset"
+              type="button"
+            >
+              전체 삭제
+            </button>
           </div>
 
-          <button
-            class="btn-sub-danger bodyMedium12px"
-            @click="handleReset"
-            type="button"
-          >
-            전체 삭제
-          </button>
-        </div>
-
-        <!-- 썸네일 -->
-        <AIUploadList
-          :imagePreviews="imagePreviews"
-          @removeImage="removeImage"
-        />
-
-        <!-- 버튼 그룹 -->
-        <div class="btn-group-wrapper">
-          <AIButtonGroup
-            class="ai-button-group"
-            :isLoading="isLoading"
-            :totalCount="imagePreviews.length"
-            @analyze="handleAnalyze"
-            @reset="handleReset"
+          <!-- 썸네일 -->
+          <AIUploadList
+            :imagePreviews="imagePreviews"
+            @removeImage="removeImage"
           />
-        </div>
 
-        <!-- 결과 -->
-        <AIAnalysisResult
-          v-if="analysisResults.length > 0"
-          :imagePreviews="imagePreviews"
-          :analysisResults="analysisResults"
-          :isLoading="isLoading"
-          @selectSection="selectSection"
-        />
-      </template>
-      <div v-if="error" class="error-msg bodyLight12px">{{ error }}</div>
+          <!-- 버튼 그룹 -->
+          <div class="btn-group-wrapper">
+            <AIButtonGroup
+              class="ai-button-group"
+              :isLoading="isLoading"
+              :totalCount="imagePreviews.length"
+              @analyze="handleAnalyze"
+              @reset="handleReset"
+            />
+          </div>
+
+          <!-- 결과 -->
+          <AIAnalysisResult
+            v-if="analysisResults.length > 0"
+            :imagePreviews="imagePreviews"
+            :analysisResults="analysisResults"
+            :isLoading="isLoading"
+            @selectSection="selectSection"
+          />
+        </template>
+        <div v-if="error" class="error-msg bodyLight12px">{{ error }}</div>
+      </div>
+      <AIAnalysisDetailModal
+        :selectedSection="selectedSection"
+        :loading="loadingRecommendation"
+        @close="closeModal"
+      />
     </div>
-    <AIAnalysisDetailModal
-      :selectedSection="selectedSection"
-      :loading="loadingRecommendation"
-      @close="closeModal"
-    />
-  </div>
   </div>
 </template>
 
@@ -176,7 +176,7 @@ const closeModal = () => {
 </script>
 
 <style scoped>
-.ai-doc-page-root{
+.ai-doc-page-root {
   margin: 2rem;
 }
 
@@ -251,10 +251,6 @@ const closeModal = () => {
   position: absolute;
   pointer-events: none;
   z-index: -1;
-}
-
-.btn-group-wrapper {
-  padding-top: 20px;
 }
 
 .error-msg {
