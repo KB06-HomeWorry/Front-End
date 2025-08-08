@@ -54,7 +54,7 @@ const agencies = ref([])
 
 // 페이지네이션 상태
 const page = ref(1)
-const pageSize = 20
+const pageSize = 10
 
 onMounted(async () => {
   try {

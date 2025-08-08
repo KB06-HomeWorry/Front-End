@@ -7,7 +7,7 @@
       :markerCluster="{
         customOverlayProps: agencies,
         calculator: [10, 30, 50],
-        minLevel: 3,
+        minLevel: 4,
         styles: [
           {
             width: '30px',
@@ -54,63 +54,33 @@
       @onLoadKakaoMap="onMapReady"
       style="width: 100%; height: 100%"
     >
-      <template v-if="level < 3">
-        <template v-for="(marker, index) in agencies" :key="marker.officeId">
+      <!-- level 4 부터 줌인 시 커스텀 핀 표시 -->
+      <template v-if="level < 4">
+        <template v-for="marker in agencies" :key="marker.officeId">
           <KakaoMapMarker
             :lat="marker.lat"
             :lng="marker.lng"
             :clickable="true"
             :image="{
-              imageSrc: '/map_agency_pin.png',
+              imageSrc: pinSrc,
               imageWidth: 36,
-              imageHeight: 36,
-              imageOption: {}
+              imageHeight: 36
             }"
             @onClickKakaoMapMarker="() => onMarkerClick(marker)"
           />
+
+          <!-- 선택된 항목만 커스텀 오버레이(분리한 컴포넌트 사용) -->
           <template v-if="selectedAgency && selectedAgency.officeId === marker.officeId">
-            <KakaoMapCustomOverlay :lat="marker.lat" :lng="marker.lng">
-              <div
-                style="
-                  padding: 10px;
-                  background-color: white;
-                  border: 1px solid #ccc;
-                  border-radius: 5px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
-              >
-                <div style="font-weight: bold; margin-bottom: 5px">
-                  {{ selectedAgency.officeName }}
-                </div>
-                <div style="display: flex">
-                  <div style="margin-right: 10px">
-                    <img
-                      src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png"
-                      width="73"
-                      height="70"
-                    />
-                  </div>
-                  <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                      {{ selectedAgency.agentName }}
-                    </div>
-                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                      {{ selectedAgency.address }}
-                    </div>
-                    <div>
-                      <a
-                        href="https://www.kakaocorp.com/main"
-                        target="_blank"
-                        style="color: blue"
-                      >
-                        {{ selectedAgency.phone }}
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <KakaoMapCustomOverlay
+              :lat="marker.lat"
+              :lng="marker.lng"
+              :z-index="9999"
+            >
+            <MapAgencyCard
+              :agency="selectedAgency"
+              @close="selectedAgency = null"
+              @detail="goDetail"
+            />
             </KakaoMapCustomOverlay>
           </template>
         </template>
@@ -122,8 +92,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay } from "vue3-kakao-maps";
+import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay} from "vue3-kakao-maps";
+import MapAgencyCard from "@/pages/map/components/MapAgencyCard.vue";
 
+const pinSrc = `${import.meta.env.BASE_URL}map_agency_pin.png`;
 const route = useRoute();
 const router = useRouter();
 
@@ -136,7 +108,7 @@ const agency_map = ref(null);
 const customOverlay = ref(null);
 const agencies = ref([]);
 const selectedAgency = ref(null);
-const map = ref();
+const map = ref(null);
 const clusterer = ref();
 
 onMounted(() => {
@@ -157,6 +129,14 @@ const onLoadKakaoMapMarkerCluster = (clustererRef) => {
     }
   });
 };
+
+function onMapReady(mapRef) {
+  map.value = mapRef;
+
+
+  kakao.maps.event.addListener(mapRef, "dragend", () => updateURL(mapRef));
+  kakao.maps.event.addListener(mapRef, "zoom_changed", () => updateURL(mapRef));
+}
 
 async function loadAgencies() {
   try {
@@ -181,22 +161,43 @@ async function onMarkerClick(agency) {
     const response = await fetch(`http://localhost:8080/api/agent/${agency.officeId}`);
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
-    selectedAgency.value = { ...data, lat: agency.lat, lng: agency.lng };
-    console.log(selectedAgency.value);
+    // 선택한 마커 좌표를 같이 보관
+    selectedAgency.value = { ...data, officeId: agency.officeId, lat: agency.lat, lng: agency.lng };
+        console.log(selectedAgency.value);
   } catch (e) {
     alert("중개사무소 정보를 불러오지 못했습니다.");
   }
 }
 
-function onMapReady(map) {
-  kakao.maps.event.addListener(map, "dragend", () => updateURL(map));
-  kakao.maps.event.addListener(map, "zoom_changed", () => updateURL(map));
-  agency_map.value = map;
+// 2) 상세보기 액션: 라우터 이동 (route name/param은 프로젝트에 맞게 수정)
+function goDetail(officeId) {
+  const id =
+    officeId ??
+    selectedAgency.value?.officeId ??
+    selectedAgency.value?.office_id ??
+    selectedAgency.value?.id;
+
+  if (!id) {
+    console.warn('[goDetail] agency id missing', officeId, selectedAgency.value);
+    return;
+  }
+  router.push({ name: 'agencyDetail', params: { agencyId: String(id) } });
 }
 
-function updateURL(map) {
-  const center = map.getCenter();
-  const zoom = map.getLevel();
+// 2) 북마크 액션: 실제 API 연동/상태 반영은 프로젝트 로직에 맞게 교체
+async function onBookmark(officeId) {
+  try {
+    // 예시: await fetch('/api/bookmark', { method:'POST', body: JSON.stringify({ officeId }) })
+    console.log("bookmark:", officeId);
+    alert("북마크에 추가했습니다.");
+  } catch {
+    alert("북마크 추가에 실패했습니다.");
+  }
+}
+
+function updateURL(mapRef) {
+  const center = mapRef.getCenter();
+  const zoom = mapRef.getLevel();
   router.replace({
     query: {
       ...route.query,
@@ -210,25 +211,6 @@ function updateURL(map) {
 }
 </script>
 
-<style>
-.custom-overlay {
-  padding: 10px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  position: relative;
-  min-width: 200px;
-}
-.custom-overlay .title {
-  font-weight: bold;
-  font-size: 16px;
-  margin-bottom: 5px;
-}
-.custom-overlay .close-btn {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
+<style scoped>
+/* 오버레이 자체 스타일은 분리한 컴포넌트(AgencyOverlayCard.vue) 내부에 있음 */
 </style>

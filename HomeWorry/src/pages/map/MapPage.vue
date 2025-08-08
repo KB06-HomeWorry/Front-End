@@ -1,77 +1,37 @@
 <template>
-  <div style="width: 100%; height: 100vh">
-    <div class="flex gap-4 p-4">
+  <div style="width: 100%; height: 100vh; position: relative">
+    <!-- 상단 FilterBar (면적/거래유형/검색) -->
+    <div class="top-controls">
+      <FilterBar
+        :minPyeong="minPyeong"
+        :maxPyeong="maxPyeong"
+        :selectedTransactionType="selectedTransactionType"
+        :sheet-open="isBottomSheetOpen"
+        @update:minPyeong="val => (minPyeong = val)"
+        @update:maxPyeong="val => (maxPyeong = val)"
+        @update:transactionType="val => (selectedTransactionType = val)"
+        @update:sheet-open="val => (isBottomSheetOpen = val)"
+        @search="onSearchLocation"
+      />
+    </div>
+
+    <!-- 카테고리 칩 6개 (2줄 텍스트, 정사각형 느낌) -->
+    <div class="chip-row bodyMedium10px">
       <button
-        @click="moveToCurrentLocation"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        v-for="btn in categoryButtons"
+        :key="btn.id"
+        @click="toggleCategory(btn.id)"
+        :class="[
+          'chip',
+          { active: activeCats.has(btn.id) },
+          btn.id.startsWith('price-') ? 'price' : 'list'
+        ]"
       >
-        Current Location
+        {{ btn.label }}
       </button>
-      <div :class="randomBgClass" class="bg-opacity-30 p-2 rounded">
-        <label
-          v-for="type in ['아파트', '연립다세대', '오피스텔']"
-          :key="type"
-          class="flex items-center gap-1"
-        >
-          <input type="checkbox" :value="type" v-model="selectedHousingTypes" />
-          {{ type }}
-        </label>
-      </div>
-    </div>
-    <!-- Listing types checkboxes -->
-    <div class="flex gap-4 p-4">
-      <div :class="randomBgClass" class="bg-opacity-30 p-2 rounded">
-        <label
-          v-for="type in [
-            '원룸',
-            '오피스텔',
-            '빌라',
-            '단독/다가구',
-            '상가주택',
-            '다세대',
-            '최근',
-          ]"
-          :key="type"
-          class="flex items-center gap-1"
-        >
-          <input type="checkbox" :value="type" v-model="selectedListingTypes" />
-          {{ type }}
-        </label>
-        <FilterBar
-          :minPyeong="minPyeong"
-          :maxPyeong="maxPyeong"
-          @updatePyeong="handlePyeongUpdate"
-        />
-
-        Current filter display
-        <div class="flex items-center gap-2 mt-2 p-2 bg-gray-100 rounded">
-          <span class="text-sm font-medium">현재 필터:</span>
-          <span class="text-sm">
-            평수: {{ minPyeong || '전체' }} ~ {{ maxPyeong || '전체' }}
-          </span>
-          <span class="text-sm">
-            | 거래유형: {{ selectedTransactionType || '전체' }}
-          </span>
-          <span class="text-sm"> | 매물수: {{ listingMarkers.length }}개 </span>
-        </div>
-
-        <div class="flex items-center gap-2 mt-2">
-          <label>거래 유형:</label>
-          <select
-            v-model="selectedTransactionType"
-            class="border px-2 py-1 rounded"
-          >
-            <option value="">전체</option>
-            <option value="전세">전세</option>
-            <option value="월세">월세</option>
-            <option value="단기임대">단기임대</option>
-          </select>
-        </div>
-      </div>
     </div>
 
-    <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
-
+    <!-- 카카오맵 -->
     <KakaoMap
       :lat="lat"
       :lng="lng"
@@ -79,442 +39,317 @@
       @onLoadKakaoMap="onMapReady"
       style="width: 100%; height: 100%"
     >
-      <!-- Price Markers with Custom Overlays -->
-      <!--  :markerCluster="{ customOverlayProps: markers }"  -->
-      <template
-        v-if="level >= 4"
-        v-for="(dongMarker, index) in dongMarkers"
-        :key="index"
-      >
-        <KakaoMapCustomOverlay
-          :lat="dongMarker.lat"
-          :lng="dongMarker.lng"
-          :y-anchor="1.4"
-        >
-          <div class="custom-overlay">
-            <!-- {{ (dongMarker.dongName, dongMarker.price) }} -->
-            <span class="bg-red-500 text-white px-2 py-1 rounded">
-              {{ dongMarker.dongName }})
-            </span>
-            {{ dongMarker.price }}
-            <!-- {{ dongMarker }} -->
-          </div>
-        </KakaoMapCustomOverlay>
+      <!-- 시세 레이어(아파트/오피스텔/연립다세대) -->
+      <template v-if="level < 5">
+        <template v-for="(marker, index) in visiblePriceMarkers" :key="'price-'+index">
+          <KakaoMapCustomOverlay :lat="marker.lat" :lng="marker.lng" :y-anchor="1.4">
+            <MarketPriceDetail :price="marker.price" :housingType="marker.housingType" />
+          </KakaoMapCustomOverlay>
+        </template>
       </template>
 
-      <template
-        v-if="level < 4"
-        v-for="(marker, index) in markers"
-        :key="index"
-      >
-        <KakaoMapCustomOverlay
-          :lat="marker.lat"
-          :lng="marker.lng"
-          :y-anchor="1.4"
-        >
-          <!-- click 추가 -->
-          <!-- <div class="custom-overlay" @click="goToDetail(marker)"> -->
-          <div class="custom-overlay">
-            <span @click="console.log(marker)"> {{ marker }}</span>
-            <!-- <span> {{ marker.price }}</span> -->
-          </div>
-        </KakaoMapCustomOverlay>
-      </template>
-      <!-- listingMarkers 지도에 표시 -->
-      <template
-        v-if="level < 4 && isListingsVisible"
-        v-for="(marker, index) in listingMarkers"
-        :key="'listing-' + index"
-      >
-        <KakaoMapCustomOverlay
-          :lat="marker.lat"
-          :lng="marker.lng"
-          :y-anchor="1.4"
-        >
-          <!-- <div
-            class="custom-overlay text-white"
-            style="background-color: #1e3a8a"
-            @click="goToDetail(marker)"
-            > -->
-          <div
-            class="custom-overlay text-white"
-            style="background-color: #1e3a8a"
-            @click="console.log(marker.areaInfo2)"
+      <!-- 매물 레이어(원룸/빌라/오피스텔) → FilterBar의 면적/거래유형 필터가 여기 반영됨 -->
+      <template v-if="level < 5 && isListingsVisible">
+        <template v-for="(marker, index) in visibleListingMarkers" :key="'listing-'+index">
+          <KakaoMapCustomOverlay
+            :lat="marker.lat"
+            :lng="marker.lng"
+            :y-anchor="1.4"
+            @click="goDetail(marker.id)"
           >
-            {{ marker.areaInfo2 }}
-          </div>
-        </KakaoMapCustomOverlay>
+            <ListingMarkers :marker="marker" />
+          </KakaoMapCustomOverlay>
+        </template>
       </template>
     </KakaoMap>
 
-    <h1 class="dong-label bg-opacity-50" :class="randomBgClass">
-      📍 {{ currentDong }} ({{ mapCenter.lat.toFixed(4) }},
-      {{ mapCenter.lng.toFixed(4) }})
-      {{ level }}
-    </h1>
+    <!-- 플로팅 버튼 스택 -->
+    <FloatingButtonStack
+      v-if="!isBottomSheetOpen"
+      @zoom-in="zoomIn"
+      @zoom-out="zoomOut"
+      @move-current-location="moveToCurrentLocation"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
-import FilterBar from './components/FilterBar.vue';
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps'
 
-const route = useRoute();
-const router = useRouter();
+import FilterBar from '@/pages/map/components/FilterBar.vue'
+import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue'
+import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue'
+import ListingMarkers from '@/pages/map/components/ListingMarkers.vue'
 
-const minPyeong = ref(null);
-const maxPyeong = ref(null);
+/** 라우터는 센터/줌 동기화만 */
+const route = useRoute()
+const router = useRouter()
 
-const handlePyeongUpdate = (pyeong) => {
-  // Update the area filter values from the FilterBar component
-  minPyeong.value = pyeong.min;
-  maxPyeong.value = pyeong.max;
-  // Manually trigger loadListings() to refresh the data
-  loadListings();
-  console.log('Area filter updated:', pyeong);
-};
+const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435)
+const lng = ref(route.query.center?.split(',').map(Number)[1] || 127.0812)
+const level = ref(Number(route.query.zoomLevel) || 4)
+const mapInstance = ref(null)
 
-const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435);
-const lng = ref(route.query.center?.split(',').map(Number)[1] || 127.0812);
-const currentLocation = ref(null);
-const level = ref(Number(route.query.zoomLevel) || 8);
+const isBottomSheetOpen = ref(false)
+const isListingsVisible = ref(true)
 
-const getCurrentLocation = (successCallback, errorCallback) => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        successCallback({ lat, lng });
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        errorCallback();
-      }
-    );
-  } else {
-    console.error('Geolocation is not supported by this browser.');
-    errorCallback();
-  }
-};
+const currentLocation = ref(null)
+const mapCenter = ref({ lat: lat.value, lng: lng.value })
 
-const moveToCurrentLocation = () => {
-  if (currentLocation.value && mapInstance.value) {
-    const newCenter = new window.kakao.maps.LatLng(
-      currentLocation.value.lat,
-      currentLocation.value.lng
-    );
-    mapInstance.value.panTo(newCenter);
-    mapInstance.value.setLevel(3);
-    updateURL(mapInstance.value);
-  }
-};
+/** FilterBar 상태 */
+const minPyeong = ref(null)
+const maxPyeong = ref(null)
+const selectedTransactionType = ref([]) // ['전세','월세','매매'] 등
 
-const markers = ref([]);
-const dongMarkers = ref([]);
-const mapInstance = ref(null);
-const currentDong = ref('');
-const mapCenter = ref({ lat: lat.value, lng: lng.value });
-const randomBgClass = ref('bg-white'); // Initial Tailwind background class
+/** 칩 6개 */
+const categoryButtons = [
+  { id: 'price-apartment', label: '아파트\n시세' },
+  { id: 'price-officetel', label: '오피스텔\n시세' },
+  { id: 'price-villa', label: '연립-\n다세대\n시세' },
+  { id: 'list-oneroom', label: '원룸\n매물' },
+  { id: 'list-villa', label: '빌라-\n다가구\n매물' },
+  { id: 'list-officetel', label: '오피스텔\n매물' }
+]
 
-const listingMarkers = ref([]);
-const selectedListingTypes = ref([
-  '원룸',
-  '오피스텔',
-  '빌라',
-  '단독/다가구',
-  '상가주택',
-  '다세대',
-  '최근',
-]);
-const selectedHousingTypes = ref(['아파트', '연립다세대', '오피스텔']);
-const selectedTransactionType = ref('');
+const activeCats = ref(new Set())
 
-// Tailwind CSS background colors for the label
-const tailwindBgColors = [
-  'bg-red-500',
-  'bg-blue-500',
-  'bg-green-500',
-  'bg-yellow-500',
-  'bg-purple-500',
-  'bg-pink-500',
-  'bg-indigo-500',
-  'bg-teal-500',
-  'bg-orange-500',
-];
+const allPriceMarkers = ref([]) 
+const allListings = ref([])    
+const loaded = ref({ price: false, listing: false })
 
-onMounted(() => {
-  getCurrentLocation(
-    (location) => {
-      lat.value = location.lat;
-      lng.value = location.lng;
-      currentLocation.value = location;
-      mapCenter.value = location;
-      loadAllData();
-    },
-    () => {
-      console.error('Failed to get current location, using default.');
-      loadAllData();
-    }
-  );
-});
-
-async function loadAllData() {
-  await loadPricelist();
-  await loadMaximumList();
-  await loadListings();
+/** 칩 → 타입 매핑 */
+const priceTypeByCat = {
+  'price-apartment': ['아파트'],
+  'price-officetel': ['오피스텔'],
+  'price-villa': ['연립다세대']
+}
+const listingTypeByCat = {
+  'list-oneroom': ['원룸'],
+  'list-villa': ['단독/다가구', '빌라', '상가주택', '다세대'],
+  'list-officetel': ['오피스텔']
 }
 
-watch(selectedHousingTypes, () => {
-  loadPricelist();
-});
-watch(selectedListingTypes, () => {
-  loadListings();
-});
+/** 표시용 computed */
+const visiblePriceMarkers = computed(() => {
+  if (!loaded.value.price) return []
+  const wanted = Object.entries(priceTypeByCat)
+    .filter(([cat]) => activeCats.value.has(cat))
+    .flatMap(([, t]) => t)
+  if (!wanted.length) return []
+  return allPriceMarkers.value.filter(m => wanted.includes(m.housingType))
+})
 
-watch(selectedTransactionType, () => {
-  loadListings();
-});
+const visibleListingMarkers = computed(() => {
+  if (!loaded.value.listing) return []
+  const wanted = Object.entries(listingTypeByCat)
+    .filter(([cat]) => activeCats.value.has(cat))
+    .flatMap(([, t]) => t)
+  if (!wanted.length) return []
 
-// Watch for area filter changes - removed to prevent infinite loop
-// The loadListings() will be called manually when FilterBar emits updatePyeong
+  // FilterBar의 면적/거래유형 필터를 반영
+  return allListings.value.filter(m =>
+    wanted.includes(m.housingType) &&
+    m.areaInfo2 !== null &&
+    (minPyeong.value === null || m.areaInfo2 >= minPyeong.value) &&
+    (maxPyeong.value === null || m.areaInfo2 <= maxPyeong.value) &&
+    (!selectedTransactionType.value.length ||
+      selectedTransactionType.value.includes(m.transactionType))
+  )
+})
 
-async function loadMaximumList() {
-  try {
-    const response = await fetch('/maximums.csv');
-    const csvText = await response.text();
-    const lines = csvText.split('\n');
-    const headers = lines[0].split(',');
-    const priceIndex = headers.indexOf('THING_AMT_KOR');
-    const latIndex = headers.indexOf('latitude');
-    const lonIndex = headers.indexOf('longitude');
-    const dongName = headers.indexOf('STDG_NM');
+function toggleCategory(catId) {
+  const next = new Set(activeCats.value)
+  next.has(catId) ? next.delete(catId) : next.add(catId)
+  activeCats.value = next
 
-    const loadedMarkers = [];
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i];
-      if (line) {
-        const values = line.split(',');
-        const latitude = parseFloat(values[latIndex]);
-        const longitude = parseFloat(values[lonIndex]);
-        if (!isNaN(latitude) && !isNaN(longitude)) {
-          loadedMarkers.push({
-            lat: latitude,
-            lng: longitude,
-            price: values[priceIndex],
-            dongName: values[dongName],
-          });
-        }
-      }
-    }
-    dongMarkers.value = loadedMarkers;
-  } catch (error) {
-    console.error('Error loading or parsing pricelist.csv:', error);
-  }
+  if (catId.startsWith('price-') && !loaded.value.price) loadPrices()
+  if (catId.startsWith('list-')  && !loaded.value.listing) loadListings()
 }
 
-// Load pricelist data
-async function loadPricelist() {
+/** 데이터 로딩 */
+async function loadPrices() {
   try {
-    const response = await fetch('/api/pricetrend'); // ✅ API 호출
-    const data = await response.json(); // ✅ JSON 파싱
-
-    const loadedMarkers = data.map((item) => ({
+    const res = await fetch('/api/pricetrend')
+    const data = await res.json()
+    allPriceMarkers.value = data.map(item => ({
       lat: item.latitude,
       lng: item.longitude,
-      price: item.price || item.monthlyRent || '가격없음', // 상황에 따라 적절한 필드 사용
+      price: item.price || item.monthlyRent || '가격없음',
       id: item.id,
-      year: item.year,
-      districtCode: item.districtCode,
-      districtName: item.districtName,
-      dongCode: item.dongCode,
-      dongName: item.dongName,
-      lotTypeCode: item.lotTypeCode,
-      lotType: item.lotType,
-      mainNo: item.mainNo,
-      subNo: item.subNo,
-      buildingName: item.buildingName,
-      contractDay: item.contractDay,
-      archArea: item.archArea,
-      landArea: item.landArea,
-      floor: item.floor,
-      builtYear: item.builtYear,
-      housingType: item.housingType,
-      dealType: item.dealType,
-      address: item.address,
-    }));
-
-    markers.value = loadedMarkers.filter((marker) =>
-      selectedHousingTypes.value.includes(marker.housingType)
-    );
-  } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+      housingType: item.housingType
+    }))
+    loaded.value.price = true
+  } catch (e) {
+    console.error('❌ 시세 로딩 실패:', e)
   }
 }
-
-// listing map
 async function loadListings() {
   try {
-    const response = await fetch('/api/listing');
-    const data = await response.json();
-
-    const loaded = data.map((item) => ({
+    const res = await fetch('/api/listing')
+    const data = await res.json()
+    allListings.value = data.map(item => ({
       lat: item.latitude,
       lng: item.longitude,
       price: item.monthlyRent
         ? `월세 ${item.deposit}/${item.monthlyRent}`
         : item.transactionType === '전세'
-        ? `전세 ${item.deposit}`
-        : item.rentalCondition || '가격없음',
+          ? `전세 ${item.deposit}`
+          : item.rentalCondition || '가격없음',
       id: item.id,
-      title: item.listing,
-      address: item.address,
-      deposit: item.deposit,
-      rent: item.monthlyRent,
-      rentalCondition: item.rentalCondition,
-      details: item.details,
-      agency: item.agency,
-      transactionType: item.transactionType,
       housingType: item.housingType,
       areaInfo: item.areaInfo,
       areaInfo2:
-        item.areaInfo &&
-        typeof item.areaInfo === 'string' &&
-        item.areaInfo.includes('/')
-          ? Math.floor(
-              parseFloat(item.areaInfo.split('/')[1].replace('m', '')) /
-                3.305785
-            )
+        item.areaInfo && typeof item.areaInfo === 'string' && item.areaInfo.includes('/')
+          ? Math.floor(parseFloat(item.areaInfo.split('/')[1].replace('m', '')) / 3.305785)
           : null,
       floorInfo: item.floorInfo,
       direction: item.direction,
-    }));
-
-    listingMarkers.value = loaded.filter(
-      (marker) =>
-        selectedListingTypes.value.includes(marker.housingType) &&
-        // Area filter: 평수 filtering based on AreaSlider values
-        (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
-        (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
-        (selectedTransactionType.value === '' ||
-          marker.transactionType === selectedTransactionType.value)
-    );
-  } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+      transactionType: item.transactionType
+    }))
+    loaded.value.listing = true
+  } catch (e) {
+    console.error('❌ 매물 로딩 실패:', e)
   }
 }
 
-const onMapReady = (map) => {
-  mapInstance.value = map;
-  coor2address({ lat: lat.value, lng: lng.value });
+/** 초기엔 데이터 안 불러오고 위치만 */
+onMounted(() => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        lat.value = pos.coords.latitude
+        lng.value = pos.coords.longitude
+        mapCenter.value = { lat: lat.value, lng: lng.value }
+      },
+      () => {}
+    )
+  }
+})
 
-  // Add map type control (top right)
-  const mapTypeControl = new window.kakao.maps.MapTypeControl();
-  map.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT);
-
-  // Add zoom control (right)
-  const zoomControl = new window.kakao.maps.ZoomControl();
-  map.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT);
-
-  kakao.maps.event.addListener(map, 'dragend', () => updateURL(map));
-  kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map));
-};
-
-// Updates the URL with the current map center and zoom level
-const updateURL = (mapInstance) => {
-  const center = mapInstance.getCenter();
-  const zoom = mapInstance.getLevel();
-
+/** 지도 이벤트 */
+function onMapReady(map) {
+  mapInstance.value = map
+  kakao.maps.event.addListener(map, 'dragend', () => updateURL(map))
+  kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map))
+}
+function updateURL(map) {
+  const center = map.getCenter()
+  const zoom = map.getLevel()
   router.replace({
-    query: {
-      ...route.query,
-      center: `${center.getLat()},${center.getLng()}`,
-      zoomLevel: zoom,
-    },
-  });
-  lat.value = center.getLat();
-  lng.value = center.getLng();
-  level.value = zoom;
-  mapCenter.value = { lat: lat.value, lng: lng.value };
-  coor2address(mapCenter.value);
-};
+    query: { ...route.query, center: `${center.getLat()},${center.getLng()}`, zoomLevel: zoom }
+  })
+  lat.value = center.getLat()
+  lng.value = center.getLng()
+  level.value = zoom
+  mapCenter.value = { lat: lat.value, lng: lng.value }
+}
 
-// Gets the administrative district ("dong") from coordinates
-const coor2address = (coordinate) => {
-  const geocoder = new kakao.maps.services.Geocoder();
-  geocoder.coord2Address(coordinate.lng, coordinate.lat, (result, status) => {
-    if (status === kakao.maps.services.Status.OK) {
-      const dong = result[0]?.address?.region_3depth_name;
-      if (dong) {
-        currentDong.value = dong;
-        randomBgClass.value = getRandomTailwindBgClass(); // Update background class
+/** FilterBar 검색 → 장소 이동 */
+function onSearchLocation(keyword) {
+  const q = (keyword || '').trim()
+  if (!q) return
+  const places = new window.kakao.maps.services.Places()
+  places.keywordSearch(q, (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK && result.length) {
+      const p = result[0]
+      const latNum = parseFloat(p.y)
+      const lngNum = parseFloat(p.x)
+      if (mapInstance.value) {
+        const center = new window.kakao.maps.LatLng(latNum, lngNum)
+        mapInstance.value.setCenter(center)
+        mapInstance.value.setLevel(4)
+        lat.value = latNum
+        lng.value = lngNum
+        mapCenter.value = { lat: latNum, lng: lngNum }
       }
     } else {
-      console.error('Geocoder failed with status:', status);
+      alert('검색 결과가 없습니다.')
     }
-  });
-};
-
-// Returns a random Tailwind CSS background class
-const getRandomTailwindBgClass = () => {
-  const randomIndex = Math.floor(Math.random() * tailwindBgColors.length);
-  return tailwindBgColors[randomIndex];
-};
-
-//map 다음 상세 페이지 이동
-function goToDetail(marker) {
-  if (!marker.lat || !marker.lng) {
-    console.error('❌ 마커 좌표 없음:', marker);
-    return;
-  }
-
-  router.push({
-    path: '/map/detail',
-    query: {
-      lat: marker.lat,
-      lng: marker.lng,
-      price: marker.price,
-    },
-  });
+  })
 }
 
-// listing toggle
-const isListingsVisible = ref(true);
+function toggleListings() { isListingsVisible.value = !isListingsVisible.value }
+function moveToCurrentLocation() {
+  if (!mapInstance.value || !currentLocation.value) return
+  const center = new window.kakao.maps.LatLng(currentLocation.value.lat, currentLocation.value.lng)
+  mapInstance.value.panTo(center)
+  mapInstance.value.setLevel(3)
+  updateURL(mapInstance.value)
+}
+function zoomIn()  { if (mapInstance.value) mapInstance.value.setLevel(mapInstance.value.getLevel() - 1) }
+function zoomOut() { if (mapInstance.value) mapInstance.value.setLevel(mapInstance.value.getLevel() + 1) }
 
-function toggleListings() {
-  isListingsVisible.value = !isListingsVisible.value;
-
-  if (isListingsVisible.value) {
-    // 마커 생성 로직 (지도에 매물 표시)
-  } else {
-    // 마커 제거 로직
-  }
+function goDetail(id) {
+  if (!id) return
+  router.push({ name: 'agencyDetail', params: { agencyId: String(id) } })
 }
 </script>
 
-<style>
-.custom-overlay {
-  padding: 5px 10px;
-  background-color: white;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 12px;
-  font-weight: bold;
-  white-space: nowrap;
-  pointer-events: auto;
-}
-.dong-label {
+<style scoped>
+.top-controls {
   position: absolute;
-  top: 10px;
+  z-index: 101;
+}
+
+/* 칩 6개 한 줄 고정 */
+.chip-row {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 54px;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: repeat(6, 56px);
+  gap: 6px;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.chip {
+  width: 56px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  cursor: pointer;
+  line-height: 1;
+  white-space: pre-line;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  box-sizing: border-box;
+  letter-spacing: -0.03em;
+}
+/* 시세 버튼 비활성화 상태 */
+.chip.price:not(.active) {
+  border-color: #888fad;
+}
+
+/* 공통 활성화 상태 */
+.chip.active {
+  border-color: var(--color-primary);
+}
+
+/* 시세 버튼 활성화 */
+.chip.active.price {
+  background: #e6e8f0;
+  color: var(--color-primary);
+}
+
+/* 매물 버튼 활성화 */
+.chip.active.list {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+
+.list-toggle-fab {
+  position: absolute;
   right: 10px;
-  z-index: 10;
-  padding: 6px 10px;
-  border-radius: 5px;
-  font-size: 18px;
-  color: white;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  top: 134px;
+  z-index: 101;
 }
 </style>

@@ -5,7 +5,7 @@
         v-for="tab in tabs"
         :key="tab.name"
         :to="tab.to"
-        class="tab-item bodyLight12px"
+        class="tab-item bodyLight10px"
         active-class="active"
         @click="onTabClick()"
       >
@@ -90,7 +90,7 @@ function onTabClick() {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 70px;
+  height: 64px;
   border-top: 1px solid var(--color-light);
 }
 
@@ -105,9 +105,9 @@ function onTabClick() {
 }
 
 .tab-icon {
-  width: 28px;
-  height: 28px;
-  margin-bottom: 5px;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
 }
 
 .tab-item.active {

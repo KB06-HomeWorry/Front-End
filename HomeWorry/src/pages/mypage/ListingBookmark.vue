@@ -67,45 +67,13 @@ onMounted(() => {
 })
 
 async function fetchListingList(){
-  // try {
-  //   // 북마크 된 매물 목록 조회
-  //   const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
-  //   listings.value = res.data
-  // } catch (e) {
-  //   alert('찜한 매물 목록을 불러오지 못했습니다.')
-  // }
-
-  // 목 데이터 삽입
-  listings.value = [
-    {
-      id: 1,
-      listingName: '해피빌 101동',
-      transactionType: '월세',
-      deposit: 1000,
-      monthlyRent: 50,
-      address: '서울특별시 강남구 테헤란로 123',
-      housingType: '오피스텔',
-      areaInfo: '18평',
-      floorInfo: '3층',
-      direction: '남향',
-      isFavorite: true,
-      price: 50000,
-    },
-    {
-      id: 2,
-      listingName: '프라임아파트',
-      transactionType: '전세',
-      deposit: 20000,
-      monthlyRent: 0,
-      address: '서울특별시 송파구 올림픽로 45',
-      housingType: '아파트',
-      areaInfo: '25평',
-      floorInfo: '15층',
-      direction: '동향',
-      isFavorite: true,
-      price: 200000,
-    },
-  ]
+  try {
+    // 북마크 된 매물 목록 조회
+    const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
+    listings.value = res.data
+  } catch (e) {
+    alert('찜한 매물 목록을 불러오지 못했습니다.')
+  }
 }
 
 const sortedList = computed(() => listings.value)
