@@ -76,12 +76,11 @@
               :lng="marker.lng"
               :z-index="9999"
             >
-              <MapAgencyCard
-                :agency="selectedAgency"
-                @close="selectedAgency = null"
-                @detail="goDetail"
-                @bookmark="onBookmark"
-              />
+            <MapAgencyCard
+              :agency="selectedAgency"
+              @close="selectedAgency = null"
+              @detail="goDetail"
+            />
             </KakaoMapCustomOverlay>
           </template>
         </template>
@@ -131,13 +130,9 @@ const onLoadKakaoMapMarkerCluster = (clustererRef) => {
   });
 };
 
-// 맵 빈 곳 클릭 시 오버레이 닫기
 function onMapReady(mapRef) {
   map.value = mapRef;
 
-  kakao.maps.event.addListener(mapRef, "click", () => {
-    selectedAgency.value = null;
-  });
 
   kakao.maps.event.addListener(mapRef, "dragend", () => updateURL(mapRef));
   kakao.maps.event.addListener(mapRef, "zoom_changed", () => updateURL(mapRef));
@@ -167,7 +162,7 @@ async function onMarkerClick(agency) {
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     // 선택한 마커 좌표를 같이 보관
-    selectedAgency.value = { ...data, lat: agency.lat, lng: agency.lng };
+    selectedAgency.value = { ...data, officeId: agency.officeId, lat: agency.lat, lng: agency.lng };
         console.log(selectedAgency.value);
   } catch (e) {
     alert("중개사무소 정보를 불러오지 못했습니다.");
@@ -176,7 +171,17 @@ async function onMarkerClick(agency) {
 
 // 2) 상세보기 액션: 라우터 이동 (route name/param은 프로젝트에 맞게 수정)
 function goDetail(officeId) {
-  router.push({ name: "agencyDetail", params: { agencyId: officeId } });
+  const id =
+    officeId ??
+    selectedAgency.value?.officeId ??
+    selectedAgency.value?.office_id ??
+    selectedAgency.value?.id;
+
+  if (!id) {
+    console.warn('[goDetail] agency id missing', officeId, selectedAgency.value);
+    return;
+  }
+  router.push({ name: 'agencyDetail', params: { agencyId: String(id) } });
 }
 
 // 2) 북마크 액션: 실제 API 연동/상태 반영은 프로젝트 로직에 맞게 교체
