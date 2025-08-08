@@ -80,6 +80,7 @@ onMounted(async () => {
   }
 })
 
+// user정보에서 프로필 이미지가 없을 시, 기본 이미지로 띄우도록 설정
 const profileImageSrc = computed(() =>
   user.value.profileImg && user.value.profileImg.trim() !== ''
     ? user.value.profileImg

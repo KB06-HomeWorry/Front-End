@@ -22,7 +22,7 @@
       alt="매물 이미지"
       style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"
     />
-    <section>
+    <section class="basic_info">
       <div>
         <span class="buildname bodyMedium16px">{{ buildingName }}</span>
       </div>
@@ -229,6 +229,10 @@ function scrollTo(section) {
 </script>
 
 <style scoped>
+.basic_info{
+  margin: 0 1.5rem;
+}
+
 .bookmark-btn {
   background: none;
   border: none;
