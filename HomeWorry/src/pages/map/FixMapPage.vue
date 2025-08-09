@@ -1,16 +1,16 @@
 <template>
-  <div style="width: 100%; height: 100vh; position: relative;">
+  <div style="width: 100%; height: 100vh; position: relative">
     <!-- 필터 영역 (지도 위) -->
-    <div style="position: absolute; left: 0; right: 0; z-index:100;">
+    <div style="position: absolute; left: 0; right: 0; z-index: 100">
       <FilterBar
         :minPyeong="minPyeong"
         :maxPyeong="maxPyeong"
         :selectedTransactionType="selectedTransactionType"
         :sheet-open="isBottomSheetOpen"
-        @update:transactionType="val => selectedTransactionType = val"
-        @update:minPyeong="val => minPyeong = val"
-        @update:maxPyeong="val => maxPyeong = val"
-        @update:sheet-open="val => isBottomSheetOpen = val"
+        @update:transactionType="(val) => (selectedTransactionType = val)"
+        @update:minPyeong="(val) => (minPyeong = val)"
+        @update:maxPyeong="(val) => (maxPyeong = val)"
+        @update:sheet-open="(val) => (isBottomSheetOpen = val)"
         @search="onSearchLocation"
       />
       <ListingToggle :visible="isListingsVisible" @toggle="toggleListings" />
@@ -25,18 +25,29 @@
       style="width: 100%; height: 100%"
     >
       <!-- Dong 단위 시세(마커) -->
-      <template v-if="level >= 5" v-for="(dongMarker, index) in dongMarkers" :key="index">
+      <template
+        v-if="level >= 5"
+        v-for="(dongMarker, index) in dongMarkers"
+        :key="index"
+      >
         <KakaoMapCustomOverlay
           :lat="dongMarker.lat"
           :lng="dongMarker.lng"
           :y-anchor="1.4"
         >
-          <MarketPrice :location="dongMarker.dongName" :price="dongMarker.price" />
+          <MarketPrice
+            :location="dongMarker.dongName"
+            :price="dongMarker.price"
+          />
         </KakaoMapCustomOverlay>
       </template>
 
       <!-- PriceOnlyBox 단위 마커 -->
-      <template v-if="level < 5" v-for="(marker, index) in markers" :key="'marker-'+index">
+      <template
+        v-if="level < 5"
+        v-for="(marker, index) in markers"
+        :key="'marker-' + index"
+      >
         <KakaoMapCustomOverlay
           :lat="marker.lat"
           :lng="marker.lng"
@@ -50,14 +61,18 @@
       </template>
 
       <!-- 상세 매물 마커 -->
-      <template v-if="level < 5 && isListingsVisible" v-for="(marker, index) in listingMarkers" :key="'listing-' + index">
+      <template
+        v-if="level < 5 && isListingsVisible"
+        v-for="(marker, index) in listingMarkers"
+        :key="'listing-' + index"
+      >
         <KakaoMapCustomOverlay
           :lat="marker.lat"
           :lng="marker.lng"
           :y-anchor="1.4"
           @click="goDetail(marker.id)"
         >
-        <ListingMarkers :marker="marker"/>
+          <ListingMarkers :marker="marker" />
         </KakaoMapCustomOverlay>
       </template>
     </KakaoMap>
@@ -73,15 +88,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
-import FilterBar from '@/pages/map/components/FilterBar.vue';
-import ListingToggle from '@/pages/map/components/ListingToggle.vue';
-import MarketPrice from '@/pages/map/components/MarketPrice.vue';
-import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue';
-import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
-import ListingMarkers from '@/pages/map/components/ListingMarkers.vue';
+import { ref, computed, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { KakaoMap, KakaoMapCustomOverlay } from "vue3-kakao-maps";
+import FilterBar from "@/pages/map/components/FilterBar.vue";
+import ListingToggle from "@/pages/map/components/ListingToggle.vue";
+import MarketPrice from "@/pages/map/components/MarketPrice.vue";
+import MarketPriceDetail from "@/pages/map/components/MarketPriceDetail.vue";
+import FloatingButtonStack from "@/pages/map/components/FloatingButtonStack.vue";
+import ListingMarkers from "@/pages/map/components/ListingMarkers.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -101,54 +116,55 @@ const isListingsVisible = ref(true);
 // 시트 오픈 상태, 플로팅 버튼 제어용
 const isBottomSheetOpen = ref(false);
 
-const lat = ref(route.query.center?.split(',').map(Number)[0] || 37.5435);
-const lng = ref(route.query.center?.split(',').map(Number)[1] || 127.0812);
+const lat = ref(route.query.center?.split(",").map(Number)[0] || 37.5435);
+const lng = ref(route.query.center?.split(",").map(Number)[1] || 127.0812);
 const level = ref(Number(route.query.zoomLevel) || 6);
 const mapInstance = ref(null);
 const currentLocation = ref(null);
-const currentDong = ref('');
+const currentDong = ref("");
 const mapCenter = ref({ lat: lat.value, lng: lng.value });
 
 // 카테고리(라우트) → 시세/매물 타입 매핑
 const pathToCategory = {
-  '/map/apartment': 'apartment',
-  '/map/onetwo': 'oneroom',
-  '/map/building': 'villa',
-  '/map/officetel': 'officetel',
+  "/map/apartment": "apartment",
+  "/map/onetwo": "oneroom",
+  "/map/building": "villa",
+  "/map/officetel": "officetel",
 };
 
 const categoryConfig = {
   apartment: {
-    priceTypes: ['아파트'],
+    priceTypes: ["아파트"],
     listingTypes: [],
   },
   oneroom: {
     priceTypes: [],
-    listingTypes: ['원룸'],
+    listingTypes: ["원룸"],
   },
   villa: {
-    priceTypes: ['연립다세대'],
-    listingTypes: ['단독/다가구', '빌라', '상가주택', '다세대'],
+    priceTypes: ["연립다세대"],
+    listingTypes: ["단독/다가구", "빌라", "상가주택", "다세대"],
   },
   officetel: {
-    priceTypes: ['오피스텔'],
-    listingTypes: ['오피스텔'],
+    priceTypes: ["오피스텔"],
+    listingTypes: ["오피스텔"],
   },
 };
 
-const selectedCategory = ref('apartment');
+const selectedCategory = ref("apartment");
 
 watch(
   () => route.path,
   (newPath) => {
-    selectedCategory.value = pathToCategory[newPath] || 'apartment';
+    selectedCategory.value = pathToCategory[newPath] || "apartment";
     applyCategoryFilter();
   },
   { immediate: true }
 );
 
 function applyCategoryFilter() {
-  const conf = categoryConfig[selectedCategory.value] || categoryConfig.apartment;
+  const conf =
+    categoryConfig[selectedCategory.value] || categoryConfig.apartment;
   selectedHousingTypes.value = [...conf.priceTypes];
   selectedListingTypes.value = [...conf.listingTypes];
   loadPricelist();
@@ -162,72 +178,111 @@ watch([minPyeong, maxPyeong], loadListings);
 
 async function loadPricelist() {
   try {
-    const response = await fetch('/api/pricetrend');
+    const token = localStorage.getItem("accessToken"); // 또는 다른 저장소
+    const response = await fetch("/api/pricetrend", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("❌ API 로딩 실패 (pricetrend):", text);
+      return;
+    }
+
     const data = await response.json();
     const loadedMarkers = data.map((item) => ({
       lat: item.latitude,
       lng: item.longitude,
-      price: item.price || item.monthlyRent || '가격없음',
+      price: item.price || item.monthlyRent || "가격없음",
       id: item.id,
       housingType: item.housingType,
     }));
-    if (selectedHousingTypes.value.length === 0) {
-      markers.value = [];
-    } else {
-      markers.value = loadedMarkers.filter((marker) =>
-        selectedHousingTypes.value.includes(marker.housingType)
-      );
-    }
+    markers.value =
+      selectedHousingTypes.value.length === 0
+        ? []
+        : loadedMarkers.filter((marker) =>
+            selectedHousingTypes.value.includes(marker.housingType)
+          );
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error("❌ API 로딩 실패 (pricetrend):", error);
   }
 }
+
 async function loadListings() {
   try {
-    const response = await fetch('/api/listing');
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch("/api/listing", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("❌ API 로딩 실패 (listing):", text);
+      return;
+    }
+
     const data = await response.json();
     const loaded = data.map((item) => ({
       lat: item.latitude,
       lng: item.longitude,
       price: item.monthlyRent
         ? `월세 ${item.deposit}/${item.monthlyRent}`
-        : item.transactionType === '전세'
+        : item.transactionType === "전세"
         ? `전세 ${item.deposit}`
-        : item.rentalCondition || '가격없음',
+        : item.rentalCondition || "가격없음",
       id: item.id,
       housingType: item.housingType,
       areaInfo: item.areaInfo,
       areaInfo2:
         item.areaInfo &&
-        typeof item.areaInfo === 'string' &&
-        item.areaInfo.includes('/')
+        typeof item.areaInfo === "string" &&
+        item.areaInfo.includes("/")
           ? Math.floor(
-              parseFloat(item.areaInfo.split('/')[1].replace('m', '')) / 3.305785
+              parseFloat(item.areaInfo.split("/")[1].replace("m", "")) /
+                3.305785
             )
           : null,
       floorInfo: item.floorInfo,
       direction: item.direction,
       transactionType: item.transactionType,
     }));
-    listingMarkers.value = loaded.filter((marker) =>
-      (selectedListingTypes.value.length > 0 &&
-      selectedListingTypes.value.includes(marker.housingType)) &&
-      (marker.areaInfo2 !== null) &&
-      (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
-      (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
-      (
-        !selectedTransactionType.value.length || 
-        selectedTransactionType.value.includes(marker.transactionType)
-      )
+    listingMarkers.value = loaded.filter(
+      (marker) =>
+        selectedListingTypes.value.length > 0 &&
+        selectedListingTypes.value.includes(marker.housingType) &&
+        marker.areaInfo2 !== null &&
+        (minPyeong.value === null || marker.areaInfo2 >= minPyeong.value) &&
+        (maxPyeong.value === null || marker.areaInfo2 <= maxPyeong.value) &&
+        (!selectedTransactionType.value.length ||
+          selectedTransactionType.value.includes(marker.transactionType))
     );
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error("❌ API 로딩 실패 (listing):", error);
   }
 }
 
 async function loadMaximumList() {
   try {
-    const response = await fetch('/api/pricetrend/max');
+    const token = localStorage.getItem("accessToken");
+    const response = await fetch("/api/pricetrend/max", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error("❌ API 로딩 실패 (max):", text);
+      return;
+    }
+
     const data = await response.json();
     const loadedMarkers = data.map((item) => ({
       lat: item.latitude,
@@ -237,7 +292,7 @@ async function loadMaximumList() {
     }));
     dongMarkers.value = loadedMarkers;
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error("❌ API 로딩 실패 (max):", error);
   }
 }
 
@@ -265,7 +320,7 @@ onMounted(() => {
 const getCurrentLocation = (success, fail) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos => success({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      (pos) => success({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
       fail
     );
   } else {
@@ -288,8 +343,8 @@ const moveToCurrentLocation = () => {
 const onMapReady = (map) => {
   mapInstance.value = map;
   coor2address({ lat: lat.value, lng: lng.value });
-  kakao.maps.event.addListener(map, 'dragend', () => updateURL(map));
-  kakao.maps.event.addListener(map, 'zoom_changed', () => updateURL(map));
+  kakao.maps.event.addListener(map, "dragend", () => updateURL(map));
+  kakao.maps.event.addListener(map, "zoom_changed", () => updateURL(map));
 };
 
 const updateURL = (mapInstance) => {
@@ -324,8 +379,8 @@ function toggleListings() {
   isListingsVisible.value = !isListingsVisible.value;
 }
 const currentDongPrice = computed(() => {
-  const found = dongMarkers.value.find(m => m.dongName === currentDong.value);
-  return found ? found.price : '0';
+  const found = dongMarkers.value.find((m) => m.dongName === currentDong.value);
+  return found ? found.price : "0";
 });
 
 function zoomIn() {
@@ -350,19 +405,17 @@ function onSearchLocation(keyword) {
       if (mapInstance.value) {
         const center = new window.kakao.maps.LatLng(latNum, lngNum);
         mapInstance.value.setCenter(center);
-        mapInstance.value.setLevel(4); 
+        mapInstance.value.setLevel(4);
         lat.value = latNum;
         lng.value = lngNum;
         mapCenter.value = { lat: latNum, lng: lngNum };
         coor2address({ lat: latNum, lng: lngNum });
       }
     } else {
-      alert('검색 결과가 없습니다.');
+      alert("검색 결과가 없습니다.");
     }
   });
 }
-
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
