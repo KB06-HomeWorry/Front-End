@@ -215,19 +215,28 @@ async function loadListings() {
 }
 
 onMounted(() => {
+  getCurrentLocation(
+    (location) => {
+      lat.value = location.lat;
+      lng.value = location.lng;
+      currentLocation.value = location;
+      mapCenter.value = location;
+    },
+    () => {
+    }
+  );
+});
+
+const getCurrentLocation = (success, fail) => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
-      pos => {
-        const { latitude, longitude } = pos.coords; 
-        lat.value = latitude;
-        lng.value = longitude;
-        mapCenter.value = { lat: latitude, lng: longitude };
-        currentLocation.value = { lat: latitude, lng: longitude };
-      },
-      () => {}
+      (pos) => success({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      fail
     );
+  } else {
+    fail();
   }
-});
+};
 
 /** 지도 이벤트 */
 function onMapReady(map) {
