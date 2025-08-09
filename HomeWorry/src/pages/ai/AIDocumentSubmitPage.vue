@@ -203,7 +203,7 @@ const closeModal = () => {
 .main-card {
   max-width: 359px;
   width: 100%;
-  background: rgba(17, 31, 92, 0.05);
+  background: var(--color-primary-05);
   border-radius: 12px;
   padding: 18px;
   margin-top: 24px;

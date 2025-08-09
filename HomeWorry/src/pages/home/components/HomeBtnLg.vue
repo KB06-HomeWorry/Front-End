@@ -73,6 +73,6 @@ defineEmits(['click']);
 .btn-lg-wrapper:hover {
   border: 1px solid var(--color-primary);
   color: var(--color-primary);
-  background: rgba(17, 31, 92, 0.05);
+  background: var(--color-primary-05);
 }
 </style>

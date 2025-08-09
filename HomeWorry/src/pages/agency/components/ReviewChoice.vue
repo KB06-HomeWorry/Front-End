@@ -49,12 +49,12 @@ function handleClick() {
 .choice-box:hover {
   border: 1.2px solid var(--color-primary);
   color: var(--color-primary);
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
 }
 
 .choice-box.selected {
   border: 1px solid var(--color-primary);
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
 
 }
 

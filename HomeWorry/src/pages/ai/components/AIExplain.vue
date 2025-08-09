@@ -37,7 +37,7 @@ import chatbotAiIcon from "@/assets/icons/home_chatbot.png";
 <style scoped>
 .explain-card {
   width: 100%;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   display: flex;
   flex-direction: column;
   align-items: stretch;

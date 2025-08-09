@@ -39,7 +39,7 @@ function onOXSelect(userAnswer) {
 <style scoped>
 .quiz-card {
   width: 393px;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   padding: 0 0 56px 0;
   margin-left: -2rem;
   margin-right: -2rem;
