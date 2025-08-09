@@ -261,11 +261,9 @@ function goToRandomCompletedQuiz() {
   gap: 20px;
   align-items: center;
   margin-bottom: 32px;
-  background-color: rgba(17, 31, 92, 0.05);
+  background-color: var(--color-primary-05);
   padding: 2rem;
   margin-left: -2rem;
-  /* border-radius: 16px; */
-  /* border: 1px solid #d0d4e6; */
 }
 
 .icon-container {
@@ -325,7 +323,7 @@ function goToRandomCompletedQuiz() {
 .icon-wrapper {
   width: 45px;
   height: 45px;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -344,9 +342,7 @@ function goToRandomCompletedQuiz() {
   width: 100%;
   height: 30px;
   border-radius: 12px;
-  background-color: rgba(17, 31, 92, 0.05);
-  /* background-color: var(--color-primary);
-  color: #fff; */
+  background-color: var(--color-primary-05);
   color: var(--color-primary);
   border: 1.4px solid var(--color-primary);
   cursor: pointer;
@@ -355,7 +351,6 @@ function goToRandomCompletedQuiz() {
 }
 
 .btn-quiz:hover {
-  /* background: rgba(17, 31, 92, 0.1); */
   background-color: var(--color-primary);
   color: #fff;
 }
@@ -372,7 +367,7 @@ function goToRandomCompletedQuiz() {
 }
 
 .completed-icon {
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   border-radius: 50%;
   padding: 8px;
   display: flex;
@@ -389,10 +384,6 @@ function goToRandomCompletedQuiz() {
   color: var(--color-primary);
   user-select: none;
   transition: color 0.2s ease;
-}
-
-.btn-completed:hover {
-  color: #111f5c;
 }
 
 .quiz-error {

@@ -36,7 +36,7 @@ defineEmits(['click']);
 
 .btn-lgshort-square:hover {
   border: 1px solid var(--color-primary);
-  background: rgba(17, 31, 92, 0.05);
+  background: var(--color-primary-05);
 }
 
 .btn-square-icon {

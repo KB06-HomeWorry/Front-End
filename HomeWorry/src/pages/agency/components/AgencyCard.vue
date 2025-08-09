@@ -113,7 +113,7 @@ const displayTrustScore = computed(() => {
 .trust-badge {
   width: 42px;
   height: 16px;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   color: var(--color-primary);
   border-radius: 7px;
   display: flex;

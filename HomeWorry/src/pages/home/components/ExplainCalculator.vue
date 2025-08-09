@@ -28,7 +28,7 @@ const iconSrc = '/src/assets/icons/ex_calculator.png';
 <style scoped>
 .explain-card {
   width: 393px;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   display: flex;
   flex-direction: column;
   align-items: stretch;

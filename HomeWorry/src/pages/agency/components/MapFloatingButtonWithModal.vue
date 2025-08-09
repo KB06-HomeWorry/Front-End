@@ -278,12 +278,12 @@ async function goToMap() {
 }
 .region-item:hover,
 .region-item.active {
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   color: var(--color-primary);
 }
 .submit-btn {
   width: 100%;
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   color: var(--color-primary);
   border: none;
   padding: 12px 0;
