@@ -214,19 +214,20 @@ async function loadListings() {
   }
 }
 
-/** 초기엔 데이터 안 불러오고 위치만 */
 onMounted(() => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       pos => {
-        lat.value = pos.coords.latitude
-        lng.value = pos.coords.longitude
-        mapCenter.value = { lat: lat.value, lng: lng.value }
+        const { latitude, longitude } = pos.coords; 
+        lat.value = latitude;
+        lng.value = longitude;
+        mapCenter.value = { lat: latitude, lng: longitude };
+        currentLocation.value = { lat: latitude, lng: longitude };
       },
       () => {}
-    )
+    );
   }
-})
+});
 
 /** 지도 이벤트 */
 function onMapReady(map) {
@@ -271,13 +272,17 @@ function onSearchLocation(keyword) {
 }
 
 function toggleListings() { isListingsVisible.value = !isListingsVisible.value }
-function moveToCurrentLocation() {
-  if (!mapInstance.value || !currentLocation.value) return
-  const center = new window.kakao.maps.LatLng(currentLocation.value.lat, currentLocation.value.lng)
-  mapInstance.value.panTo(center)
-  mapInstance.value.setLevel(3)
-  updateURL(mapInstance.value)
-}
+const moveToCurrentLocation = () => {
+  if (currentLocation.value && mapInstance.value) {
+    const newCenter = new window.kakao.maps.LatLng(
+      currentLocation.value.lat,
+      currentLocation.value.lng
+    );
+    mapInstance.value.panTo(newCenter);
+    mapInstance.value.setLevel(3);
+    updateURL(mapInstance.value);
+  }
+};
 function zoomIn()  { if (mapInstance.value) mapInstance.value.setLevel(mapInstance.value.getLevel() - 1) }
 function zoomOut() { if (mapInstance.value) mapInstance.value.setLevel(mapInstance.value.getLevel() + 1) }
 
