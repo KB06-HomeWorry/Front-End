@@ -11,10 +11,19 @@
     <div v-if="modalOpen" class="modal-overlay">
       <div class="region-modal">
         <div class="region-path bodyMedium16px">
-          <span v-if="selectedProvince">{{ selectedProvince }}</span>
-          <span v-if="selectedCity"> &gt; {{ selectedCity }}</span>
-          <span v-if="selectedDistrict"> &gt; {{ selectedDistrict }}</span>
-          <button class="close-btn titleBold20px" @click="closeModal">×</button>
+          <!-- 선택 전: 안내 문구 -->
+          <template v-if="!selectedProvince">
+            <span class="placeholder">지역을 선택해주세요</span>
+          </template>
+
+          <!-- 선택 후: 시/도 > 시군구 > 동 -->
+          <template v-else>
+            <span>{{ selectedProvince }}</span>
+            <span v-if="selectedCity"> &gt; {{ selectedCity }}</span>
+            <span v-if="selectedDistrict"> &gt; {{ selectedDistrict }}</span>
+          </template>
+
+          <button class="close-btn titleBold20px" @click="closeModal" aria-label="닫기">×</button>
         </div>
         <!-- 시/도 선택 -->
         <div v-if="!selectedProvince" class="region-list bodyMedium14px">
@@ -161,7 +170,7 @@ async function goToMap() {
     const lng = res.data.x
 
     if (lat && lng) {
-      window.location.href = `/map/agency?center=${lat},${lng}&zoomLevel=3`
+      window.location.href = `/agency/map?center=${lat},${lng}&zoomLevel=3`
     } else {
       alert('위치 정보를 찾을 수 없습니다.')
     }
@@ -189,6 +198,7 @@ async function goToMap() {
   cursor: pointer;
   padding: 0;
 }
+
 .fab-inner {
   display: flex;
   flex-direction: column;
@@ -210,6 +220,7 @@ async function goToMap() {
   white-space: nowrap;
   font-weight: 600;
 }
+
 .modal-overlay {
   position: fixed;
   top:0; left:0; right:0; bottom:0;
@@ -228,6 +239,10 @@ async function goToMap() {
   padding: 24px 22px 16px 22px;
   position: relative;
 }
+
+.placeholder{
+  color: var(--color-mediumgray);
+}
 .region-path {
   color: var(--color-primary);
   display: flex;
@@ -235,6 +250,7 @@ async function goToMap() {
   gap: 7px;
   margin-bottom: 18px;
 }
+
 .close-btn {
   margin-left: auto;
   border: none;

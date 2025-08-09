@@ -1,20 +1,20 @@
 export default [
-  {
-    path: '/agencysample/1',
-    name: 'agencySample',
-    component: () => import('../pages/agency/AgencySample.vue'),
-  },
+  // {
+  //   path: '/agencysample/1',
+  //   name: 'agencySample',
+  //   component: () => import('../pages/agency/AgencySample.vue'),
+  // },
   {
     path: '/agency/:agencyId',
     name: 'agencyDetail',
     component: () => import('../pages/agency/AgencyDetail.vue'),
       meta: { hideHeader: true }
   },
-  {
-    path: '/agency/review-write',
-    name: 'agencyReviewWrite',
-    component: () => import('../pages/agency/AgencyReviewWrite.vue'),
-  },
+  // {
+  //   path: '/agency/review-write',
+  //   name: 'agencyReviewWrite',
+  //   component: () => import('../pages/agency/AgencyReviewWrite.vue'),
+  // },
   {
     path: '/agency/list',
     name: 'agencyList',
@@ -32,5 +32,10 @@ export default [
     meta: {
       requiresAuth: true
     }
+  },
+    {
+    path: '/agency/map',
+    name: 'agencyMap',
+    component: () => import('../pages/agency/AgencyMapPage.vue'),
   },
 ];

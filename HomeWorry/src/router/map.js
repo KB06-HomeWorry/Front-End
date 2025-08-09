@@ -25,11 +25,6 @@ export default [
     component: () => import('../pages/map/FixMapPage.vue'),
   },
   {
-    path: '/map/agency',
-    name: 'map-agency',
-    component: () => import('../pages/map/MapAgencyPage.vue'),
-  },
-  {
     path: '/map/detail',
     name: 'mapdetail',
     component: () => import('../pages/map/DetailPage.vue'),

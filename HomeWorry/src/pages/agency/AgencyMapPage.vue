@@ -76,7 +76,7 @@
               :lng="marker.lng"
               :z-index="9999"
             >
-            <MapAgencyCard
+            <AgencyMapCard
               :agency="selectedAgency"
               @close="selectedAgency = null"
               @detail="goDetail"
@@ -93,7 +93,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay} from "vue3-kakao-maps";
-import MapAgencyCard from "@/pages/map/components/MapAgencyCard.vue";
+import AgencyMapCard from "@/pages/agency/components/AgencyMapCard.vue";
 
 const pinSrc = `${import.meta.env.BASE_URL}map_agency_pin.png`;
 const route = useRoute();

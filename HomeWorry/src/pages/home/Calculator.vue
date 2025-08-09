@@ -1,5 +1,9 @@
 <template>
+  <div>
+      <SimpleHeader title="중개수수료 계산기">
+    </SimpleHeader>
   <div class="commission-calculator">
+    <ExplainCalculator />
     <!-- 거래 종류 선택 -->
     <div class="form-group bodyMedium16px">
       <CalOption
@@ -146,10 +150,13 @@
       {{ error }}
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, nextTick } from 'vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
+import ExplainCalculator from '@/pages/home/components/ExplainCalculator.vue';
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue';
 import NumberButtonGroup from '@/components/input/NumberButtonGroup.vue';
 import CalOption from '@/pages/home/components/CalOption.vue';
@@ -379,11 +386,8 @@ function handleCalcBtn() {
 
 <style scoped>
 .commission-calculator {
-  margin: 2rem;
+  margin: 1.5rem 2rem;
   border-radius: 12px;
-}
-.form-group {
-  margin-bottom: 1.2rem;
 }
 
 .form-group label {
@@ -394,8 +398,8 @@ function handleCalcBtn() {
 
 .option-btn-group {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .input-with-unit {

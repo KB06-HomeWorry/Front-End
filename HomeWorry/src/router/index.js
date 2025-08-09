@@ -25,6 +25,9 @@ const router = createRouter({
       path: '/calculator',
       name: 'calculator',
       component: Calculator,
+          meta: {
+      hideHeader: true,    // Header 숨김
+    },
     },
     ...authRoutes,
     ...mapRoutes,
