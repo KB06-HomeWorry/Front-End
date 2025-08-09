@@ -11,6 +11,7 @@ import dangerResults from "./dangerResult";
 import wordquizRoutes from "./wordquiz";
 import Calculator from "../pages/home/Calculator.vue";
 import ai from './ai';
+import agencyPortalRoutes from "./agencyPortal";
 
 
 const router = createRouter({
@@ -39,6 +40,7 @@ const router = createRouter({
     ...notfoundRoutes,
     ...wordquizRoutes,
     ...ai,
+    ...agencyPortalRoutes,
   ],
   scrollBehavior(to, from, savedPosition) {
     // 항상 맨 위로 스크롤
