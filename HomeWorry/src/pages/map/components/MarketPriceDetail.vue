@@ -1,5 +1,6 @@
 <template>
-  <div class="price-box" @click="$emit('click')">
+  <!-- <div class="price-box" @click="goToDetail"> -->
+  <div class="price-box" @click="goToDetail">
     <div class="top-section bodyMedium10px">
       <span class="top-text">{{ housingType || '-' }}</span>
     </div>
@@ -12,11 +13,15 @@
 
 <script setup>
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   price: { type: [String, Number], required: true },
   housingType: { type: String, default: '' },
+  id: { type: [String, Number], required: true }, // Add id prop
 });
+
+const router = useRouter();
 
 const formattedPrice = computed(() => formatKoreanPrice(props.price));
 
@@ -24,9 +29,12 @@ function formatKoreanPrice(price) {
   const num = Number(String(price).replace(/[^0-9]/g, ''));
   if (isNaN(num) || num === 0) return '-';
   const eok = num / 100000000;
-  // 정수면 .0 안 붙임, 소수는 첫째 자리까지 표시
   if (eok % 1 === 0) return `${eok}억`;
   return `${parseFloat(eok.toFixed(1))}억`;
+}
+
+function goToDetail() {
+  router.push(`/pricetrend/${props.id}`);
 }
 </script>
 

@@ -56,6 +56,7 @@
           <MarketPriceDetail
             :price="marker.price"
             :housingType="marker.housingType"
+            :id="marker.id"
           />
         </KakaoMapCustomOverlay>
       </template>
@@ -248,6 +249,7 @@ async function loadMaximumList() {
     const loadedMarkers = data.map((item) => ({
       lat: item.latitude,
       lng: item.longitude,
+      id: item.id,
       price:
         typeof item.formattedPrice === 'string' &&
         item.formattedPrice.endsWith('.0억')
