@@ -45,4 +45,10 @@ export default [
   component: () => import('@/pages/map/DetailPage.vue'),
   meta: { hideHeader: true }
 },
+{
+  path: '/pricetrend/:priceTrendId',
+  name: 'PriceDetail',
+  component: () => import('@/pages/map/PriceDetail.vue'),
+  meta: { hideHeader: true }
+},
 ];
