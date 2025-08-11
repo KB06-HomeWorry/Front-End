@@ -2,6 +2,7 @@
   <div class="quiz-root">
     <LoadingAnimation v-if="isLoading" />
     <div v-else-if="loadError" class="quiz-error">{{ loadError }}</div>
+
     <!-- 전체 퀴즈 상태 -->
     <section class="quiz-summary" v-if="quizList.length">
       <div class="icon-container">
@@ -51,7 +52,7 @@
       </div>
     </section>
 
-    <!-- 완료한 퀴즈-->
+    <!-- 완료한 퀴즈 -->
     <section v-if="completedSteps > 0" class="quiz-completed">
       <div class="completed-header">
         <div class="icon-wrapper completed-icon">
@@ -112,21 +113,26 @@ const userId = computed(() => authStore.user?.userId || null);
 
 const quizList = ref([]);
 const userQuizStatus = ref([]);
+const completedQuizzes = ref([]);
 const modalVisible = ref(false);
 const modalMessage = ref('');
 const isLoading = ref(true);
+const loadError = ref(null);
 
 async function fetchData() {
   isLoading.value = true;
   try {
-    const [quizRes, statusRes] = await Promise.all([
+    const [quizRes, statusRes, completedRes] = await Promise.all([
       axios.get('http://localhost:8080/api/quiz/getQuiz'),
       axios.get(`http://localhost:8080/api/quiz/user/${userId.value}`),
+      axios.get(`http://localhost:8080/api/quiz/user/${userId.value}/completed`)
     ]);
     quizList.value = quizRes.data;
     userQuizStatus.value = statusRes.data;
+    completedQuizzes.value = completedRes.data;
   } catch (err) {
     console.error('데이터 불러오기 실패:', err);
+    loadError.value = '데이터를 불러오지 못했습니다.';
   } finally {
     isLoading.value = false;
   }
@@ -143,13 +149,13 @@ watch(
 const levels = [
   { key: '초급', name: '초급' },
   { key: '중급', name: '중급' },
-  { key: '고급', name: '고급' },
+  { key: '고급', name: '고급' }
 ];
 
 const levelIcons = {
   초급: level1,
   중급: level2,
-  고급: level3,
+  고급: level3
 };
 
 const quizzesByLevel = computed(() => {
@@ -191,9 +197,7 @@ const totalRemaining = computed(() => {
   );
 });
 
-const completedSteps = computed(
-  () => userQuizStatus.value.filter((s) => s.isSolved).length
-);
+const completedSteps = computed(() => completedQuizzes.value.length);
 
 const progressPercent = computed(() => {
   if (quizList.value.length === 0) return 0;
@@ -229,13 +233,9 @@ function goToLevel(level) {
   router.push(`/quiz/${randomQuiz.number}`);
 }
 
-const completedQuizzes = computed(() =>
-  userQuizStatus.value.filter((s) => s.isSolved)
-);
-
 function goToRandomCompletedQuiz() {
   if (completedQuizzes.value.length === 0) {
-    showModal('No completed quizzes available.');
+    showModal('완료한 퀴즈가 없습니다.');
     return;
   }
   const randomQuiz =
