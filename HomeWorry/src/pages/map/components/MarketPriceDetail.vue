@@ -54,7 +54,7 @@ function goToDetail() {
 }
 
 .top-section {
-  background: rgba(17, 31, 92, 0.1);
+  background: var(--color-primary-10);
   height: 40%;
   display: flex;
   align-items: center;
