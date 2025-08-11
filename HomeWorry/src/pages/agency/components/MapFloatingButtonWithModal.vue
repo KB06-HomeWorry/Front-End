@@ -1,21 +1,28 @@
 <template>
   <div ref="fabWrap" class="fab-wrap">
-    <button class="floating-btn" @click="modalOpen = true" aria-label="지도에서 지역검색">
+    <button
+      class="floating-btn"
+      @click="modalOpen = true"
+      aria-label="지도에서 지역검색"
+    >
       <div class="fab-inner">
-        <img src="@/assets/icons/map_floating.png" alt="지도 플로팅 버튼" class="fab-img" />
+        <img
+          src="@/assets/icons/map_floating.png"
+          alt="지도 플로팅 버튼"
+          class="fab-img"
+        />
         <div class="fab-label bodyLight8px">중개사무소 위치</div>
       </div>
     </button>
 
-    <!-- 모달창 (v-if) -->
+    <!-- 모달 -->
     <div v-if="modalOpen" class="modal-overlay">
       <div class="region-modal">
         <div class="region-path bodyMedium16px">
-          <!-- 선택 전: 안내 문구 -->
+          <!-- 선택 전 -->
           <template v-if="!selectedProvince">
             <span class="placeholder">지역을 선택해주세요</span>
           </template>
-
           <!-- 선택 후: 시/도 > 시군구 > 동 -->
           <template v-else>
             <span>{{ selectedProvince }}</span>
@@ -23,46 +30,59 @@
             <span v-if="selectedDistrict"> &gt; {{ selectedDistrict }}</span>
           </template>
 
-          <button class="close-btn titleBold20px" @click="closeModal" aria-label="닫기">×</button>
+          <button
+            class="close-btn titleBold20px"
+            @click="closeModal"
+            aria-label="닫기"
+          >
+            ×
+          </button>
         </div>
+
         <!-- 시/도 선택 -->
         <div v-if="!selectedProvince" class="region-list bodyMedium14px">
-          <div v-if="provincesLoading" class="region-item">로딩중...</div>
           <div
-            v-else
             v-for="province in provinceList"
             :key="province"
             class="region-item"
             @click="selectProvince(province)"
-          >{{ province }}</div>
+          >
+            {{ province }}
+          </div>
         </div>
+
         <!-- 시군구 선택 -->
         <div v-else-if="!selectedCity" class="region-list bodyMedium14px">
-          <div v-if="loading" class="region-item">로딩중...</div>
           <div
-            v-else
             v-for="city in cityList"
             :key="city"
             class="region-item"
             @click="selectCity(city)"
-          >{{ city }}</div>
+          >
+            {{ city }}
+          </div>
         </div>
+
         <!-- 동 선택 -->
         <div v-else class="region-list bodyMedium14px">
-          <div v-if="loading" class="region-item">로딩중...</div>
           <div
-            v-else
             v-for="district in districtList"
             :key="district"
             class="region-item"
             :class="{ active: selectedDistrict === district }"
             @click="selectDistrict(district)"
-          >{{ district }}</div>
+          >
+            {{ district }}
+          </div>
         </div>
-        <button class="submit-btn bodyMedium16px" :disabled="!selectedDistrict || loading" @click="goToMap">
-          <span v-if="!loading && selectedDistrict">{{ selectedDistrict }} 지도에서 보기</span>
-          <span v-else-if="!loading">지역을 선택하세요</span>
-          <span v-else>로딩중...</span>
+
+        <button
+          class="submit-btn bodyMedium16px"
+          :disabled="!selectedDistrict || loading"
+          @click="goToMap"
+        >
+          <span v-if="selectedDistrict">{{ selectedDistrict }} 지도에서 보기</span>
+          <span v-else>지역을 선택하세요</span>
         </button>
       </div>
     </div>
@@ -77,7 +97,6 @@ const provinceList = ref([])
 const cityList = ref([])
 const districtList = ref([])
 
-const provincesLoading = ref(false)
 const loading = ref(false)
 
 const modalOpen = ref(false)
@@ -86,29 +105,28 @@ const selectedCity = ref(null)
 const selectedDistrict = ref(null)
 
 const fabWrap = ref(null)
+
 function updateFabPosition() {
   const container = document.querySelector('.agency-list-page')
   if (!container || !fabWrap.value) return
   const containerRect = container.getBoundingClientRect()
   fabWrap.value.style.position = 'fixed'
-  fabWrap.value.style.left = `${containerRect.right - 75}px` // 버튼폭 마진(조정)
+  fabWrap.value.style.left = `${containerRect.right - 75}px`
   fabWrap.value.style.bottom = '120px'
   fabWrap.value.style.right = 'unset'
 }
 
 onMounted(async () => {
-  nextTick(updateFabPosition)
+  await nextTick()
+  updateFabPosition()
   window.addEventListener('resize', updateFabPosition)
-  provincesLoading.value = true
+
   try {
     const res = await axios.get('http://localhost:8080/section/')
     provinceList.value = res.data
-
   } catch (e) {
     provinceList.value = []
     alert('시/도 데이터를 불러오지 못했습니다.')
-  } finally {
-    provincesLoading.value = false
   }
 })
 
@@ -126,7 +144,6 @@ async function selectProvince(province) {
   try {
     const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}`)
     cityList.value = res.data
-
   } catch (e) {
     cityList.value = []
     alert('시/군/구 데이터를 불러오지 못했습니다.')
@@ -141,7 +158,9 @@ async function selectCity(city) {
   districtList.value = []
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}`)
+    const res = await axios.get(
+      `http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}`
+    )
     districtList.value = res.data
   } catch (e) {
     districtList.value = []
@@ -150,9 +169,11 @@ async function selectCity(city) {
     loading.value = false
   }
 }
+
 function selectDistrict(d) {
   selectedDistrict.value = d
 }
+
 function closeModal() {
   modalOpen.value = false
   selectedProvince.value = null
@@ -161,14 +182,16 @@ function closeModal() {
   cityList.value = []
   districtList.value = []
 }
+
 async function goToMap() {
   if (!selectedDistrict.value || !selectedCity.value || !selectedProvince.value) return
   loading.value = true
   try {
-    const res = await axios.get(`http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}/${selectedDistrict.value}`)
+    const res = await axios.get(
+      `http://localhost:8080/section/${selectedProvince.value}/${selectedCity.value}/${selectedDistrict.value}`
+    )
     const lat = res.data.y
     const lng = res.data.x
-
     if (lat && lng) {
       window.location.href = `/agency/map?center=${lat},${lng}&zoomLevel=3`
     } else {
@@ -189,12 +212,12 @@ async function goToMap() {
   height: 55px;
   border-radius: 18px;
   background: #fff;
-  box-shadow: 0 2px 10px rgba(40,70,60,.14);
+  box-shadow: 0 2px 10px rgba(40, 70, 60, 0.14);
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: box-shadow .2s;
+  transition: box-shadow 0.2s;
   cursor: pointer;
   padding: 0;
 }
@@ -207,11 +230,13 @@ async function goToMap() {
   height: 100%;
   width: 100%;
 }
+
 .fab-img {
   width: 35px;
   height: 35px;
   display: block;
 }
+
 .fab-label {
   margin-top: 2px;
   text-align: center;
@@ -223,26 +248,28 @@ async function goToMap() {
 
 .modal-overlay {
   position: fixed;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.24);
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.24);
   z-index: 1001;
   display: flex;
   align-items: flex-start;
   justify-content: center;
 }
+
 .region-modal {
   background: #fff;
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.14);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
   width: 360px;
   margin: 64px auto 0 auto;
   padding: 24px 22px 16px 22px;
   position: relative;
 }
 
-.placeholder{
+.placeholder {
   color: var(--color-mediumgray);
 }
+
 .region-path {
   color: var(--color-primary);
   display: flex;
@@ -259,6 +286,7 @@ async function goToMap() {
   color: var(--color-primary);
   padding: 0 4px;
 }
+
 .region-list {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -268,6 +296,7 @@ async function goToMap() {
   overflow-y: auto;
   padding-right: 6px;
 }
+
 .region-item {
   padding: 6px 0;
   text-align: center;
@@ -276,11 +305,13 @@ async function goToMap() {
   border-radius: 12px;
   cursor: pointer;
 }
+
 .region-item:hover,
 .region-item.active {
   background: var(--color-primary-10);
   color: var(--color-primary);
 }
+
 .submit-btn {
   width: 100%;
   background: var(--color-primary-10);
@@ -290,8 +321,9 @@ async function goToMap() {
   border-radius: 9px;
   margin-top: 10px;
   cursor: pointer;
-  transition: filter .13s;
+  transition: filter 0.13s;
 }
+
 .submit-btn:disabled {
   background: var(--color-lightgray);
   color: var(--color-darkgray);
