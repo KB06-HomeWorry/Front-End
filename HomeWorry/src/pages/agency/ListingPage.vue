@@ -18,6 +18,7 @@
         :areaInfo="listing.areaInfo"
         :floorInfo="listing.floorInfo"
         :direction="listing.direction"
+        :img="listing._img" 
       />
     </div>
     <div v-if="displayedListings.length === 0" class="empty-msg bodyMedium20px">
@@ -32,6 +33,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import ListingCard from '@/pages/agency/components/ListingCard.vue'; 
 import ListingFilterBar from '@/pages/agency/components/ListingFilterBar.vue'
+import { getListingImage } from '@/components/utils/listingImage'
 
 const route = useRoute()
 
@@ -116,10 +118,25 @@ const displayedListings = computed(() => {
   return arr
 })
 
+/* 서버 이미지/시드 준비 */
+function primaryImageOf(item) {
+  return (
+    item.mainImage ||
+    item.imageUrl ||
+    (Array.isArray(item.images) && item.images.length ? item.images[0] : null)
+  )
+}
+function seedOf(item) {
+  return String(item.id ?? item.address ?? item.listing ?? '')
+}
+
 onMounted(async () => {
   try {
     const res = await axios.get(`http://localhost:8080/api/listing/getAgencyList/${officeId}`)
-    listings.value = res.data
+    listings.value = (res.data || []).map(it => ({
+      ...it,
+      _img: getListingImage(it.housingType, seedOf(it), primaryImageOf(it)),
+    }))
   } catch (e) {
     alert("매물 목록 불러오기에 실패했습니다.")
   }
