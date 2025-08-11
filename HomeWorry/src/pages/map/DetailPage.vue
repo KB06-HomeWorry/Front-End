@@ -179,7 +179,7 @@ async function toggleBookmark() {
 onMounted(async () => {
   const id = listingId
   if (!id) {
-    console.error('❌ id 없음')
+    console.error('id 없음')
     return
   }
 
