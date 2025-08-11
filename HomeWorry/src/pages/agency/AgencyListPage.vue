@@ -37,7 +37,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from'vue-router'
 import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
 import SortSelect from '@/pages/agency/components/SortSelect.vue'
 import AgencyCard from '@/pages/agency/components/AgencyCard.vue'
@@ -52,9 +53,13 @@ const sampleImgs = [profile1, profile2, profile3]
 
 const agencies = ref([])
 
+const route = useRoute()
+const router = useRouter()
+
+
 // 페이지네이션 상태
-const page = ref(1)
 const pageSize = 10
+const page = ref(Math.max(1, parseInt(route.query.page ?? '1', 10) || 1))
 
 onMounted(async () => {
   try {
@@ -68,7 +73,8 @@ onMounted(async () => {
 })
 
 const searchText = ref('')
-const sortBy = ref('trust') 
+const sortBy = ref('trust')
+watch(sortBy, () => { page.value = 1 })
 
 function onSearch(val) {
   searchText.value = val
@@ -92,9 +98,7 @@ const sortedList = computed(() => {
   return list.sort((a, b) => a.officeName.localeCompare(b.officeName, 'ko'))
 })
 
-const totalPages = computed(() =>
-  Math.ceil(sortedList.value.length / pageSize)
-)
+const totalPages = computed(() => Math.max(1, Math.ceil(sortedList.value.length / pageSize)))
 
 const pagedList = computed(() =>
   sortedList.value.slice((page.value - 1) * pageSize, page.value * pageSize)
@@ -119,6 +123,23 @@ const pageNumbers = computed(() => {
 function goToPage(p) {
   if (p >= 1 && p <= totalPages.value) page.value = p
 }
+
+// page가 바뀌면 URL ?page= 갱신 (히스토리 누적 없이)
+watch(page, (p) => {
+  const q = { ...route.query, page: String(p) }
+  router.replace({ query: q })
+})
+
+// 브라우저 뒤로가기 등으로 URL이 바뀌면 page 반영
+watch(() => route.query.page, (q) => {
+  const p = Math.max(1, parseInt(q ?? '1', 10) || 1)
+  if (p !== page.value) page.value = p
+})
+
+// 데이터/검색/정렬 변화로 총 페이지 수가 줄면 현재 페이지 보정
+watch([sortedList, totalPages], () => {
+  if (page.value > totalPages.value) page.value = totalPages.value
+})
 </script>
 
 <style scoped>
