@@ -11,12 +11,26 @@
         autocomplete="username"
       />
       <!-- 비밀번호 -->
-      <InputSimple
-        v-model="password"
-        type="password"
-        placeholder="비밀번호를 입력하세요."
-        autocomplete="current-password"
-      />
+      <div class="password-wrapper">
+        <InputSimple
+          v-model="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="비밀번호를 입력하세요."
+          autocomplete="current-password"
+        />
+        <button
+          class="showPassword-btn"
+          type="button"
+          @click.stop="toggleShowPassword"
+          :aria-label="showPassword ? '비밀번호 숨기기' : '비밀번호 보이기'"
+        >
+          <img
+            :src="showPassword ? hidePasswordImage : showPasswordImage"
+            class="showPassword-icon"
+            :alt="showPassword ? '비밀번호 숨기기' : '비밀번호 보이기'"
+          />
+        </button>
+      </div>
       <BtnMed class="login-btn" type="submit" text="로그인" />
     </form>
 
@@ -48,6 +62,8 @@ import CustomModal from "@/components/modal/CustomModal.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useChecklistStore } from "@/stores/checklist";
 import loginLogo from "@/assets/icons/login_logo.png";
+import showPasswordImage from "@/assets/icons/eye-password-show.svg";
+import hidePasswordImage from "@/assets/icons/eye-password-hide.svg";
 
 const authStore = useAuthStore();
 const checklistStore = useChecklistStore();
@@ -56,6 +72,7 @@ const router = useRouter();
 const route = useRoute();
 const username = ref("");
 const password = ref("");
+const showPassword = ref(false)
 
 const isAlertVisible = ref(false);
 const alertMessage = ref("");
@@ -124,6 +141,10 @@ function onSignup() {
 function onResetPw() {
   router.push("/auth/reset-password");
 }
+
+const toggleShowPassword = () => {
+  showPassword.value = !showPassword.value
+}
 </script>
 
 <style scoped>
@@ -144,6 +165,20 @@ function onResetPw() {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.password-wrapper{
+  display: flex;
+  position: relative;
+  align-items: center;
+}
+
+.showPassword-icon{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 32px;
+  height: 32px;
 }
 
 .login-btn {
