@@ -30,5 +30,6 @@ export default [
     path: '/agency/map',
     name: 'agencyMap',
     component: () => import('../pages/agency/AgencyMapPage.vue'),
+    meta: { hideHeader: true }
   },
 ];

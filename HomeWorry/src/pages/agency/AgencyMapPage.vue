@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="중개사무소 위치"/>
   <div style="width: 100%; height: 100vh">
     <KakaoMap
       :lat="lat"
@@ -40,12 +42,14 @@
       </template>
     </KakaoMap>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay } from "vue3-kakao-maps";
+import SimpleHeader from "@/components/layout/SimpleHeader.vue";
 import AgencyMapCard from "@/pages/agency/components/AgencyMapCard.vue";
 
 const pinSrc = `${import.meta.env.BASE_URL}map_agency_pin.png`;
