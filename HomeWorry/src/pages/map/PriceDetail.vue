@@ -1,6 +1,18 @@
 <template>
   <SimpleHeader title="시세 상세페이지" />
   <div class="price-detail-container">
+    <img
+      :src="roomImg"
+      @error="onImgError"
+      alt="매물 이미지"
+      style="
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        object-fit: cover;
+        margin-bottom: 10px;
+      "
+    />
 
   <section ref="listing">
     <div class="location-info-card">
@@ -69,6 +81,7 @@ import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DetailLocation from '@/pages/map/components/DetailLocation.vue';
 import SimpleHeader from '@/components/layout/SimpleHeader.vue';
+import { getListingImage } from '@/components/utils/listingImage'; 
 
 const router = useRouter();
 const route = useRoute();
@@ -76,59 +89,66 @@ const route = useRoute();
 const trendlat = ref(null);
 const trendlng = ref(null);
 const trendprice = ref('');
-const hiya = ref('');
+const priceDetailData = ref('');
+const agency = ref(null);
+
+const roomImg = ref(getListingImage('', String(route.params.priceTrendId)))
+
+function onImgError() {
+  roomImg.value = getListingImage(housingType.value, String(route.params.priceTrendId))
+}
 
 // Computed properties for formatted display
 const price = computed(() => {
-  if (!hiya.value?.price) return '-';
-  return formatKoreanPrice(hiya.value.price);
+  if (!priceDetailData.value?.price) return '-';
+  return formatKoreanPrice(priceDetailData.value.price);
 });
 
 const housingType = computed(() => {
-  return hiya.value?.housingType || '-';
+  return priceDetailData.value?.housingType || '-';
 });
 
 const areaInfo = computed(() => {
-  if (!hiya.value?.archArea) return '-';
-  return `${hiya.value.archArea}㎡`;
+  if (!priceDetailData.value?.archArea) return '-';
+  return `${priceDetailData.value.archArea}㎡`;
 });
 
 const floorInfo = computed(() => {
-  if (!hiya.value?.floor) return '-';
-  return `${hiya.value.floor}층`;
+  if (!priceDetailData.value?.floor) return '-';
+  return `${priceDetailData.value.floor}층`;
 });
 
 const dealType = computed(() => {
-  return hiya.value?.dealType || '-';
+  return priceDetailData.value?.dealType || '-';
 });
 
 const contractDay = computed(() => {
-  return hiya.value?.contractDay || '-';
+  return priceDetailData.value?.contractDay || '-';
 });
 
 const buildingName = computed(() => {
-  return hiya.value?.buildingName || '-';
+  return priceDetailData.value?.buildingName || '-';
 });
 
 const landAreaInfo = computed(() => {
-  if (!hiya.value?.landArea) return '-';
-  return `${hiya.value.landArea}㎡`;
+  if (!priceDetailData.value?.landArea) return '-';
+  return `${priceDetailData.value.landArea}㎡`;
 });
 
 const builtYearInfo = computed(() => {
-  if (!hiya.value?.builtYear) return '-';
-  return hiya.value.builtYear.toString().split('.')[0]; // Remove decimal part
+  if (!priceDetailData.value?.builtYear) return '-';
+  return priceDetailData.value.builtYear.toString().split('.')[0]; // Remove decimal part
 });
 
 const locationInfo = computed(() => {
-  if (hiya.value?.districtName && hiya.value?.dongName) {
-    return `${hiya.value.districtName} ${hiya.value.dongName}`;
+  if (priceDetailData.value?.districtName && priceDetailData.value?.dongName) {
+    return `${priceDetailData.value.districtName} ${priceDetailData.value.dongName}`;
   }
   return '-';
 });
 
 const addressInfo = computed(() => {
-  return hiya.value?.address || '-';
+  return priceDetailData.value?.address || '-';
 });
 
 // Price formatting function
@@ -143,23 +163,32 @@ function formatKoreanPrice(price) {
 const priceTrendId = route.params.priceTrendId;
 
 onMounted(async () => {
-  const priceid = priceTrendId;
-  if (!priceid) {
-    console.log('priceid 없음');
+  const priceTrendId = route.params.priceTrendId;
+  if (!priceTrendId) {
+    console.log('priceTrendId 없음');
     return;
   }
 
   try {
-    const endpoint2 = `/api/pricetrend/${priceid}`;
+    const endpoint2 = `/api/pricetrend/${priceTrendId}`;
     const response2 = await fetch(endpoint2);
     const data2 = await response2.json();
 
     trendlat.value = data2.latitude;
     trendlng.value = data2.longitude;
     trendprice.value = data2.price;
-    hiya.value = data2;
+    priceDetailData.value = data2;
+       // 서버 이미지 우선, 없으면 유틸이 타입/시드로 폴백
+       const primaryImage =
+      data2.mainImage ||
+      data2.imageUrl ||
+      (Array.isArray(data2.images) && data2.images.length ? data2.images[0] : null)
+
+    const seedKey = String(data2.id ?? route.params.priceTrendId ?? data2.address ?? data2.listing ?? '')
+    roomImg.value = getListingImage(housingType.value, seedKey, primaryImage)
   } catch (error) {
     console.error('데이터 가져오기 실패:', error);
+    roomImg.value = getListingImage(housingType.value, String(route.params.priceTrendId))
   }
 });
 </script>
