@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="부동산 지식 퀴즈"/>
   <div class="quiz-root">
     <LoadingAnimation v-if="isLoading" />
     <div v-else-if="loadError" class="quiz-error">{{ loadError }}</div>
@@ -27,6 +29,7 @@
       />
     </template>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -34,7 +37,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import OXQuizBox from '@/pages/wordquiz/components/OXQuizBox.vue';
 import SelectQuizBox from '@/pages/wordquiz/components/SelectQuizBox.vue';
 import AnswerModal from '@/pages/wordquiz/components/AnswerModal.vue';

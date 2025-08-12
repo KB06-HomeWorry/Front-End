@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="부동산 지식 퀴즈"/>
   <div class="quiz-root">
     <LoadingAnimation v-if="isLoading" />
     <div v-else-if="loadError" class="quiz-error">{{ loadError }}</div>
@@ -91,6 +93,7 @@
       @cancel="modalVisible = false"
     />
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -98,7 +101,7 @@ import { ref, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import level1 from '@/assets/icons/level1.png';
 import level2 from '@/assets/icons/level2.png';
 import level3 from '@/assets/icons/level3.png';
