@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <SimpleHeader :title="headerTitle" />
   <div style="width: 100%; height: 100vh; position: relative">
     <!-- 필터 영역 (지도 위) -->
     <div style="position: absolute; left: 0; right: 0; z-index: 100">
@@ -86,12 +88,14 @@
       @move-current-location="moveToCurrentLocation"
     />
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import FilterBar from '@/pages/map/components/FilterBar.vue';
 import ListingToggle from '@/pages/map/components/ListingToggle.vue';
 import MarketPrice from '@/pages/map/components/MarketPrice.vue';
@@ -132,6 +136,18 @@ const pathToCategory = {
   '/map/building': 'villa',
   '/map/officetel': 'officetel',
 };
+
+const categoryTitleMap = {
+  apartment: '아파트',
+  oneroom:  '원·투룸',   // 원한다면 '원.투룸'으로 바꿔도 됨
+  villa:    '빌라·주택', // '빌라.주택' 표기 원하면 변경
+  officetel:'오피스텔',
+};
+
+const headerTitle = computed(() => {
+  const cat = selectedCategory.value || 'apartment';
+  return categoryTitleMap[cat] || '아파트';
+});
 
 const categoryConfig = {
   apartment: {

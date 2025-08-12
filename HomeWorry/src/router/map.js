@@ -12,21 +12,25 @@ export default [
     path: '/map/apartment',
     name: 'map-apartment',
     component: () => import('../pages/map/FilterMapPage.vue'),
+    meta: { hideHeader: true },
   },
   {
     path: '/map/onetwo',
     name: 'map-onetwo',
     component: () => import('../pages/map/FilterMapPage.vue'),
+    meta: { hideHeader: true },
   },
   {
     path: '/map/building',
     name: 'map-building',
     component: () => import('../pages/map/FilterMapPage.vue'),
+    meta: { hideHeader: true },
   },
   {
     path: '/map/officetel',
     name: 'map-officetel',
     component: () => import('../pages/map/FilterMapPage.vue'),
+    meta: { hideHeader: true },
   },
   {
   path: '/listing/:listingId',
