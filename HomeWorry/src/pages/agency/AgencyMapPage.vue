@@ -4,58 +4,11 @@
       :lat="lat"
       :lng="lng"
       :level="level"
-      :markerCluster="{
-        customOverlayProps: agencies,
-        calculator: [10, 30, 50],
-        minLevel: 4,
-        styles: [
-          {
-            width: '30px',
-            height: '30px',
-            background: 'rgba(80, 240, 195, 0.8)',
-            borderRadius: '15px',
-            color: '#000',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            lineHeight: '31px'
-          },
-          {
-            width: '40px',
-            height: '40px',
-            background: 'rgba(0, 173, 255, 0.35)',
-            borderRadius: '20px',
-            color: '#000',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            lineHeight: '41px'
-          },
-          {
-            width: '50px',
-            height: '50px',
-            background: 'rgba(19, 182, 68, 0.71)',
-            borderRadius: '25px',
-            color: '#000',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            lineHeight: '51px'
-          },
-          {
-            width: '60px',
-            height: '60px',
-            background: 'rgba(236, 163, 221, 0.58)',
-            borderRadius: '30px',
-            color: '#000',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            lineHeight: '61px'
-          }
-        ]
-      }"
       @onLoadKakaoMap="onMapReady"
       style="width: 100%; height: 100%"
     >
       <!-- level 4 부터 줌인 시 커스텀 핀 표시 -->
-      <template v-if="level < 4">
+      <template v-if="level <= 4">
         <template v-for="marker in agencies" :key="marker.officeId">
           <KakaoMapMarker
             :lat="marker.lat"
@@ -76,11 +29,11 @@
               :lng="marker.lng"
               :z-index="9999"
             >
-            <AgencyMapCard
-              :agency="selectedAgency"
-              @close="selectedAgency = null"
-              @detail="goDetail"
-            />
+              <AgencyMapCard
+                :agency="selectedAgency"
+                @close="selectedAgency = null"
+                @detail="goDetail"
+              />
             </KakaoMapCustomOverlay>
           </template>
         </template>
@@ -92,24 +45,25 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay} from "vue3-kakao-maps";
+import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay } from "vue3-kakao-maps";
 import AgencyMapCard from "@/pages/agency/components/AgencyMapCard.vue";
 
 const pinSrc = `${import.meta.env.BASE_URL}map_agency_pin.png`;
 const route = useRoute();
 const router = useRouter();
 
+const MAX_LEVEL = 4;
+
 const initialCenter = route.query.center?.split(",").map(Number) || [37.5435, 127.0812];
 const lat = ref(initialCenter[0]);
 const lng = ref(initialCenter[1]);
-const level = ref(Number(route.query.zoomLevel) || 8);
+const level = ref(Math.min(Number(route.query.zoomLevel) || 8, MAX_LEVEL)); 
 
 const agency_map = ref(null);
 const customOverlay = ref(null);
 const agencies = ref([]);
 const selectedAgency = ref(null);
 const map = ref(null);
-const clusterer = ref();
 
 onMounted(() => {
   loadAgencies();
@@ -119,23 +73,26 @@ const onLoadKakaoMap = (mapRef) => {
   map.value = mapRef;
 };
 
-const onLoadKakaoMapMarkerCluster = (clustererRef) => {
-  clusterer.value = clustererRef;
-  kakao.maps.event.addListener(clusterer.value, "clusterclick", (cluster) => {
-    const currentLevel = map?.value?.getLevel();
-    console.log("클러스터 클릭:", cluster, "현재 레벨:", currentLevel);
-    if (currentLevel !== undefined && !isNaN(currentLevel)) {
-      map.value?.setLevel(currentLevel - 1, { anchor: cluster.getCenter() });
-    }
-  });
-};
-
 function onMapReady(mapRef) {
   map.value = mapRef;
 
+  // 초기 진입 시 최대 줌아웃 제한 적용
+  if (mapRef.getLevel() > MAX_LEVEL) {
+    mapRef.setLevel(MAX_LEVEL);
+    level.value = MAX_LEVEL;
+  }
 
   kakao.maps.event.addListener(mapRef, "dragend", () => updateURL(mapRef));
-  kakao.maps.event.addListener(mapRef, "zoom_changed", () => updateURL(mapRef));
+  kakao.maps.event.addListener(mapRef, "zoom_changed", () => {
+    const current = mapRef.getLevel();
+    if (current > MAX_LEVEL) {
+      // 4보다 더 줌아웃하려 하면 다시 4로 되돌림
+      mapRef.setLevel(MAX_LEVEL);
+      level.value = MAX_LEVEL;
+      return; 
+    }
+    updateURL(mapRef);
+  });
 }
 
 async function loadAgencies() {
@@ -163,13 +120,13 @@ async function onMarkerClick(agency) {
     const data = await response.json();
     // 선택한 마커 좌표를 같이 보관
     selectedAgency.value = { ...data, officeId: agency.officeId, lat: agency.lat, lng: agency.lng };
-        console.log(selectedAgency.value);
+    console.log(selectedAgency.value);
   } catch (e) {
     alert("중개사무소 정보를 불러오지 못했습니다.");
   }
 }
 
-// 2) 상세보기 액션: 라우터 이동 (route name/param은 프로젝트에 맞게 수정)
+// 상세보기 액션: 라우터 이동 (route name/param은 프로젝트에 맞게 수정)
 function goDetail(officeId) {
   const id =
     officeId ??
@@ -178,16 +135,14 @@ function goDetail(officeId) {
     selectedAgency.value?.id;
 
   if (!id) {
-    console.warn('[goDetail] agency id missing', officeId, selectedAgency.value);
+    console.warn("[goDetail] agency id missing", officeId, selectedAgency.value);
     return;
   }
-  router.push({ name: 'agencyDetail', params: { agencyId: String(id) } });
+  router.push({ name: "agencyDetail", params: { agencyId: String(id) } });
 }
 
-// 2) 북마크 액션: 실제 API 연동/상태 반영은 프로젝트 로직에 맞게 교체
 async function onBookmark(officeId) {
   try {
-    // 예시: await fetch('/api/bookmark', { method:'POST', body: JSON.stringify({ officeId }) })
     console.log("bookmark:", officeId);
     alert("북마크에 추가했습니다.");
   } catch {
