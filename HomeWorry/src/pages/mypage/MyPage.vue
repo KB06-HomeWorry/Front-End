@@ -49,7 +49,6 @@ import CurrentPwModal from '@/pages/mypage/components/CurrentPwModal.vue'
 import MyMenu from '@/pages/mypage/components/MyMenu.vue'
 import bookmarkIcon from '@/assets/icons/my_bookmark.png'
 import listingbookmarkIcon from '@/assets/icons/my_listing.png'
-import noticeIcon from '@/assets/icons/my_notice.png'
 import privacyIcon from '@/assets/icons/my_privacy.png'
 import changepwIcon from '@/assets/icons/my_change_password.png'
 import deleteLight from '@/assets/icons/my_deleteaccount_light.png'
@@ -99,7 +98,6 @@ const deleteMode = ref(false)
 // 메뉴 클릭 핸들러
 const goToAgencyBookmark = () => router.push('/my/agency/bookmark')
 const goToListingBookmark = () => router.push('/my/listing/bookmark')
-const goToNotice = () => router.push('/notice')
 const goToPrivacy = () => router.push('/my/privacy')
 const handleChangePwClick = () => {
   showPwModal.value = true
@@ -114,7 +112,6 @@ const handleDeleteClick = () => {
 const menuList = computed(() => [
   { icon: bookmarkIcon, label: '저장된 중개사무소 목록', onClick: goToAgencyBookmark },
   { icon: listingbookmarkIcon, label: '저장된 매물 목록', onClick: goToListingBookmark },
-  { icon: noticeIcon, label: '공지사항', onClick: goToNotice },
   { icon: privacyIcon, label: '개인정보 수집 및 이용', onClick: goToPrivacy },
   { icon: changepwIcon, label: '비밀번호 변경', onClick: handleChangePwClick },
   {
