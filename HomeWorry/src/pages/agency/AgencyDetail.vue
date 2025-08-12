@@ -55,8 +55,8 @@
       </div>
 
       <div class="agency-btn-row">
-        <BtnAgency text="보유 매물 보러가기" color="#fff" @click="goToListingPage" />
-        <BtnAgency text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
+        <Btn161px35px text="보유 매물 보러가기" color="#fff" @click="goToListingPage" />
+        <Btn161px35px text="방문 후기 작성하기" color="#fff" @click="goToReviewPage" />
       </div>
 
       <AgencyReviewSummary :score-data="agencyScore" />
@@ -82,7 +82,7 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { useRouter, useRoute } from 'vue-router'
 import Hashtag from '@/pages/agency/components/HashTag.vue'
-import BtnAgency from '@/pages/agency/components/BtnAgency.vue'
+import Btn161px35px from '@/components/button/Btn161px35px.vue'
 import AgencyReviewSummary from '@/pages/agency/components/AgencyReviewSummary.vue'
 import ReviewItem from '@/pages/agency/components/ReviewBox.vue'
 import { calculateAgencyScore } from '@/pages/agency/composables/useAllTrustScore.js'

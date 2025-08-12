@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root">
     <AuthTitle class="titleBold24px" title="개인정보 수집 및 이용 " />
     <div class="agreement-content">
       <p class="agreement-head bodyMedium16px">
@@ -27,10 +27,12 @@ const router = useRouter()
 const goBack = () => {
     router.back()
 }
-
 </script>
 
 <style scoped>
+.root{
+  margin-top: 80px;
+}
 .agreement-content {
   margin: 2rem;
 }

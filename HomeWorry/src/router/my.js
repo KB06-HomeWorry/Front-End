@@ -12,6 +12,7 @@ export default [
     path: '/my/privacy',
     name: 'my-privacy',
     component: () => import('../pages/mypage/PrivacyNotice.vue'),
+    meta: { hideHeader: true }
   },
   {
     path: '/my/agency/bookmark',

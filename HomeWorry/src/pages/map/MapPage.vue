@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="시세-매물 지도"/>
   <div style="width: 100%; height: 100vh; position: relative">
     <!-- 상단 FilterBar (면적/거래유형/검색) -->
     <div class="top-controls">
@@ -85,17 +87,20 @@
       @move-current-location="moveToCurrentLocation"
     />
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps';
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { KakaoMap, KakaoMapCustomOverlay } from 'vue3-kakao-maps'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import FilterBar from '@/pages/map/components/FilterBar.vue'
+import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue'
+import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue'
+import ListingMarkers from '@/pages/map/components/ListingMarkers.vue'
 
-import FilterBar from '@/pages/map/components/FilterBar.vue';
-import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue';
-import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
-import ListingMarkers from '@/pages/map/components/ListingMarkers.vue';
+defineOptions({ name: 'MapPage' })  // KeepAlive가 구분할 이름
 
 /** 라우터는 센터/줌 동기화만 */
 const route = useRoute();
