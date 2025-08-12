@@ -15,19 +15,24 @@
           <span v-if="direction"> · {{ direction }}</span>
         </div>
       </div>
-      <img :src="roomImg" alt="매물 이미지" class="listing-image"/>
+      <img
+        :src="img || roomImg"
+        @error="onImgError"
+        alt="매물 이미지"
+        class="listing-image"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import roomImg from '@/assets/icons/home_villa.png';
+import { useRouter } from 'vue-router'
+import roomImg from '@/assets/icons/home_villa.png' // 기본(폴백) 이미지
 
-const router = useRouter();
+const router = useRouter()
 
 const props = defineProps({
-  id: [String, Number],   
+  id: [String, Number],
   transactionType: String,
   deposit: String,
   monthlyRent: String,
@@ -36,11 +41,16 @@ const props = defineProps({
   areaInfo: String,
   floorInfo: String,
   direction: String,
-});
+  img: { type: String, default: '' },
+})
 
 function goDetail() {
-  // 상세페이지 route로 이동 (ex: /listing/15)
-  router.push(`/listing/${props.id}`);
+  router.push(`/listing/${props.id}`)
+}
+
+// 이미지 로드 실패 시 기본 이미지로 교체
+function onImgError(e) {
+  if (e?.target) e.target.src = roomImg
 }
 </script>
 
