@@ -97,6 +97,8 @@ import MarketPriceDetail from '@/pages/map/components/MarketPriceDetail.vue';
 import FloatingButtonStack from '@/pages/map/components/FloatingButtonStack.vue';
 import ListingMarkers from '@/pages/map/components/ListingMarkers.vue';
 
+defineOptions({ name: 'MapPage' })  // KeepAlive가 구분할 이름
+
 /** 라우터는 센터/줌 동기화만 */
 const route = useRoute();
 const router = useRouter();
