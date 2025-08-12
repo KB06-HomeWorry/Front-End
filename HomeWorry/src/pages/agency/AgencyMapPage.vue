@@ -1,8 +1,10 @@
 <template>
   <div>
     <SimpleHeader title="중개사무소 위치" />
-
     <div style="width: 100%; height: 100vh; position: relative">
+      <div class="search-overlay">
+        <SearchBar @search="onSearchLocation" />
+      </div>
       <KakaoMap
         :lat="lat"
         :lng="lng"
@@ -59,6 +61,7 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { KakaoMap, KakaoMapMarker, KakaoMapCustomOverlay } from "vue3-kakao-maps";
 import SimpleHeader from "@/components/layout/SimpleHeader.vue";
+import SearchBar from '@/pages/agency/components/AGencyMapSearchBar.vue';
 import AgencyMapCard from "@/pages/agency/components/AgencyMapCard.vue";
 import FloatingButtonStack from "../map/components/FloatingButtonStack.vue";
 
@@ -151,16 +154,6 @@ function goDetail(officeId) {
   router.push({ name: "agencyDetail", params: { agencyId: String(id) } });
 }
 
-// (옵션) 북마크 액션
-async function onBookmark(officeId) {
-  try {
-    console.log("bookmark:", officeId);
-    alert("북마크에 추가했습니다.");
-  } catch {
-    alert("북마크 추가에 실패했습니다.");
-  }
-}
-
 function updateURL(mapRef) {
   const center = mapRef.getCenter();
   const zoom = mapRef.getLevel();
@@ -176,9 +169,30 @@ function updateURL(mapRef) {
   level.value = zoom;
 }
 
-/* =========================
-   FloatingButtonStack 핸들러
-   ========================= */
+function onSearchLocation(keyword) {
+  if (!keyword) return;
+  const geocoder = new window.kakao.maps.services.Places();
+  geocoder.keywordSearch(keyword, (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+      const place = result[0];
+      const latNum = parseFloat(place.y);
+      const lngNum = parseFloat(place.x);
+      if (mapInstance.value) {
+        const center = new window.kakao.maps.LatLng(latNum, lngNum);
+        mapInstance.value.setCenter(center);
+        mapInstance.value.setLevel(4);
+        lat.value = latNum;
+        lng.value = lngNum;
+        mapCenter.value = { lat: latNum, lng: lngNum };
+        coor2address({ lat: latNum, lng: lngNum });
+      }
+    } else {
+      alert('검색 결과가 없습니다.');
+    }
+  });
+}
+
+/*  FloatingButtonStack 핸들러 */
 function zoomIn() {
   if (mapInstance.value) {
     mapInstance.value.setLevel(mapInstance.value.getLevel() - 1);
@@ -216,5 +230,11 @@ function moveToCurrentLocation() {
 </script>
 
 <style scoped>
-/* 오버레이 자체 스타일은 분리한 컴포넌트(AgencyOverlayCard.vue) 내부에 있음 */
+.search-overlay{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;          /* 필요하면 8~12px 정도 여백 */
+  z-index: 1000;   /* 지도 위로 */
+}
 </style>
