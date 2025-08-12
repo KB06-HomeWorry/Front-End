@@ -25,7 +25,7 @@ function goBack() {
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  margin: 6.5rem 1rem;
+  margin: 8.5rem 1rem;
 }
 .button {
   margin-top: 0.5rem;
