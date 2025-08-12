@@ -61,7 +61,7 @@ import FilterButton from "@/pages/map/components/FilterButton.vue";
 import BottomSheet from "@/pages/map/components/BottomSheet.vue";
 import AreaSlider from "@/pages/map/components/AreaSlider.vue";
 import FilterOptionList from "@/pages/map/components/FilterOptionList.vue";
-import LocationSearch from "@/pages/map/components/LocationSearch.vue";
+import LocationSearch from "@/components/input/SearchInput.vue";
 import resetIcon from "@/assets/icons/reset_circle.png";
 
 // 거래유형 옵션

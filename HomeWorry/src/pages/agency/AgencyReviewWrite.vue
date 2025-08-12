@@ -287,7 +287,7 @@ async function submitReview() {
   align-items: center;
   flex: 1 1 0;
   padding: 2rem;
-  gap: 24px;
+  gap: 32px;
 }
 
 .review-root {
@@ -315,7 +315,7 @@ async function submitReview() {
 }
 
 .choice-title{
-  margin: 1.5rem 0 1rem 0;
+  margin: 1.5rem 0 0.5rem 0;
   color: var(--color-primary);
 }
 

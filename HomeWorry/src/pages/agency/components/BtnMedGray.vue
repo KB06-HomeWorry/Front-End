@@ -1,6 +1,6 @@
 <template>
   <button
-    class="btn-med-wrapper bodyMedium16px"
+    class="btn-med-wrapper bodyMedium18px"
     @click="$emit('click')"
   >
     {{ text }}
@@ -21,7 +21,7 @@ defineEmits(['click']);
 .btn-med-wrapper {
   border-radius: 12px;
   width: 329px;
-  height: 60px;
+  height: 100px;
   text-align: center;
   padding: 0;
   line-height: 35px;
