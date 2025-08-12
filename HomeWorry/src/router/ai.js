@@ -17,4 +17,9 @@ export default [
     name: 'aiContractOcr',
     component: () => import('../pages/ai/components/ContractOcrUploader.vue'),
   },
+  {
+    path: '/ai/recommendation',
+    name: 'recommendation',
+    component: () => import('../pages/ai/Recommendation.vue'),
+  },
 ];
