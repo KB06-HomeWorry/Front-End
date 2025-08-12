@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="분석 결과 확인"/>
   <div class="result-page">
     <div class="content titleBold20px">분석 결과</div>
     <br />
@@ -19,6 +21,7 @@
       <DangerButtons :moveDefined="moveDefined" />
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
@@ -28,7 +31,7 @@ import { useRoute } from 'vue-router';
 import { useDangerResultStore } from '@/stores/dangerResult';
 import { useAnalysisStore } from '@/stores/analysis.js';
 import axios from 'axios';
-
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import DangerCard from './components/DangerResultCard.vue';
 import DangerSummery from './components/DangerResultSummery.vue';
 import DangerButtons from './components/DangerResultButtons.vue';

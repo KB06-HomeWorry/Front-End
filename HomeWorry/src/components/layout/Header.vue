@@ -168,6 +168,10 @@ const onLogoutAlertConfirm = () => {
   padding: 0 16px;
 }
 
+.right{
+  margin-right: 16px;
+}
+
 .left {
   display: flex;
   align-items: center;
@@ -177,7 +181,7 @@ const onLogoutAlertConfirm = () => {
 }
 
 .header {
-  padding: 0 8px;
+  padding: 0 3px;
 }
 
 .left h1 {
