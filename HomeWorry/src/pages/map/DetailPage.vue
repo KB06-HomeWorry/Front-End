@@ -22,7 +22,13 @@
       :src="roomImg"
       @error="onImgError"
       alt="매물 이미지"
-      style="width: 100%; height: auto; max-height: 200px; object-fit: cover; margin-bottom: 10px;"
+      style="
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        object-fit: cover;
+        margin-bottom: 10px;
+      "
     />
 
     <div class="root">
@@ -88,16 +94,16 @@ import { getListingImage } from '@/components/utils/listingImage'
 const route = useRoute()
 const listingId = route.params.listingId
 
-const lat = ref(null)
-const lng = ref(null)
-const price = ref('')
-const buildingName = ref('')
-const deposit = ref('')
-const rent = ref('')
-const housingType = ref('')
-const floorInfo = ref('')
-const areaInfo = ref('')
-const direction = ref('')
+const lat = ref(null);
+const lng = ref(null);
+const price = ref('');
+const buildingName = ref('');
+const deposit = ref('');
+const rent = ref('');
+const housingType = ref('');
+const floorInfo = ref('');
+const areaInfo = ref('');
+const direction = ref('');
 
 const isFavorite = ref(false)
 const heartAnim = ref(false)
@@ -149,8 +155,8 @@ onMounted(async () => {
     const response = await fetch(`/api/listing/${listingId}`)
     const data = await response.json()
 
-    lat.value = data.latitude
-    lng.value = data.longitude
+    lat.value = data.latitude;
+    lng.value = data.longitude;
     price.value = data.monthlyRent
       ? `월세 ${data.deposit}/${data.monthlyRent}`
       : `전세 ${data.deposit}`
@@ -177,7 +183,7 @@ onMounted(async () => {
     console.error('❌ 상세정보 로딩 실패:', error)
     roomImg.value = getListingImage(housingType.value, String(listingId))
   }
-})
+});
 
 async function fetchAgency() {
   try {
@@ -220,12 +226,18 @@ async function fetchAgency() {
   transition: filter 0.15s;
 }
 @keyframes pop {
-  0%   { transform: scale(1); }
-  60%  { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 .bookmark-icon.pop {
-  animation: pop 0.28s cubic-bezier(.4,2,.6,1) both;
+  animation: pop 0.28s cubic-bezier(0.4, 2, 0.6, 1) both;
 }
 
 .section-btn {

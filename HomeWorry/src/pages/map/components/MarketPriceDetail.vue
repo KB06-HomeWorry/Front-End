@@ -19,6 +19,7 @@ const props = defineProps({
   price: { type: [String, Number], required: true },
   housingType: { type: String, default: '' },
   id: { type: [String, Number], required: true }, // Add id prop
+  showReportButton: { type: Boolean, default: true },
 });
 
 const router = useRouter();

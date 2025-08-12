@@ -18,24 +18,30 @@
     </div>
 
     <!-- 지도 -->
-    <div class="location-map">
+    <div class="location-map" :style="{ height: mapHeight }">
       <KakaoMap
         v-if="hasCoord"
         :lat="lat"
         :lng="lng"
         :level="3"
-        style="width: 100%; height: 170px"
+        :scrollwheel="false"
+        :draggable="false"
+        :style="{ width: '100%', height: mapHeight }"
+        :disableDoubleClickZoom="true"
+        :disableDoubleClick="true"
       >
         <KakaoMapMarker :lat="lat" :lng="lng" />
       </KakaoMap>
 
-      <div v-else class="map-empty bodyLight12px">
-        좌표 정보가 없습니다.
-      </div>
+      <div v-else class="map-empty bodyLight12px" :style="{ height: mapHeight }">좌표 정보가 없습니다.</div>
     </div>
 
     <!-- 하단 신고 버튼 -->
-    <button class="report-row bodyMedium12px" @click="reportItem">
+    <button
+      v-if="props.showReportButton"
+      class="report-row bodyMedium12px"
+      @click="reportItem"
+    >
       <span>매물 신고</span>
       <img src="@/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
     </button>
@@ -52,26 +58,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps'
-import Modal from '@/components/modal/CustomModal.vue' 
-import mapLocationIcon from '@/assets/icons/map_location.png'
-import copyIcon from '@/assets/icons/copy.png'
+import { ref, computed } from 'vue';
+import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+import Modal from '@/components/modal/CustomModal.vue';
+import mapLocationIcon from '@/assets/icons/map_location.png';
+import copyIcon from '@/assets/icons/copy.png';
 
 /** 부모에서 좌표/주소 받기 */
 const props = defineProps({
   lat: { type: Number, required: false, default: null },
   lng: { type: Number, required: false, default: null },
   address: { type: String, required: false, default: '' },
-})
+  showReportButton: { type: Boolean, default: true },
+});
 
-const hasCoord = computed(() => props.lat != null && props.lng != null)
+const hasCoord = computed(() => props.lat != null && props.lng != null);
 const addressText = computed(() =>
-  props.address?.trim() ? props.address : (hasCoord.value ? '좌표 기반 위치' : '주소 정보 없음')
-)
+  props.address?.trim()
+    ? props.address
+    : hasCoord.value
+    ? '좌표 기반 위치'
+    : '주소 정보 없음'
+);
+
+const mapHeight = computed(() => props.showReportButton ? '170px' : '300px');
 
 // 📌 모달 상태
-const showReportModal = ref(false)
+const showReportModal = ref(false);
 
 async function copyLocation() {
   const text = props.address?.trim();
@@ -89,15 +102,15 @@ async function copyLocation() {
 
 function reportItem() {
   // 신고 로직 연결 필요
-  showReportModal.value = true // 모달 열기
+  showReportModal.value = true; // 모달 열기
 }
 
 function handleReportConfirm() {
-  console.log('신고 확인 버튼 클릭됨')
+  console.log('신고 확인 버튼 클릭됨');
 }
 
 function handleReportCancel() {
-  console.log('모달 닫힘')
+  console.log('모달 닫힘');
 }
 </script>
 
