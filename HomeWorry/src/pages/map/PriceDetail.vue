@@ -1,47 +1,167 @@
 <template>
+  <SimpleHeader title="시세 상세페이지" />
   <div class="price-detail-container">
-    <h2>시세 상세 정보</h2>
-    <ul>
-      <li><strong>가격:</strong> {{ trendprice.toLocaleString() }}원</li>
-      <li><strong>위도:</strong> {{ trendlat }}</li>
-      <li><strong>경도:</strong> {{ trendlng }}</li>
-    </ul>
+
+  <section ref="listing">
+    <div class="location-info-card">
+      <div class="menu-list titleBold20px">시세정보</div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">거래가격</div>
+        <div class="info-value titleBold16px">{{ price }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">주택유형</div>
+        <div class="info-value bodyMedium14px">{{ housingType }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">거래유형</div>
+        <div class="info-value bodyMedium14px">{{ dealType }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">계약일</div>
+        <div class="info-value bodyMedium14px">{{ contractDay }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">건물명</div>
+        <div class="info-value bodyMedium14px">{{ buildingName }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">전용면적</div>
+        <div class="info-value bodyMedium14px">{{ areaInfo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">토지면적</div>
+        <div class="info-value bodyMedium14px">{{ landAreaInfo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">해당층</div>
+        <div class="info-value bodyMedium14px">{{ floorInfo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">준공년도</div>
+        <div class="info-value bodyMedium14px">{{ builtYearInfo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">위치</div>
+        <div class="info-value bodyMedium14px">{{ locationInfo }}</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label bodyMedium14px">주소</div>
+        <div class="info-value bodyMedium14px">{{ addressInfo }}</div>
+      </div>
+    </div>
+  </section>
+  <div class="map-container">
+    <DetailLocation
+      :lat="Number(trendlat)"
+      :lng="Number(trendlng)"
+      :address="agency?.address || ''"
+      :showReportButton="false"
+    >
+    </DetailLocation>
+  </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { useRoute,useRouter } from 'vue-router'
+import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
+import { onMounted, ref, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import DetailLocation from '@/pages/map/components/DetailLocation.vue';
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 
-const router=useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
-const trendlat = ref(null)
-const trendlng = ref(null)
-const trendprice = ref('')
+const trendlat = ref(null);
+const trendlng = ref(null);
+const trendprice = ref('');
+const hiya = ref('');
 
-const priceTrendId = route.params.priceTrendId
+// Computed properties for formatted display
+const price = computed(() => {
+  if (!hiya.value?.price) return '-';
+  return formatKoreanPrice(hiya.value.price);
+});
 
+const housingType = computed(() => {
+  return hiya.value?.housingType || '-';
+});
+
+const areaInfo = computed(() => {
+  if (!hiya.value?.archArea) return '-';
+  return `${hiya.value.archArea}㎡`;
+});
+
+const floorInfo = computed(() => {
+  if (!hiya.value?.floor) return '-';
+  return `${hiya.value.floor}층`;
+});
+
+const dealType = computed(() => {
+  return hiya.value?.dealType || '-';
+});
+
+const contractDay = computed(() => {
+  return hiya.value?.contractDay || '-';
+});
+
+const buildingName = computed(() => {
+  return hiya.value?.buildingName || '-';
+});
+
+const landAreaInfo = computed(() => {
+  if (!hiya.value?.landArea) return '-';
+  return `${hiya.value.landArea}㎡`;
+});
+
+const builtYearInfo = computed(() => {
+  if (!hiya.value?.builtYear) return '-';
+  return hiya.value.builtYear.toString().split('.')[0]; // Remove decimal part
+});
+
+const locationInfo = computed(() => {
+  if (hiya.value?.districtName && hiya.value?.dongName) {
+    return `${hiya.value.districtName} ${hiya.value.dongName}`;
+  }
+  return '-';
+});
+
+const addressInfo = computed(() => {
+  return hiya.value?.address || '-';
+});
+
+// Price formatting function
+function formatKoreanPrice(price) {
+  const num = Number(price);
+  if (isNaN(num) || num === 0) return '-';
+  const eok = num / 100000000;
+  if (eok % 1 === 0) return `${eok}억`;
+  return `${parseFloat(eok.toFixed(1))}억`;
+}
+
+const priceTrendId = route.params.priceTrendId;
 
 onMounted(async () => {
-  const priceid = priceTrendId
+  const priceid = priceTrendId;
   if (!priceid) {
-    console.log('priceid 없음')
-    return
+    console.log('priceid 없음');
+    return;
   }
 
   try {
-    const endpoint2 = `/api/pricetrend/${priceid}`
-    const response2 = await fetch(endpoint2)
-    const data2 = await response2.json()
+    const endpoint2 = `/api/pricetrend/${priceid}`;
+    const response2 = await fetch(endpoint2);
+    const data2 = await response2.json();
 
-    trendlat.value = data2.latitude
-    trendlng.value = data2.longitude
-    trendprice.value = data2.price
+    trendlat.value = data2.latitude;
+    trendlng.value = data2.longitude;
+    trendprice.value = data2.price;
+    hiya.value = data2;
   } catch (error) {
-    console.error('데이터 가져오기 실패:', error)
+    console.error('데이터 가져오기 실패:', error);
   }
-})
+});
 </script>
 
 <style scoped>
@@ -54,5 +174,123 @@ ul {
 }
 li {
   margin-bottom: 0.5rem;
+}
+
+.root {
+  margin: 0 1.5rem;
+}
+
+.basic_info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-mediumgray);
+  padding-bottom: 12px;
+}
+
+.bookmark-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  padding-right: 2px;
+}
+.bookmark-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  transition: filter 0.15s;
+}
+/* 애니메이션 */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.bookmark-icon.pop {
+  animation: pop 0.28s cubic-bezier(0.4, 2, 0.6, 1) both;
+}
+
+/* .section-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--color-mediumgray);
+} */
+.section-btn {
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+.section-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-radius: 6px;
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+.location-info-card {
+  background: var(--color-white);
+  max-width: 100%;
+}
+
+/* 좌측 라벨 / 우측 값 2열 배치 */
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  gap: 12px;
+  border-top: 1px solid #f4f4f4;
+}
+.info-row:first-of-type {
+  border-top: none;
+}
+.info-label {
+  color: var(--color-darkgray);
+  min-width: 96px;
+  flex-shrink: 0;
+}
+.info-value {
+  text-align: right;
+  flex: 1;
+  word-break: keep-all;
+  color: var(--color-primary);
+}
+
+.location-info-card {
+  background-color: var(--color-white);
+  padding: 10px 0;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* 아래 구분선 */
+.full-width-hr {
+  border: none;
+  border-top: 1px solid;
+  color: var(--color-mediumgray);
+  margin: 16px 0;
+  width: 100%;
+}
+.menu-list {
+  color: var(--color-primary);
 }
 </style>
