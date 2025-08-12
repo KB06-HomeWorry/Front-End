@@ -15,7 +15,6 @@
 </template>
 
 <script setup>
-// 부모 MapPage.vue(현재 수정중에는 FixMapPage.vue)에서 이벤트 처리
 import location from "@/assets/icons/Location.png";
 </script>
 

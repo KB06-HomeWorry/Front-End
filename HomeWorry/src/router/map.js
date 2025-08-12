@@ -3,32 +3,30 @@ export default [
     path: '/map',
     name: 'map',
     component: () => import('../pages/map/MapPage.vue'),
-    meta: { keepAlive: true },
+    meta: { 
+      keepAlive: true,
+      hideHeader: true
+    },
   },
   {
     path: '/map/apartment',
     name: 'map-apartment',
-    component: () => import('../pages/map/FixMapPage.vue'),
+    component: () => import('../pages/map/FilterMapPage.vue'),
   },
   {
     path: '/map/onetwo',
     name: 'map-onetwo',
-    component: () => import('../pages/map/FixMapPage.vue'),
+    component: () => import('../pages/map/FilterMapPage.vue'),
   },
   {
     path: '/map/building',
     name: 'map-building',
-    component: () => import('../pages/map/FixMapPage.vue'),
+    component: () => import('../pages/map/FilterMapPage.vue'),
   },
   {
     path: '/map/officetel',
     name: 'map-officetel',
-    component: () => import('../pages/map/FixMapPage.vue'),
-  },
-  {
-    path: '/map/detail',
-    name: 'mapdetail',
-    component: () => import('../pages/map/DetailPage.vue'),
+    component: () => import('../pages/map/FilterMapPage.vue'),
   },
   {
   path: '/listing/:listingId',
