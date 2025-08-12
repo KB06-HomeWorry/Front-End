@@ -1,4 +1,6 @@
 <template>
+    <div>
+    <SimpleHeader title="중개사무소"></SimpleHeader>
   <div class="agency-list-page">
     <!-- 검색&정렬 -->
     <div class="search-sort-row">
@@ -36,11 +38,13 @@
 
     <MapFloatingButtonWithModal />
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import AgencySearchBar from '@/pages/agency/components/AgencySearchBar.vue'
 import SortSelect from '@/pages/agency/components/SortSelect.vue'
 import AgencyCard from '@/pages/agency/components/AgencyCard.vue'

@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader :title="`${agency.office_name || ''}`" />
   <div class="page-container">
   <div v-if="!reviewType" class="initial-choice-container">
     <div class="choice-title bodyMedium20px">해당 중개사무소에서,</div>
@@ -51,11 +53,13 @@
     </div>
   </div>
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, onMounted } from 'vue'
 import axios from 'axios'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import ProgressBar from '@/pages/agency/components/ProgressBar.vue'
 import ReviewQuestion from '@/pages/agency/components/ReviewQuestion.vue'
 import ProgressAvatar from '@/assets/icons/progress-avatar.png'
@@ -70,6 +74,21 @@ const router = useRouter()
 const route = useRoute()
 const officeId = route.query.agencyId || route.params.agencyId || ''
 const userToken = localStorage.getItem('user-token');
+
+// 중개사 정보 상태
+const agency = ref({
+  office_name: ''
+})
+
+// 페이지 진입 시 중개사 정보 불러오기
+onMounted(async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/api/agent/${officeId}`)
+   agency.value.office_name = res.data.officeName || res.data.office_name || ''
+  } catch (e) {
+    console.error('중개사 정보 로드 실패:', e)
+  }
+})
 
 const avatar = ProgressAvatar
 const reviewType = ref(null) // null | 'consultation' | 'transaction'
@@ -293,6 +312,11 @@ async function submitReview() {
   padding: 18px 2rem 8px 2rem;
   max-width: 393px; /* App.vue의 최대 width와 맞추기 */
   margin: 0 auto;
+}
+
+.choice-title{
+  margin: 1.5rem 0 1rem 0;
+  color: var(--color-primary);
 }
 
 .write-review {

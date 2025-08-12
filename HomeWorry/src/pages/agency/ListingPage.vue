@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <SimpleHeader :title="`${agency.office_name || ''}`" />
   <div class="listing-page">
     <ListingFilterBar
       v-model:modelValueTypes="selectedTypes"
@@ -25,12 +27,14 @@
       등록된 매물이 없습니다.
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import ListingCard from '@/pages/agency/components/ListingCard.vue'; 
 import ListingFilterBar from '@/pages/agency/components/ListingFilterBar.vue'
 import { getListingImage } from '@/components/utils/listingImage'
@@ -39,6 +43,21 @@ const route = useRoute()
 
 const listings = ref([]);
 const officeId = route.query.agencyId || route.params.agencyId || '1'
+
+// 중개사 정보 상태
+const agency = ref({
+  office_name: ''
+})
+
+// 페이지 진입 시 중개사 정보 불러오기
+onMounted(async () => {
+  try {
+    const res = await axios.get(`http://localhost:8080/api/agent/${officeId}`)
+   agency.value.office_name = res.data.officeName || res.data.office_name || ''
+  } catch (e) {
+    console.error('중개사 정보 로드 실패:', e)
+  }
+})
 
 /* 필터 상태 */
 const selectedTypes = ref(['MONTHLY','JEONSE','SALE'])
