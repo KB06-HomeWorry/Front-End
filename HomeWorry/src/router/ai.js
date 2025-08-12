@@ -3,6 +3,9 @@ export default [
     path: '/ai/estate-ease',
     name: 'estate-ease',
     component: () => import('../pages/ai/EstateEase.vue'),
+    meta: {
+      hideHeader: true,    // Header 숨김
+    },
   },
   {
     path: '/ai/analysis',

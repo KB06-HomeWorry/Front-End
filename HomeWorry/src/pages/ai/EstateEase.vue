@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <SimpleHeader title="부동산 용어 해석"/>
   <div class="sentence-simplify-page">
     <AIExplain class="explain-box" />
     <EstateEaseInput v-model="input" :maxlength="100" :minlength="3" />
@@ -23,12 +25,14 @@
 
     <div v-if="error" class="error-msg bodyLight12px">{{ error }}</div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import lightbulbIcon from "@/assets/icons/quiz_lightbulb.png";
 import axios from "axios";
+import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import AIExplain from "@/pages/ai/components/AIExplain.vue";
 import EstateEaseInput from "./components/EstateEaseInput.vue";
 import BtnMedSlim from "@/components/button/BtnMedSlim.vue";
