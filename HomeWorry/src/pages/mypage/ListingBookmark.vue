@@ -5,7 +5,7 @@
 
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
-          v-for="(listing, idx) in pagedList"
+          v-for="(listing) in pagedList"
           :key="listing.id"
           :id="listing.id"
           :transactionType="listing.transactionType"
