@@ -19,7 +19,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from 'vue'
+import { getAgencyImage } from '@/components/utils/agencyImage'
 
 const props = defineProps({
   id: Number,
@@ -27,36 +28,26 @@ const props = defineProps({
   address: String,
   phone: String,
   trustScore: [Number, String],
-  // 실제 이미지 URL이 있을 때
   img: String,
-  // 없을 땐 idx로 sample 돌리기
   profileIdx: { type: Number, default: 0 },
-});
+})
 
-const sampleImgs = [
-  "@/assets/icons/sample_profile1.png",
-  "@/assets/icons/sample_profile1.png",
-  "@/assets/icons/sample_profile1.png",
-];
-
-// 실 이미지가 props.img로 들어오면 우선, 없으면 sample
-const computedImg =
-  props.img && props.img.length > 0
-    ? props.img
-    : sampleImgs[props.profileIdx % sampleImgs.length];
+const computedImg = computed(() =>
+  getAgencyImage(props.img || '', String(props.id ?? ''))
+)
 
 /** 0~100 또는 0~5 입력을 모두 0~5 스케일로 변환해 1자리 소수로 표시 */
 const displayTrustScore = computed(() => {
-  const raw = Number(props.trustScore);
-  if (Number.isNaN(raw)) return '0.0';
+  const raw = Number(props.trustScore)
+  if (Number.isNaN(raw)) return '0.0'
 
   // 6 이상이면 0~100 스케일로 판단 → 0~5 변환
-  const fiveScale = raw > 5 ? raw / 20 : raw;
+  const fiveScale = raw > 5 ? raw / 20 : raw
 
-  // 안전 범위 클램프 후 표시 포맷
-  const clamped = Math.min(5, Math.max(0, fiveScale));
-  return clamped.toFixed(1);
-});
+    // 안전 범위 클램프 후 표시 포맷
+  const clamped = Math.min(5, Math.max(0, fiveScale))
+  return clamped.toFixed(1)
+})
 </script>
 
 <style scoped>

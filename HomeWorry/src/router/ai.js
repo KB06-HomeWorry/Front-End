@@ -3,6 +3,9 @@ export default [
     path: '/ai/estate-ease',
     name: 'estate-ease',
     component: () => import('../pages/ai/EstateEase.vue'),
+    meta: {
+      hideHeader: true,    // Header 숨김
+    },
   },
   {
     path: '/ai/analysis',
@@ -16,5 +19,10 @@ export default [
     path: '/ai/contract-ocr',
     name: 'aiContractOcr',
     component: () => import('../pages/ai/components/ContractOcrUploader.vue'),
+  },
+  {
+    path: '/ai/recommendation',
+    name: 'recommendation',
+    component: () => import('../pages/ai/Recommendation.vue'),
   },
 ];

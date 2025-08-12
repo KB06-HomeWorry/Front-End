@@ -2,7 +2,21 @@
   <div class="app-wrapper">
     <Header v-if="!hideHeader" />
     <main class="main-content" :class="{ 'has-header': !hideHeader }">
-      <RouterView />
+      <RouterView v-slot="{ Component, route }">
+        <KeepAlive>
+          <component
+            :is="Component"
+            v-if="route.meta.keepAlive"
+            :key="route.name"
+          />
+        </KeepAlive>
+
+        <component
+          :is="Component"
+          v-if="!route.meta.keepAlive"
+          :key="route.name"
+        />
+      </RouterView>
     </main>
     <Footer v-if="!hideFooter" />
   </div>

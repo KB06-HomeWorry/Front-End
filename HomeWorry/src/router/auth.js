@@ -44,12 +44,6 @@ export default [
       hideFooter: true     // Footer 숨김
     },
   },
-//   {
-//   path: '/auth/change-password',
-//   name: 'change-password',
-//   component: () => import('../pages/auth/ChangePasswordPage.vue'),
-//   meta: { hideHeader: true, hideFooter: true }
-// }
 
 // 토큰부분!!
   {
