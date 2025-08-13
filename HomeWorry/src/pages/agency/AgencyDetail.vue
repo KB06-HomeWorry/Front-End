@@ -134,7 +134,11 @@ function onProfileError() {
 // ---- 즐겨찾기 ----
 async function fetchFavoriteStatus() {
   try {
-    const res = await axios.get(`/api/agent/${userToken}/isFavorite/${office_id}`)
+    const res = await axios.get(`http://localhost:8080/agent/isFavorite/${office_id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     isFavorite.value = res.data
   } catch (e) {
     isFavorite.value = false
@@ -148,10 +152,18 @@ async function toggleBookmark() {
 
   try {
     if (isFavorite.value) {
-      await axios.delete(`/api/agent/${userToken}/favorite/${office_id}`)
+      await axios.delete(`http://localhost:8080/agent/favorite/${office_id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
       isFavorite.value = false
     } else {
-      await axios.get(`/api/agent/${userToken}/favorite/${office_id}`)
+      await axios.get(`http://localhost:8080/agent/favorite/${office_id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
       isFavorite.value = true
     }
   } catch (e) {
@@ -163,7 +175,7 @@ async function toggleBookmark() {
 onMounted(async () => {
   try {
     // 중개사 정보
-    const res = await axios.get(`http://localhost:8080/api/agent/${office_id}`)
+    const res = await axios.get(`http://localhost:8080/agent/${office_id}`)
     agency.value = {
       ...agency.value,
       office_name: res.data.officeName,
@@ -303,7 +315,7 @@ onMounted(async () => {
     }
 
     // 신뢰점수
-    const res_score = await axios.get(`http://localhost:8080/api/agent/trustScore/${office_id}`)
+    const res_score = await axios.get(`http://localhost:8080/agent/trustScore/${office_id}`)
     agencyScore.value = {
       ...agencyScore.value,
       finalTrustScore: res_score.data.totalTrustScore,
@@ -316,7 +328,7 @@ onMounted(async () => {
     }
 
     // 리뷰
-    const res_reviews = await axios.get(`http://localhost:8080/api/agent/reviews/${office_id}`)
+    const res_reviews = await axios.get(`http://localhost:8080/agent/reviews/${office_id}`)
     reviews.value = res_reviews.data
 
     // 즐겨찾기 상태

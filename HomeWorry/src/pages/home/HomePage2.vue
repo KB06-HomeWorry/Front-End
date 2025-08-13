@@ -127,7 +127,11 @@ async function loadProfileIfNeeded() {
   if (!token) return;
   try {
     const { data } = await axios.get(
-      `http://localhost:8080/api/member/getprofile/${token}`
+      `http://localhost:8080/member/getprofile`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
     );
     profile.value = {
       name: data?.name ?? '',

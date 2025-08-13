@@ -87,7 +87,7 @@ async function onSubmit() {
 
   // --- API 요청 ---
   try {
-    await axios.post('http://localhost:8080/api/member/resetpassword', {
+    await axios.post('http://localhost:8080/member/resetpassword', {
       password: password.value,
       token: token,
     });

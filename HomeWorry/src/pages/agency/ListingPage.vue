@@ -52,7 +52,7 @@ const agency = ref({
 // 페이지 진입 시 중개사 정보 불러오기
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/agent/${officeId}`)
+    const res = await axios.get(`http://localhost:8080/agent/${officeId}`)
    agency.value.office_name = res.data.officeName || res.data.office_name || ''
   } catch (e) {
     console.error('중개사 정보 로드 실패:', e)

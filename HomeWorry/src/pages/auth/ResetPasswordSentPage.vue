@@ -70,7 +70,7 @@ async function onResend() {
   resendLoading.value = true;
   try {
     await axios.get(
-      `http://localhost:8080/api/member/resetpassword/${email.value}`
+      `http://localhost:8080/member/resetpassword/${email.value}`
     );
     resendSuccess.value = "📧 이메일이 전송되었습니다!";
   } catch (err) {

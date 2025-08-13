@@ -72,7 +72,11 @@ onMounted(() => {
 async function fetchAgencyList(){
   try {
     // 북마크 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/agent/${userToken}/favorite`)
+    const res = await axios.get(`http://localhost:8080/agent/favorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     agencies.value = res.data
   } catch (e) {
     alert('북마크 목록을 불러오지 못했습니다.')
@@ -121,10 +125,18 @@ async function toggleFavorite(id, isFavorite) {
   try {
     if (isFavorite) {
       // [북마크 해제]
-      await axios.delete(`/api/agent/${userToken}/favorite/${id}`)
+      await axios.delete(`/agent/favorite/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     } else {
       // [북마크 등록]
-      await axios.get(`/api/agent/${userToken}/favorite/${id}`)
+      await axios.get(`/agent/favorite/${id}`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     }
   } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')
