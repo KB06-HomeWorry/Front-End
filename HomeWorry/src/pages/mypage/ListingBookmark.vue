@@ -69,7 +69,11 @@ onMounted(() => {
 async function fetchListingList(){
   try {
     // 북마크 된 매물 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
+    const res = await axios.get(`http://localhost:8080/api/listing/favorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     listings.value = res.data
   } catch (e) {
     alert('찜한 매물 목록을 불러오지 못했습니다.')
@@ -100,10 +104,18 @@ async function toggleFavorite(id, isFavorite) {
   try {
     if (isFavorite) {
       // [북마크 해제]
-      await axios.delete(`/api/listing/${id}/disFavorite/${userToken}`)
+      await axios.delete(`/api/listing/${id}/disFavorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     } else {
       // [북마크 등록]
-      await axios.get(`/api/listing/${id}/favorite/${userToken}`)
+      await axios.get(`/api/listing/${id}/favorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     }
   } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')

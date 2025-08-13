@@ -63,7 +63,7 @@ const page = ref(Math.max(1, parseInt(route.query.page ?? '1', 10) || 1))
 onMounted(async () => {
   try {
     // 중개사무소 목록 조회
-    const res = await axios.get(`http://localhost:8080/api/agent/list`)
+    const res = await axios.get(`http://localhost:8080/agent/list`)
 
     agencies.value = (res.data || []).map(a => ({
       ...a,

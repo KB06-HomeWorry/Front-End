@@ -65,7 +65,11 @@ const token = localStorage.getItem('user-token');
 
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/member/getprofile/${token}`)
+    const res = await axios.get(`http://localhost:8080/member/getprofile`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     const data = res.data
     user.value = {
       ...user.value,
@@ -131,7 +135,11 @@ async function onPwModalSuccess() {
   if (deleteMode.value) {
     handleDeleteClickAfterPw();
   } else {
-    const pwResetToken = await axios.get(`http://localhost:8080/api/member/verify-password/${token}`)
+    const pwResetToken = await axios.get(`http://localhost:8080/member/verify-password`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
     router.push(`/auth/change-password/${encodeURIComponent(pwResetToken.data)}`)
   }
   deleteMode.value = false; // 상태 초기화
@@ -147,7 +155,11 @@ const handleDeleteClickAfterPw = async () => {
   }
 
   try {
-    await axios.delete(`http://localhost:8080/api/member/withdraw/${token}`);
+    await axios.delete(`http://localhost:8080/member/withdraw`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     alert('회원탈퇴가 완료되었습니다.');
     router.replace('/auth/login');
   } catch (err) {

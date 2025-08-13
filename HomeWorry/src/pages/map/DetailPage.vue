@@ -121,7 +121,11 @@ function onImgError() {
 // --- 즐겨찾기 상태 ---
 async function fetchFavoriteStatus() {
   try {
-    const res = await axios.get(`/api/listing/${listingId}/isFavorite/${userToken}`)
+    const res = await axios.get(`/api/listing/${listingId}/isFavorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
     isFavorite.value = !!res.data
   } catch {
     isFavorite.value = false
@@ -133,10 +137,18 @@ async function toggleBookmark() {
   heartAnim.value = true
   try {
     if (isFavorite.value) {
-      await axios.delete(`/api/listing/${listingId}/disFavorite/${userToken}`)
+      await axios.delete(`/api/listing/${listingId}/disFavorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
       isFavorite.value = false
     } else {
-      await axios.get(`/api/listing/${listingId}/favorite/${userToken}`)
+      await axios.get(`/api/listing/${listingId}/favorite`, {
+      headers: {
+        Authorization: `Bearer ${userToken}`
+      }
+    })
       isFavorite.value = true
     }
   } catch {

@@ -83,7 +83,7 @@ const agency = ref({
 // 페이지 진입 시 중개사 정보 불러오기
 onMounted(async () => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/agent/${officeId}`)
+    const res = await axios.get(`http://localhost:8080/agent/${officeId}`)
    agency.value.office_name = res.data.officeName || res.data.office_name || ''
   } catch (e) {
     console.error('중개사 정보 로드 실패:', e)
@@ -261,7 +261,7 @@ async function submitReview() {
 
   // 서버로 reviewData 객체를 전송하는 API 호출
   try {
-    await axios.post('http://localhost:8080/api/agent/reviews', reviewData);
+    await axios.post('http://localhost:8080/agent/reviews', reviewData);
 
     alert('리뷰가 등록되었습니다.');
     router.push(`/agency/${officeId}`);

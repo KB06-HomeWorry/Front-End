@@ -114,7 +114,7 @@ async function checkEmailDuplicate() {
   emailError.value = '';
   try {
     const res = await axios.get(
-      `http://localhost:8080/api/member/checkusername/${val}`
+      `http://localhost:8080/member/checkusername/${val}`
     );
 
     if (res.data) {
@@ -212,7 +212,7 @@ async function onSubmit() {
     };
 
     // 백엔드의 회원가입 API 엔드포인트로 POST 요청
-    await axios.post('http://localhost:8080/api/member', userData);
+    await axios.post('http://localhost:8080/member', userData);
 
     alertMessage.value =
       '회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.';

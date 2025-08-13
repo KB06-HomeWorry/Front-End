@@ -112,7 +112,7 @@ function onMapReady(mapRef) {
 
 async function loadAgencies() {
   try {
-    const response = await fetch("http://localhost:8080/api/agent/geo/list");
+    const response = await fetch("http://localhost:8080/agent/geo/list");
     const data = await response.json();
     agencies.value = data.map((item) => ({
       officeId: item.officeId,
@@ -129,7 +129,7 @@ async function loadAgencies() {
 
 async function onMarkerClick(agency) {
   try {
-    const response = await fetch(`http://localhost:8080/api/agent/${agency.officeId}`);
+    const response = await fetch(`http://localhost:8080/agent/${agency.officeId}`);
     if (!response.ok) throw new Error("Network response was not ok");
     const data = await response.json();
     // 선택한 마커 좌표를 같이 보관

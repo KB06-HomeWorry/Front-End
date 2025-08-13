@@ -68,7 +68,7 @@ async function onSubmit() {
   // 백엔드 api에 맞춰서 수정 요망
   try {
     const res = await axios.get(
-      'http://localhost:8080/api/member/checkNameAndEmail',
+      'http://localhost:8080/member/checkNameAndEmail',
       {
         params: {
           email: email.value.trim(),

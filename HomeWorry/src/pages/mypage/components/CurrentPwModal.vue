@@ -52,7 +52,7 @@ async function submit() {
   }
   try {
     const res = await axios.post(
-      'http://localhost:8080/api/member/verify-password-check',
+      'http://localhost:8080/member/verify-password-check',
       {
         password: currentPw.value,
         token: usertoken,
