@@ -65,9 +65,9 @@
   </section>
   <div class="map-container">
     <DetailLocation
-      :lat="Number(trendlat)"
-      :lng="Number(trendlng)"
-      :address="agency?.address || ''"
+      :lat="trendlat"
+      :lng="trendlng"
+      :address="addressInfo"
       :showReportButton="false"
     >
     </DetailLocation>
@@ -76,7 +76,6 @@
 </template>
 
 <script setup>
-import { KakaoMap, KakaoMapMarker } from 'vue3-kakao-maps';
 import { onMounted, ref, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import DetailLocation from '@/pages/map/components/DetailLocation.vue';
@@ -89,8 +88,7 @@ const route = useRoute();
 const trendlat = ref(null);
 const trendlng = ref(null);
 const trendprice = ref('');
-const priceDetailData = ref('');
-const agency = ref(null);
+const priceDetailData = ref({});
 
 const roomImg = ref(getListingImage('', String(route.params.priceTrendId)))
 

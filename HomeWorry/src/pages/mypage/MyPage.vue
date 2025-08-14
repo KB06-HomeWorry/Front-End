@@ -9,10 +9,10 @@
         <div class="profile-info">
           <div class="profile-name titleBold20px">{{ user.name }}</div>
           <div class="profile-email bodyMedium14px">
-            <span class="emoji">📧</span>{{ user.email }}
+            <span class="emoji">📧 </span>{{ user.email }}
           </div>
           <div class="profile-phone bodyMedium14px">
-            <span class="emoji">📞</span>{{ formatPhone(user.phone) }}
+            <span class="emoji">📞 </span>{{ formatPhone(user.phone) }}
           </div>
         </div>
       </div>

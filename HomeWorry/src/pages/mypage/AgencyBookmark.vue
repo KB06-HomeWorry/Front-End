@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SimpleHeader title="저장된 공인중개사무소" />
+    <SimpleHeader title="저장된 중개사무소 목록" />
     <div class="bookmark-page">
       <!-- 검색/정렬 -->
       <div class="search-sort-row">

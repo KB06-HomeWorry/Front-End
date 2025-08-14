@@ -35,13 +35,13 @@ export default [
   {
   path: '/listing/:listingId',
   name: 'listingDetail',
-  component: () => import('@/pages/map/DetailPage.vue'),
+  component: () => import('@/pages/map/ListingDetailPage.vue'),
   meta: { hideHeader: true }
 },
 {
   path: '/pricetrend/:priceTrendId',
   name: 'PriceDetail',
-  component: () => import('@/pages/map/PriceDetail.vue'),
+  component: () => import('@/pages/map/PriceDetailPage.vue'),
   meta: { hideHeader: true }
 },
 ];

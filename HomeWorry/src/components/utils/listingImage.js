@@ -45,12 +45,17 @@ function hash32(str) {
   return h | 0;
 }
 
+function mapToIndex(seed, n) {
+  const x = ((seed >>> 0) * 0x9e3779b1) >>> 0;
+  return x % n;
+}
+
 export function getFallbackImage(housingType, seedKey = '') {
   const cat = getCatByHousingType(housingType);
   const pool = (cat && FALLBACK_POOLS[cat]) || FALLBACK_POOLS.default;
   if (!pool || pool.length === 0) return '';
   const seed = hash32(String(seedKey) + '|' + String(housingType || ''));
-  const idx = Math.abs(seed) % pool.length;
+  const idx = mapToIndex(seed, pool.length);
   return pool[idx];
 }
 

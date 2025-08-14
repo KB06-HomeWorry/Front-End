@@ -1,8 +1,12 @@
 <template>
   <div>
-    <SimpleHeader title="저장된 매물" />
-    <div class="bookmark-page">
+    <SimpleHeader title="저장된 매물 목록" />
 
+    <div class="bookmark-page">
+      <ListingFilterBar
+        v-model:modelValueTypes="selectedTypes"
+        v-model:modelValueSort="sortMode"
+      />
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
           v-for="(listing) in pagedList"
@@ -16,6 +20,7 @@
           :areaInfo="listing.areaInfo"
           :floorInfo="listing.floorInfo"
           :direction="listing.direction"
+          :img="listing._img"
           :isFavorite="true"
           :onToggleFavorite="toggleFavorite"
         />
@@ -42,25 +47,21 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import ListingFilterBar from '@/pages/agency/components/ListingFilterBar.vue'
 import ListingBookmarkCard from '@/pages/mypage/components/ListingBookmarkCard.vue'
-import SortSelect from '@/pages/agency/components/SortSelect.vue'
-import profile1 from '@/assets/icons/sample_profile1.png'
-import profile2 from '@/assets/icons/sample_profile2.png'
-import profile3 from '@/assets/icons/sample_profile3.png'
-
-const sampleImgs = [profile1, profile2, profile3]
+import { getListingImage } from '@/components/utils/listingImage'
 
 const listings = ref([])
 const userToken = localStorage.getItem('user-token')
 
 // 정렬/페이지네이션 상태
-const sortBy = ref('name')         // 'price', 'date' 등으로 확장 가능
+const sortBy = ref('name')
 const page = ref(1)
-const pageSize = 8                 // 1페이지에 8개씩
-const maxPageDisplay = 5           // 하단 페이지버튼 5개씩
+const pageSize = 8
+const maxPageDisplay = 5
 
 onMounted(() => {
   fetchListingList()
@@ -74,13 +75,87 @@ async function fetchListingList(){
         Authorization: `Bearer ${userToken}`
       }
     })
-    listings.value = res.data
+
+    listings.value = (res.data || []).map(it => ({
+      ...it,
+      _img: getListingImage(it),
+    }))
   } catch (e) {
     alert('찜한 매물 목록을 불러오지 못했습니다.')
   }
 }
 
-const sortedList = computed(() => listings.value)
+/* 필터 상태 */
+const selectedTypes = ref(['MONTHLY','JEONSE','SALE'])
+const sortMode = ref('server')
+
+const TRANSACTION_TYPE_MAP = {
+  MONTHLY: ['월세', 'monthly', 'rent', 'month'],
+  JEONSE:  ['전세', 'jeonse', 'charter'],
+  SALE:    ['매매', 'sale', 'trade']
+}
+const typeRank = { MONTHLY: 0, JEONSE: 1, SALE: 2 }
+const num = (x) => Number.isFinite(+x) ? +x : 0
+function normalizeType(item) {
+  const raw = item?.transactionType ? String(item.transactionType).toLowerCase() : ''
+  for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
+    if (keywords.some(k => raw.includes(k))) return type
+  }
+  const p = String(item?.price ?? '').toLowerCase()
+  for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
+    if (keywords.some(k => p.startsWith(k))) return type
+  }
+  return 'SALE'
+}
+
+function cmpDefault(a, b) {
+  const ta = normalizeType(a), tb = normalizeType(b)
+  const ra = typeRank[ta] ?? 99, rb = typeRank[tb] ?? 99
+  if (ra !== rb) return ra - rb
+
+  if (ta === 'MONTHLY') {
+    const da = num(a.deposit), db = num(b.deposit)
+    if (da !== db) return da - db
+    const ma = num(a.monthlyRent), mb = num(b.monthlyRent)
+    if (ma !== mb) return ma - mb
+  } else if (ta === 'JEONSE') {
+    const da = num(a.deposit), db = num(b.deposit)
+    if (da !== db) return da - db
+  } else { // SALE
+    const sa = num(a.salePrice ?? a.deposit)
+    const sb = num(b.salePrice ?? b.deposit)
+    if (sa !== sb) return sa - sb
+  }
+  return num(a.id) - num(b.id)
+}
+
+function cmpPriceAsc(a, b) {
+  const ta = normalizeType(a), tb = normalizeType(b)
+  const a1 = ta === 'SALE' ? num(a.salePrice ?? a.deposit) : num(a.deposit)
+  const b1 = tb === 'SALE' ? num(b.salePrice ?? b.deposit) : num(b.deposit)
+  if (a1 !== b1) return a1 - b1
+  const a2 = ta === 'MONTHLY' ? num(a.monthlyRent) : 0
+  const b2 = tb === 'MONTHLY' ? num(b.monthlyRent) : 0
+  if (a2 !== b2) return a2 - b2
+  return (typeRank[ta] ?? 99) - (typeRank[tb] ?? 99) || (num(a.id) - num(b.id))
+}
+const cmpPriceDesc = (a, b) => -cmpPriceAsc(a, b)
+
+/* 필터 + 정렬 적용된 목록 */
+const sortedList = computed(() => {
+  const filtered = listings.value.filter(l =>
+    selectedTypes.value.includes(normalizeType(l))
+  )
+  const arr = [...filtered]
+  if (sortMode.value === 'server') return arr
+  if (sortMode.value === 'default') return arr.sort(cmpDefault)
+  if (sortMode.value === 'priceAsc') return arr.sort(cmpPriceAsc)
+  if (sortMode.value === 'priceDesc') return arr.sort(cmpPriceDesc)
+  return arr
+})
+
+/* 필터/정렬 바뀌면 첫 페이지로 */
+watch([selectedTypes, sortMode], () => { page.value = 1 })
 
 const totalPages = computed(() =>
   Math.ceil(sortedList.value.length / pageSize)
@@ -105,17 +180,13 @@ async function toggleFavorite(id, isFavorite) {
     if (isFavorite) {
       // [북마크 해제]
       await axios.delete(`/api/listing/${id}/disFavorite`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`
-      }
-    })
+        headers: { Authorization: `Bearer ${userToken}` }
+      })
     } else {
       // [북마크 등록]
       await axios.get(`/api/listing/${id}/favorite`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`
-      }
-    })
+        headers: { Authorization: `Bearer ${userToken}` }
+      })
     }
   } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')

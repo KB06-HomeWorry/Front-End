@@ -43,7 +43,6 @@
       <!-- 연락처 -->
       <InputField
         label="연락처를 입력해주세요."
-        placeholder="숫자만 입력하세요"
       >
         <input
           class="input-box-pw bodyMedium16px"

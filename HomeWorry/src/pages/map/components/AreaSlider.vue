@@ -1,11 +1,11 @@
 <template>
   <div class="range-slider">
     <div class="slider-label bodyMedium16px">
-      <template v-if="minValue === min && maxValue === max"> 전체 </template>
+      <template v-if="minValue === min && maxValue === max">
+        전체
+      </template>
       <template v-else>
-        {{ minValue }}평 ({{ toM2(minValue) }}㎡) ~ {{ maxValue }}평 ({{
-          toM2(maxValue)
-        }}㎡)
+        {{ leftLabel }} ~ {{ rightLabel }}
       </template>
     </div>
 
@@ -17,6 +17,7 @@
         type="range"
         :min="min"
         :max="max"
+        :step="1"
         v-model.number="minValue"
         @input="fixMin"
         @mousedown="onDragStart"
@@ -28,6 +29,7 @@
         type="range"
         :min="min"
         :max="max"
+        :step="1"
         v-model.number="maxValue"
         @input="fixMax"
         @mousedown="onDragStart"
@@ -39,11 +41,12 @@
 
     <div class="slider-marks bodyLight12px">
       <span>최소</span>
-      <span>8평</span>
-      <span>12평</span>
+      <span>10평</span>
+      <span>15평</span>
       <span>최대</span>
     </div>
-    <button class="reset-btn bodyMedium14px" @click="reset">초기화</button>
+    <!-- submit 방지 -->
+    <button class="reset-btn bodyMedium14px" type="button" @click="reset">초기화</button>
   </div>
 </template>
 
@@ -62,41 +65,42 @@ const props = defineProps({
   },
 });
 
-// Emit changes to parent
-const emit = defineEmits(['change']);
+// 부모 양방향 바인딩 지원을 위해 update 이벤트 추가
+const emit = defineEmits(['change', 'update:minValue', 'update:maxValue']);
 
-const min = 5,
-  max = 20;
+const min = 5, max = 20;
 const minGap = 1; // 최소 포인터와 최대 포인터 사이의 최소 간격
 
-// Use props or defaults
 const minValue = ref(props.minValue !== null ? props.minValue : min);
 const maxValue = ref(props.maxValue !== null ? props.maxValue : max);
 
-// Track if user is currently dragging
 const isDragging = ref(false);
 let debounceTimer = null;
 
-// Watch for prop changes and update local values (only from parent)
 watch(
   () => props.minValue,
   (newVal) => {
-    if (newVal !== null) {
-      minValue.value = newVal;
-    }
+    if (newVal !== null) minValue.value = newVal;
   }
 );
-
 watch(
   () => props.maxValue,
   (newVal) => {
-    if (newVal !== null) {
-      maxValue.value = newVal;
-    }
+    if (newVal !== null) maxValue.value = newVal;
   }
 );
 
-// 선택된 범위의 스타일을 계산
+const leftLabel = computed(() => {
+  return minValue.value === min
+    ? '최소'
+    : `${minValue.value}평 (${toM2(minValue.value)}㎡)`;
+});
+const rightLabel = computed(() => {
+  return maxValue.value === max
+    ? '최대'
+    : `${maxValue.value}평 (${toM2(maxValue.value)}㎡)`;
+});
+
 const rangeStyle = computed(() => {
   const range = max - min;
   const leftPercent = ((minValue.value - min) / range) * 100;
@@ -112,69 +116,53 @@ function toM2(py) {
   return Math.round(py * 3.3);
 }
 
-// Handle drag start
 function onDragStart() {
   isDragging.value = true;
-  // Clear any pending timer when starting to drag
   if (debounceTimer) {
     clearTimeout(debounceTimer);
     debounceTimer = null;
   }
 }
 
-// Handle drag end
 function onDragEnd() {
   isDragging.value = false;
-  // Emit after user stops dragging
   emitChange();
 }
 
-// Emit changes to parent
 function emitChange() {
-  emit('change', {
-    min: minValue.value,
-    max: maxValue.value,
-  });
+  emit('update:minValue', minValue.value);
+  emit('update:maxValue', maxValue.value);
+  emit('change', { min: minValue.value, max: maxValue.value });
 }
 
-// 최소 값 포인터가 최대 값을 넘지 않도록 하였음
+// 최소 값 포인터 보정
 function fixMin() {
   if (maxValue.value - minValue.value < minGap) {
     minValue.value = maxValue.value - minGap;
   }
-  // Only emit if not currently dragging (for programmatic changes)
-  if (!isDragging.value) {
-    emitChange();
-  }
+  if (!isDragging.value) emitChange();
 }
 
-// 최대 값 포인터가 최소 값보다 내려가지 않도록 보정
+// 최대 값 포인터 보정
 function fixMax() {
   if (maxValue.value - minValue.value < minGap) {
     maxValue.value = minValue.value + minGap;
   }
-  // Only emit if not currently dragging (for programmatic changes)
-  if (!isDragging.value) {
-    emitChange();
-  }
+  if (!isDragging.value) emitChange();
 }
 
 function reset() {
   minValue.value = min;
   maxValue.value = max;
-  // Clear any pending timer and emit immediately for reset
   if (debounceTimer) {
     clearTimeout(debounceTimer);
     debounceTimer = null;
   }
-  emitChange();
+  emitChange(); // 부모/상단 라벨 즉시 갱신
 }
 
-// Clean up timer on component unmount
 onUnmounted(() => {
-  if (debounceTimer) {
-    clearTimeout(debounceTimer);
-  }
+  if (debounceTimer) clearTimeout(debounceTimer);
 });
 </script>
 

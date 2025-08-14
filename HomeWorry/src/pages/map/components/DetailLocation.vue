@@ -46,13 +46,22 @@
       <img src="@/assets/icons/alert.png" alt="신고 버튼" class="alert-img" />
     </button>
 
-    <!-- 📌 신고 모달 -->
+    <!-- 신고 모달 -->
     <Modal
       v-model="showReportModal"
-      message="신고가 접수되었습니다!"
+      message="신고가 접수되었습니다."
       confirmText="확인"
       @confirm="handleReportConfirm"
       @cancel="handleReportCancel"
+    />
+
+    <!-- 복사 알림 모달 -->
+    <Modal
+      v-model="showMsgModal"
+      :message="modalMessage"
+      confirmText="확인"
+      @confirm="showMsgModal = false"
+      @cancel="showMsgModal = false"
     />
   </div>
 </template>
@@ -83,20 +92,26 @@ const addressText = computed(() =>
 
 const mapHeight = computed(() => props.showReportButton ? '170px' : '300px');
 
-// 📌 모달 상태
+// 모달 상태
 const showReportModal = ref(false);
+
+const showMsgModal = ref(false);
+const modalMessage = ref('');
 
 async function copyLocation() {
   const text = props.address?.trim();
   if (!text) {
-    alert('주소가 없어 복사할 수 없습니다.');
+    modalMessage.value = '주소가 없어 복사할 수 없습니다.';
+    showMsgModal.value = true;
     return;
   }
   try {
     await navigator.clipboard.writeText(text);
-    alert('📌 주소가 복사되었습니다!');
+    modalMessage.value = '매물 주소가 복사되었습니다.';
+    showMsgModal.value = true;
   } catch (err) {
-    alert('❌ 복사 실패: ' + err);
+    modalMessage.value = '매물 주소 복사가 실패하였습니다. 다시 시도해주세요.' + (err?.message ? `\n(${err.message})` : '');
+    showMsgModal.value = true;
   }
 }
 

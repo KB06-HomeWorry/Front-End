@@ -2,7 +2,7 @@
   <div>
   <SimpleHeader :title="headerTitle" />
   <div style="width: 100%; height: 100vh; position: relative">
-    <!-- 필터 영역 (지도 위) -->
+    <!-- 지도 상단 필터 컴포넌트 영역 -->
     <div style="position: absolute; left: 0; right: 0; z-index: 100">
       <FilterBar
         :minPyeong="minPyeong"
@@ -80,7 +80,7 @@
       </template>
     </KakaoMap>
 
-    <!-- 플로팅 버튼 스택 (우하단에 세로로 묶어서 배치) -->
+    <!-- 플로팅 버튼 컴포넌트 -->
     <FloatingButtonStack
       v-if="!isBottomSheetOpen"
       @zoom-in="zoomIn"
@@ -129,7 +129,7 @@ const currentLocation = ref(null);
 const currentDong = ref('');
 const mapCenter = ref({ lat: lat.value, lng: lng.value });
 
-// 카테고리(라우트) → 시세/매물 타입 매핑
+// 라우트에 맞춰서 카테고리(시세/매물) 타입 매핑
 const pathToCategory = {
   '/map/apartment': 'apartment',
   '/map/onetwo': 'oneroom',
@@ -139,8 +139,8 @@ const pathToCategory = {
 
 const categoryTitleMap = {
   apartment: '아파트',
-  oneroom:  '원·투룸',   // 원한다면 '원.투룸'으로 바꿔도 됨
-  villa:    '빌라·주택', // '빌라.주택' 표기 원하면 변경
+  oneroom:  '원·투룸',
+  villa:    '빌라·주택',
   officetel:'오피스텔',
 };
 

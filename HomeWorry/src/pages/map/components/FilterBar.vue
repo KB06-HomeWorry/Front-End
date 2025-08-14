@@ -9,13 +9,11 @@
     <BottomSheet :visible="props.sheetOpen" @close="closeSheet">
       <template #title>
         <div class="sheet-title-row titleBold16px">
-          <span>
-            {{ sheetType === "transaction" ? "거래유형" : "평수" }}
-          </span>
+          <span>{{ sheetType === "transaction" ? "거래유형" : "평수" }}</span>
           <div class="action-btns">
             <button
               class="reset-btn-title bodyMedium12px"
-              @click="resetTransaction"
+              @click="sheetType === 'area' ? resetArea() : resetTransaction()"
               v-if="sheetType === 'transaction' || sheetType === 'area'"
             >
               <img :src="resetIcon" class="reset-icon" alt="초기화" />
@@ -30,7 +28,8 @@
           </div>
         </div>
       </template>
-      <!-- 거래유형: FilterOptionList 적용 (복수 선택 가능) -->
+
+      <!-- 거래유형 -->
       <template v-if="sheetType === 'transaction'">
         <FilterOptionList
           :options="transactionTypes.map((t) => t.label)"
@@ -38,17 +37,16 @@
           @update:modelValue="onTransactionTypeChange"
         />
       </template>
+
       <!-- 평수 -->
       <template v-if="sheetType === 'area'">
         <AreaSlider
+          :key="`${tempMinPyeong}-${tempMaxPyeong}`"
           :minValue="tempMinPyeong"
           :maxValue="tempMaxPyeong"
-          @change="
-            ({ min, max }) => {
-              tempMinPyeong = min;
-              tempMaxPyeong = max;
-            }
-          "
+          @update:minValue="val => (tempMinPyeong = val)"
+          @update:maxValue="val => (tempMaxPyeong = val)"
+          @change="({ min, max }) => { tempMinPyeong = min; tempMaxPyeong = max; }"
         />
       </template>
     </BottomSheet>
@@ -77,20 +75,24 @@ const props = defineProps({
   selectedTransactionType: Array, // 여러개 선택 가능
   sheetOpen: Boolean,
 });
+
 const emit = defineEmits([
   "update:transactionType",
   "update:minPyeong",
   "update:maxPyeong",
   "update:sheetOpen",
-  'search'
+  "search",
 ]);
+
+const AREA_MIN = 5;
+const AREA_MAX = 20;
 
 // 내부 임시 상태 (확인 전까지는 부모에 영향 안줌)
 const tempTransactionTypes = ref(
   props.selectedTransactionType ? [...props.selectedTransactionType] : []
 );
-const tempMinPyeong = ref(props.minPyeong ?? null);
-const tempMaxPyeong = ref(props.maxPyeong ?? null);
+const tempMinPyeong = ref(props.minPyeong ?? AREA_MIN);
+const tempMaxPyeong = ref(props.maxPyeong ?? AREA_MAX);
 
 // 거래유형 라벨 목록 (ex: ['전세', '월세'])
 const tempTransactionTypeLabels = computed(() =>
@@ -99,7 +101,7 @@ const tempTransactionTypeLabels = computed(() =>
     .filter(Boolean)
 );
 
-// props 값이 변경될 때 임시값도 동기화
+// props 변경 시 임시값 동기화
 watch(
   () => props.selectedTransactionType,
   (val) => {
@@ -109,60 +111,73 @@ watch(
 watch(
   () => props.minPyeong,
   (val) => {
-    tempMinPyeong.value = val;
+    tempMinPyeong.value = val ?? AREA_MIN;
   }
 );
 watch(
   () => props.maxPyeong,
   (val) => {
-    tempMaxPyeong.value = val;
+    tempMaxPyeong.value = val ?? AREA_MAX;
   }
 );
 
 const sheetType = ref("transaction");
 
-// 거래유형 FilterOptionList에서 옵션 변경시
+// 거래유형 변경 수신
 function onTransactionTypeChange(val) {
-  // val: ['전세', '월세', ...]
+  // val: ['전세','월세',...]
   tempTransactionTypes.value = val;
 }
 
-// "확인" 눌렀을 때 상위로 emit
+// 거래유형 적용/초기화
 function applyTransaction() {
   emit("update:transactionType", [...tempTransactionTypes.value]);
-  emit("update:sheetOpen", false); // 시트 닫기
+  emit("update:sheetOpen", false);
 }
 function resetTransaction() {
   tempTransactionTypes.value = [];
-  emit("update:transactionType", []);
+  emit("update:transactionType", []); // 즉시 반영
 }
 
-// 평수 처리
+// 평수 적용/초기화
 function applyArea() {
   emit("update:minPyeong", tempMinPyeong.value);
   emit("update:maxPyeong", tempMaxPyeong.value);
-  emit("update:sheetOpen", false); // 시트 닫기
+  emit("update:sheetOpen", false);
+}
+function resetArea() {
+  // 슬라이더는 전체 범위로 복귀
+  tempMinPyeong.value = AREA_MIN;
+  tempMaxPyeong.value = AREA_MAX;
+  // 부모 필터는 해제(null)
+  emit("update:minPyeong", null);
+  emit("update:maxPyeong", null);
 }
 
-// FilterButton에 보여줄 거래유형 라벨
+// 거래유형 버튼 라벨
 const selectedLabel = computed(() => {
-  if (
-    !props.selectedTransactionType ||
-    props.selectedTransactionType.length === 0
-  )
+  if (!props.selectedTransactionType || props.selectedTransactionType.length === 0)
     return "거래유형";
   return props.selectedTransactionType
     .map((v) => transactionTypes.find((t) => t.value === v)?.label)
     .filter(Boolean)
     .join(", ");
 });
-const areaLabel = computed(() =>
-  props.minPyeong || props.maxPyeong
-    ? `${props.minPyeong ?? ""}${props.minPyeong ? "평" : ""}` +
-      (props.minPyeong || props.maxPyeong ? " ~ " : "") +
-      `${props.maxPyeong ?? ""}${props.maxPyeong ? "평" : ""}`
-    : "평수"
-);
+
+const areaLabel = computed(() => {
+  const min = props.minPyeong ?? AREA_MIN;
+  const max = props.maxPyeong ?? AREA_MAX;
+
+  const isMinDefault = props.minPyeong == null || props.minPyeong === AREA_MIN;
+  const isMaxDefault = props.maxPyeong == null || props.maxPyeong === AREA_MAX;
+
+  if (isMinDefault && isMaxDefault) return "전체";
+
+  const left = isMinDefault ? "최소" : `${min}평`;
+  const right = isMaxDefault ? "최대" : `${max}평`;
+
+  return `${left} ~ ${right}`;
+});
 
 function openSheet(type) {
   sheetType.value = type;
@@ -173,7 +188,7 @@ function closeSheet() {
 }
 
 function onSearch(keyword) {
-  emit('search', keyword)
+  emit("search", keyword);
 }
 </script>
 
@@ -199,7 +214,6 @@ function onSearch(keyword) {
 .apply-btn {
   min-width: 50px;
   height: 25px;
-  /* padding: 5px 14px; */
   border-radius: 12px;
   border: none;
   cursor: pointer;
