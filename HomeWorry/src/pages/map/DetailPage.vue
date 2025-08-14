@@ -64,7 +64,7 @@
         <DetailLocation
           :lat="Number(lat)"
           :lng="Number(lng)"
-          :address="agency?.address || ''"
+          :address="listingAddress"
         />
       </section>
 
@@ -104,6 +104,7 @@ const housingType = ref('');
 const floorInfo = ref('');
 const areaInfo = ref('');
 const direction = ref('');
+const listingAddress=ref('');
 
 const isFavorite = ref(false)
 const heartAnim = ref(false)
@@ -118,7 +119,7 @@ function onImgError() {
   roomImg.value = getListingImage(housingType.value, String(listingId))
 }
 
-// --- 즐겨찾기 상태 ---
+// 즐겨찾기 상태
 async function fetchFavoriteStatus() {
   try {
     const res = await axios.get(`/api/listing/${listingId}/isFavorite`, {
@@ -156,7 +157,7 @@ async function toggleBookmark() {
   }
 }
 
-// --- 상세 데이터 로딩 ---
+// 상세 데이터 로딩
 onMounted(async () => {
   if (!listingId) {
     console.error('❌ id 없음')
@@ -179,6 +180,7 @@ onMounted(async () => {
     floorInfo.value = data.floorInfo
     areaInfo.value = data.areaInfo ? data.areaInfo.replace(/m$/, 'm²') : ''
     direction.value = data.direction
+    listingAddress.value = data.address || ''
 
     // 서버 이미지 우선, 없으면 유틸이 타입/시드로 폴백
     const primaryImage =
