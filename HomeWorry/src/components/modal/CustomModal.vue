@@ -18,8 +18,10 @@
         <p
           id="modalDesc"
           class="modal-message bodyMedium14px"
+          ref="messageRef"
           v-html="message"
         ></p>
+
         <div class="modal-buttons">
           <button
             v-if="cancelText"
@@ -40,57 +42,130 @@
       </div>
     </div>
   </Teleport>
+
+  <!-- 큰 이미지 보기 -->
+  <ZoomModal v-model:open="zoomOpen" :src="zoomSrc" :alt="zoomAlt" />
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, ref, watch } from 'vue';
+import ZoomModal from '@/components/modal/ZoomModal.vue';
 
-// Props: 모델 값, 메시지, 버튼 텍스트
 const props = defineProps({
   modelValue: Boolean,
-  message: {
-    type: String,
-    required: true,
-  },
-  confirmText: {
-    type: String,
-    default: "확인",
-  },
-  cancelText: {
-    type: String,
-    default: "",
-  },
+  message: { type: String, required: true },
+  confirmText: { type: String, default: '확인' },
+  cancelText: { type: String, default: '' },
 });
+const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);
 
-// 이벤트: 모델 값 업데이트, confirm, cancel
-const emit = defineEmits(["update:modelValue", "confirm", "cancel"]);
+const messageRef = ref(null);
 
-// 모달 확인 처리
+// 큰 보기 상태
+const zoomOpen = ref(false);
+const zoomSrc = ref('');
+const zoomAlt = ref('');
+
+// 확인/취소
 const handleConfirm = () => {
-  emit("update:modelValue", false);
-  emit("confirm");
+  emit('update:modelValue', false);
+  emit('confirm');
 };
-
-// 모달 닫기(취소) 처리
 const handleCancel = () => {
-  emit("update:modelValue", false);
-  emit("cancel");
+  emit('update:modelValue', false);
+  emit('cancel');
 };
 
-// ESC 키 눌렀을 때 모달 닫기
+// ESC 닫기
 const handleEscapeKey = (e) => {
-  if (e.key === "Escape") handleCancel();
+  if (e.key === 'Escape') handleCancel();
 };
+onMounted(() => window.addEventListener('keydown', handleEscapeKey));
+onBeforeUnmount(() => window.removeEventListener('keydown', handleEscapeKey));
 
-// 컴포넌트 마운트 시 ESC 키 이벤트 등록
-onMounted(() => {
-  window.addEventListener("keydown", handleEscapeKey);
-});
+// 이미지 인터랙션 (이미지 있을 때만)
+let bound = false;
 
-// 언마운트 시 이벤트 해제
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleEscapeKey);
-});
+function bindImageInteractions() {
+  const el = messageRef.value;
+  if (!el) return;
+
+  const imgs = el.querySelectorAll('img');
+  if (!imgs.length) return;
+
+  imgs.forEach((img) => {
+    img.classList.add('zoomable-img');
+    img.setAttribute('decoding', 'async');
+    img.setAttribute('loading', 'lazy');
+  });
+
+  if (bound) return;
+  el.addEventListener('mouseover', onMouseOver);
+  el.addEventListener('mouseout', onMouseOut);
+  el.addEventListener('click', onClick);
+  bound = true;
+}
+
+function unbindImageInteractions() {
+  const el = messageRef.value;
+  if (!el || !bound) return;
+  el.removeEventListener('mouseover', onMouseOver);
+  el.removeEventListener('mouseout', onMouseOut);
+  el.removeEventListener('click', onClick);
+  bound = false;
+}
+
+function isImgTarget(e) {
+  const t = e.target;
+  return t instanceof HTMLImageElement && messageRef.value?.contains(t);
+}
+
+function onMouseOver(e) {
+  if (!isImgTarget(e)) return;
+  const img = e.target;
+  // 혹시 이전 설정이 남았을 경우 초기화
+  img.style.transformOrigin = 'center center';
+  img.classList.add('zoomable-img--hover');
+}
+
+function onMouseOut(e) {
+  if (!isImgTarget(e)) return;
+  const img = e.target;
+  img.classList.remove('zoomable-img--hover');
+  img.style.transformOrigin = 'center center';
+}
+
+function onClick(e) {
+  if (!isImgTarget(e)) return;
+  const img = e.target;
+  zoomSrc.value = img.getAttribute('src') || '';
+  zoomAlt.value = img.getAttribute('alt') || '';
+  if (zoomSrc.value) zoomOpen.value = true;
+}
+
+// 모달 열릴 때 바인딩/닫히면 해제
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open) {
+      requestAnimationFrame(bindImageInteractions);
+    } else {
+      unbindImageInteractions();
+    }
+  }
+);
+
+// 메시지 변경 시 재바인딩
+watch(
+  () => props.message,
+  () => {
+    if (!props.modelValue) return;
+    requestAnimationFrame(() => {
+      unbindImageInteractions();
+      bindImageInteractions();
+    });
+  }
+);
 </script>
 
 <style scoped>
@@ -167,5 +242,22 @@ onBeforeUnmount(() => {
 
 .close-btn:hover {
   color: var(--color-primary);
+}
+
+/* 이미지 확대 기본 스타일 */
+.modal-message :deep(img.zoomable-img) {
+  max-height: 120px;
+  height: auto;
+  cursor: zoom-in;
+  border-radius: 8px;
+  margin-top: 8px;
+  transition: transform 0.15s ease;
+  display: inline-block;
+  transform-origin: center center !important; /* 중앙 고정 */
+}
+
+/* 호버 시: 중앙에서만 고정 확대 */
+.modal-message :deep(img.zoomable-img.zoomable-img--hover) {
+  transform: scale(1.35);
 }
 </style>
