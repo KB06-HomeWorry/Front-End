@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SimpleHeader title="저장된 매물" />
+    <SimpleHeader title="저장된 매물 목록" />
     <div class="bookmark-page">
 
       <div v-if="pagedList.length > 0" class="listing-list-grid">
