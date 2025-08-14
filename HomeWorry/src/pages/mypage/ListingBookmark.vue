@@ -1,8 +1,12 @@
 <template>
   <div>
     <SimpleHeader title="저장된 매물 목록" />
-    <div class="bookmark-page">
 
+    <div class="bookmark-page">
+      <ListingFilterBar
+        v-model:modelValueTypes="selectedTypes"
+        v-model:modelValueSort="sortMode"
+      />
       <div v-if="pagedList.length > 0" class="listing-list-grid">
         <ListingBookmarkCard
           v-for="(listing) in pagedList"
@@ -42,9 +46,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import axios from 'axios'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
+import ListingFilterBar from '@/pages/agency/components/ListingFilterBar.vue'
 import ListingBookmarkCard from '@/pages/mypage/components/ListingBookmarkCard.vue'
 import SortSelect from '@/pages/agency/components/SortSelect.vue'
 import profile1 from '@/assets/icons/sample_profile1.png'
@@ -80,7 +85,80 @@ async function fetchListingList(){
   }
 }
 
-const sortedList = computed(() => listings.value)
+/* 필터 상태 */
+const selectedTypes = ref(['MONTHLY','JEONSE','SALE'])
+const sortMode = ref('server') // 'server' | 'default' | 'priceAsc' | 'priceDesc'
+
+const TRANSACTION_TYPE_MAP = {
+  MONTHLY: ['월세', 'monthly', 'rent', 'month'],
+  JEONSE:  ['전세', 'jeonse', 'charter'],
+  SALE:    ['매매', 'sale', 'trade']
+}
+const typeRank = { MONTHLY: 0, JEONSE: 1, SALE: 2 }
+const num = (x) => Number.isFinite(+x) ? +x : 0
+function normalizeType(item) {
+  const raw = item?.transactionType ? String(item.transactionType).toLowerCase() : ''
+  for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
+    if (keywords.some(k => raw.includes(k))) return type
+  }
+  // 필요시 price 문자열로 보조 추론
+  const p = String(item?.price ?? '').toLowerCase()
+  for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
+    if (keywords.some(k => p.startsWith(k))) return type
+  }
+  return 'SALE'
+}
+
+/** 기본 정렬: 타입 우선(MONTHLY→JEONSE→SALE), 타입 내 가격 순 */
+function cmpDefault(a, b) {
+  const ta = normalizeType(a), tb = normalizeType(b)
+  const ra = typeRank[ta] ?? 99, rb = typeRank[tb] ?? 99
+  if (ra !== rb) return ra - rb
+
+  if (ta === 'MONTHLY') {
+    const da = num(a.deposit), db = num(b.deposit)
+    if (da !== db) return da - db
+    const ma = num(a.monthlyRent), mb = num(b.monthlyRent)
+    if (ma !== mb) return ma - mb
+  } else if (ta === 'JEONSE') {
+    const da = num(a.deposit), db = num(b.deposit)
+    if (da !== db) return da - db
+  } else { // SALE
+    const sa = num(a.salePrice ?? a.deposit)
+    const sb = num(b.salePrice ?? b.deposit)
+    if (sa !== sb) return sa - sb
+  }
+  return num(a.id) - num(b.id) // 안정화
+}
+
+/** 가격 오름차순/내림차순 */
+function cmpPriceAsc(a, b) {
+  const ta = normalizeType(a), tb = normalizeType(b)
+  const a1 = ta === 'SALE' ? num(a.salePrice ?? a.deposit) : num(a.deposit)
+  const b1 = tb === 'SALE' ? num(b.salePrice ?? b.deposit) : num(b.deposit)
+  if (a1 !== b1) return a1 - b1
+  const a2 = ta === 'MONTHLY' ? num(a.monthlyRent) : 0
+  const b2 = tb === 'MONTHLY' ? num(b.monthlyRent) : 0
+  if (a2 !== b2) return a2 - b2
+  return (typeRank[ta] ?? 99) - (typeRank[tb] ?? 99) || (num(a.id) - num(b.id))
+}
+const cmpPriceDesc = (a, b) => -cmpPriceAsc(a, b)
+
+/** 필터 + 정렬 적용된 목록 */
+const sortedList = computed(() => {
+  const filtered = listings.value.filter(l =>
+    selectedTypes.value.includes(normalizeType(l))
+  )
+  const arr = [...filtered]
+  if (sortMode.value === 'server') return arr
+  if (sortMode.value === 'default') return arr.sort(cmpDefault)
+  if (sortMode.value === 'priceAsc') return arr.sort(cmpPriceAsc)
+  if (sortMode.value === 'priceDesc') return arr.sort(cmpPriceDesc)
+  return arr
+})
+
+/** 필터/정렬 바뀌면 첫 페이지로 */
+watch([selectedTypes, sortMode], () => { page.value = 1 })
 
 const totalPages = computed(() =>
   Math.ceil(sortedList.value.length / pageSize)
