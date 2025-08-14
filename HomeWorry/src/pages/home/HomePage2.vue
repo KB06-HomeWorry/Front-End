@@ -53,8 +53,14 @@
       />
     </div>
 
-    <!-- 카드뉴스 부분 추후 컴포넌트로 구현 예정 (width 100% - height 200px) -->
-    <div class="card-news-placeholder"></div>
+    <div class="card-news-container">
+      <RecommendBanner
+        :user-name="userName"
+        :base-url="bannerBaseUrl"
+        :interval-ms="3000"
+        style="--header-gap:6px; --list-bottom-gap:20px;"
+      />
+    </div>
 
     <div class="home-btn-row" style="margin-bottom: 10px">
       <HomeBtnMed
@@ -101,6 +107,8 @@ import HomeBtnSmall from '@/pages/home/components/HomeBtnSmall.vue';
 import { useChecklistStore } from '@/stores/checklist';
 import { useAuthStore } from '@/stores/auth';
 
+import RecommendBanner from '@/pages/home/components/RecommendBanner.vue';
+
 import homeApartment from '@/assets/icons/home_apartment.png';
 import homeOneroom from '@/assets/icons/home_oneroom.png';
 import homeVilla from '@/assets/icons/home_villa.png';
@@ -119,7 +127,6 @@ import homeCalculator from '@/assets/icons/home_calculator.png';
 const router = useRouter();
 const go = (path) => router.push(path);
 
-// 프로필 로딩
 const token = localStorage.getItem('user-token');
 const profile = ref({ name: '', email: '', phone: '' });
 
@@ -131,13 +138,11 @@ async function loadProfileIfNeeded() {
       headers: {
         Authorization: `Bearer ${token}`
       }
-    }
-    );
+    });
     profile.value = {
       name: data?.name ?? '',
     };
   } catch (e) {
-    // 프로필 실패해도 홈 작동엔 영향 없도록 무시
     console.warn('프로필 로드 실패:', e);
   }
 }
@@ -160,24 +165,23 @@ function showToast(message, duration = 2500) {
 const authStore = useAuthStore();
 const isLoggedIn = computed(() => !!authStore.user || !!token);
 
-const userName = computed(() => {
-  return profile.value.name || '회원';
-});
+const userName = computed(() => profile.value.name || '회원');
 
-// “로그인해서 들어옴” → sessionStorage 플래그로만 판단(간소화 정책)
+// 카드배너 테스트용 jsonserver(leeday)
+const bannerBaseUrl = import.meta.env.VITE_JSON_SERVER_URL || 'http://localhost:3001';
+
 function cameFromLogin() {
   return sessionStorage.getItem('auth.justLoggedIn') === '1';
 }
-
 function clearLoginMarkers() {
-  sessionStorage.removeItem('auth.justLoggedIn'); // 1회성 표식 제거
-  sessionStorage.setItem('welcome.toast.shown', '1'); // 같은 세션 재노출 방지
+  sessionStorage.removeItem('auth.justLoggedIn');
+  sessionStorage.setItem('welcome.toast.shown', '1');
 }
 
-// 홈 최초 진입 시: 프로필 먼저 로딩 → 로그인 플래그 검사 → 토스트
+// 홈 최초 진입
 onMounted(async () => {
   if (!isLoggedIn.value) return;
-  await loadProfileIfNeeded(); // 이름이 비지 않도록 먼저 로드
+  await loadProfileIfNeeded();
 
   const alreadyShown = sessionStorage.getItem('welcome.toast.shown') === '1';
   if (cameFromLogin() && !alreadyShown) {
@@ -225,11 +229,10 @@ const handleCategoryClick = (category) => {
   margin: 10px 0;
 }
 
-.card-news-placeholder {
+.card-news-container {
   width: 393px;
-  height: 200px;
-  margin: 14px -16px;
-  background: var(--color-primary-10);
+  height: 200px; 
+  margin: 14px -16px; /* 좌우 -16px로 홈 패딩을 상쇄하여 꽉 차게 하였음 */
 }
 
 .toast-root {
