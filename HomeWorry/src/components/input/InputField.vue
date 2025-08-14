@@ -3,7 +3,7 @@
     <label class="input-label bodyMedium20px">{{ label }}</label>
     <slot>
       <input
-        class="input-box bodyLight16px"
+        class="input-box bodyMedium16px"
         :type="type"
         :placeholder="placeholder"
         :value="modelValue"
