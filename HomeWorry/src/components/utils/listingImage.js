@@ -46,7 +46,6 @@ function hash32(str) {
 }
 
 function mapToIndex(seed, n) {
-  // 0x9e3779b1 = 2654435761 (32-bit 골든 레이쇼 상수)
   const x = ((seed >>> 0) * 0x9e3779b1) >>> 0;
   return x % n;
 }
@@ -55,11 +54,8 @@ export function getFallbackImage(housingType, seedKey = '') {
   const cat = getCatByHousingType(housingType);
   const pool = (cat && FALLBACK_POOLS[cat]) || FALLBACK_POOLS.default;
   if (!pool || pool.length === 0) return '';
-
-  // seed 구성은 그대로(매물 id/주소 등 + 타입)
-  // 단, 인덱스 산출만 곱셈 해시로 변경
   const seed = hash32(String(seedKey) + '|' + String(housingType || ''));
-  const idx = mapToIndex(seed, pool.length); // ← 여기만 달라짐
+  const idx = mapToIndex(seed, pool.length);
   return pool[idx];
 }
 
