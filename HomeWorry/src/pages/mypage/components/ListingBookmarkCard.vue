@@ -15,9 +15,15 @@
           <span v-if="direction"> · {{ direction }}</span>
         </div>
       </div>
+
       <!-- 이미지/북마크 버튼 영역 -->
       <div class="image-wrapper">
-        <img :src="roomImg" alt="매물 이미지" class="listing-image"/>
+        <img
+          :src="displayImg"
+          @error="onImgError"
+          alt="매물 이미지"
+          class="listing-image"
+        />
         <button
           class="bookmark-btn"
           @click.stop="onToggleFavorite"
@@ -35,18 +41,18 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router';
-import roomImg from '@/assets/icons/home_villa.png';
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import bookmarkOn from '@/assets/icons/heart_filled.png'
 import bookmarkOff from '@/assets/icons/heart_outline.png'
+import { getListingImage } from '@/components/utils/listingImage'
 
-const router = useRouter();
+const router = useRouter()
 
 const isBookmark = ref(null)
 
 const props = defineProps({
-  id: [String, Number],   
+  id: [String, Number],
   transactionType: String,
   deposit: String,
   monthlyRent: String,
@@ -57,7 +63,8 @@ const props = defineProps({
   direction: String,
   isFavorite: Boolean,
   onToggleFavorite: { type: Function, required: true },
-});
+  img: { type: String, default: '' },
+})
 
 function onToggleFavorite() {
   props.onToggleFavorite(props.id, isBookmark.value)
@@ -68,8 +75,14 @@ onMounted(() => {
   isBookmark.value = props.isFavorite
 })
 
+const displayImg = ref(props.img || getListingImage(props.housingType, String(props.id)))
+
+function onImgError() {
+  displayImg.value = getListingImage(props.housingType, String(props.id))
+}
+
 function goDetail() {
-  router.push(`/listing/${props.id}`);
+  router.push(`/listing/${props.id}`)
 }
 </script>
 
@@ -96,14 +109,12 @@ function goDetail() {
   flex: 1 1 0%;
   min-width: 0;
 }
-.deal-type {
-  margin-right: 6px;
+.deal-type { 
+  margin-right: 6px; 
 }
-.deal-info {
-  color: var(--color-primary);
-}
-.deal-detail {
-  color: var(--color-primary);
+.deal-info, 
+.deal-detail { 
+  color: var(--color-primary); 
 }
 .address {
   color: var(--color-darkgray);
@@ -120,15 +131,12 @@ function goDetail() {
   max-width: 220px;
   letter-spacing: -0.05em;
 }
-
-/* 이미지 + 북마크 버튼 감싸는 부분 */
 .image-wrapper {
   position: relative;
   width: 90px;
   height: 90px;
   flex-shrink: 0;
 }
-
 .listing-image {
   width: 100%;
   height: 100%;
@@ -137,8 +145,6 @@ function goDetail() {
   background: var(--color-lightgray);
   display: block;
 }
-
-/* 우상단 북마크 버튼 */
 .bookmark-btn {
   position: absolute;
   right: 2px;
