@@ -20,6 +20,7 @@
           :areaInfo="listing.areaInfo"
           :floorInfo="listing.floorInfo"
           :direction="listing.direction"
+          :img="listing._img"
           :isFavorite="true"
           :onToggleFavorite="toggleFavorite"
         />
@@ -51,21 +52,16 @@ import axios from 'axios'
 import SimpleHeader from '@/components/layout/SimpleHeader.vue'
 import ListingFilterBar from '@/pages/agency/components/ListingFilterBar.vue'
 import ListingBookmarkCard from '@/pages/mypage/components/ListingBookmarkCard.vue'
-import SortSelect from '@/pages/agency/components/SortSelect.vue'
-import profile1 from '@/assets/icons/sample_profile1.png'
-import profile2 from '@/assets/icons/sample_profile2.png'
-import profile3 from '@/assets/icons/sample_profile3.png'
-
-const sampleImgs = [profile1, profile2, profile3]
+import { getListingImage } from '@/components/utils/listingImage'
 
 const listings = ref([])
 const userToken = localStorage.getItem('user-token')
 
 // 정렬/페이지네이션 상태
-const sortBy = ref('name')         // 'price', 'date' 등으로 확장 가능
+const sortBy = ref('name')
 const page = ref(1)
-const pageSize = 8                 // 1페이지에 8개씩
-const maxPageDisplay = 5           // 하단 페이지버튼 5개씩
+const pageSize = 8
+const maxPageDisplay = 5
 
 onMounted(() => {
   fetchListingList()
@@ -79,7 +75,11 @@ async function fetchListingList(){
         Authorization: `Bearer ${userToken}`
       }
     })
-    listings.value = res.data
+
+    listings.value = (res.data || []).map(it => ({
+      ...it,
+      _img: getListingImage(it),
+    }))
   } catch (e) {
     alert('찜한 매물 목록을 불러오지 못했습니다.')
   }
@@ -87,7 +87,7 @@ async function fetchListingList(){
 
 /* 필터 상태 */
 const selectedTypes = ref(['MONTHLY','JEONSE','SALE'])
-const sortMode = ref('server') // 'server' | 'default' | 'priceAsc' | 'priceDesc'
+const sortMode = ref('server')
 
 const TRANSACTION_TYPE_MAP = {
   MONTHLY: ['월세', 'monthly', 'rent', 'month'],
@@ -101,7 +101,6 @@ function normalizeType(item) {
   for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
     if (keywords.some(k => raw.includes(k))) return type
   }
-  // 필요시 price 문자열로 보조 추론
   const p = String(item?.price ?? '').toLowerCase()
   for (const [type, keywords] of Object.entries(TRANSACTION_TYPE_MAP)) {
     if (keywords.some(k => p.startsWith(k))) return type
@@ -109,7 +108,6 @@ function normalizeType(item) {
   return 'SALE'
 }
 
-/** 기본 정렬: 타입 우선(MONTHLY→JEONSE→SALE), 타입 내 가격 순 */
 function cmpDefault(a, b) {
   const ta = normalizeType(a), tb = normalizeType(b)
   const ra = typeRank[ta] ?? 99, rb = typeRank[tb] ?? 99
@@ -128,10 +126,9 @@ function cmpDefault(a, b) {
     const sb = num(b.salePrice ?? b.deposit)
     if (sa !== sb) return sa - sb
   }
-  return num(a.id) - num(b.id) // 안정화
+  return num(a.id) - num(b.id)
 }
 
-/** 가격 오름차순/내림차순 */
 function cmpPriceAsc(a, b) {
   const ta = normalizeType(a), tb = normalizeType(b)
   const a1 = ta === 'SALE' ? num(a.salePrice ?? a.deposit) : num(a.deposit)
@@ -144,7 +141,7 @@ function cmpPriceAsc(a, b) {
 }
 const cmpPriceDesc = (a, b) => -cmpPriceAsc(a, b)
 
-/** 필터 + 정렬 적용된 목록 */
+/* 필터 + 정렬 적용된 목록 */
 const sortedList = computed(() => {
   const filtered = listings.value.filter(l =>
     selectedTypes.value.includes(normalizeType(l))
@@ -157,7 +154,7 @@ const sortedList = computed(() => {
   return arr
 })
 
-/** 필터/정렬 바뀌면 첫 페이지로 */
+/* 필터/정렬 바뀌면 첫 페이지로 */
 watch([selectedTypes, sortMode], () => { page.value = 1 })
 
 const totalPages = computed(() =>
@@ -183,17 +180,13 @@ async function toggleFavorite(id, isFavorite) {
     if (isFavorite) {
       // [북마크 해제]
       await axios.delete(`/api/listing/${id}/disFavorite`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`
-      }
-    })
+        headers: { Authorization: `Bearer ${userToken}` }
+      })
     } else {
       // [북마크 등록]
       await axios.get(`/api/listing/${id}/favorite`, {
-      headers: {
-        Authorization: `Bearer ${userToken}`
-      }
-    })
+        headers: { Authorization: `Bearer ${userToken}` }
+      })
     }
   } catch (e) {
     alert('북마크 처리 중 오류가 발생했습니다.')
