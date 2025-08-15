@@ -23,12 +23,17 @@
 
         <div
           v-for="(page, idx) in listPages"
-          :key="idx"
+          :key="'page-'+idx"
           class="page list-page"
           :style="{ width: slideWidth + 'px' }"
         >
           <div class="card-list">
-            <RecommendCard v-for="item in page" :key="item.id" :item="item" />
+            <RecommendCard
+              v-for="(item, i) in page"
+              :key="`${item.id ?? 'noid'}-${i}`"
+              :item="item"
+              :hydrate="true"
+            />
           </div>
         </div>
       </div>
@@ -50,24 +55,25 @@
 <script>
 import axios from 'axios'
 import RecommendCard from '@/pages/home/components/RecommendCard.vue'
-import adImage from '@/assets/icons/home_ad.png' 
+import adImage from '@/assets/icons/home_ad.png'
 
 export default {
   name: 'RecommendBanner',
   components: { RecommendCard },
   props: {
     userName: { type: String, default: '이름' },
-    baseUrl: { type: String, default: 'http://localhost:3001' }, // 테스트용 json-server
     intervalMs: { type: Number, default: 3000 },
     adSrc: { type: String, default: adImage }
   },
   data() {
     return {
       allListings: [],
-      currentPage: 0,      // 0=광고, 1&2 = 리스트 페이지
+      currentPage: 0,
       timer: null,
       animating: true,
-      slideWidth: 393
+      slideWidth: 393,
+      loading: false,
+      error: null
     }
   },
   computed: {
@@ -86,11 +92,57 @@ export default {
     }
   },
   methods: {
-    async fetchListings() {
-      const res = await axios.get(`${this.baseUrl}/listings`)
-      this.allListings = Array.isArray(res.data) ? res.data : []
-      if (this.totalPages <= 1) this.stop()
+    async fetchRecommendations() {
+      this.loading = true
+      this.error = null
+
+      try {
+        const userToken = localStorage.getItem('user-token')
+        if (!userToken) {
+          this.error = '로그인 후 이용해주세요.'
+          this.allListings = []
+          this.stop()
+          return
+        }
+
+        // 북마크 목록
+        const favRes = await axios.get(`http://localhost:8080/api/listing/favorite/${userToken}`)
+        const likedIdsRaw = Array.isArray(favRes.data)
+          ? favRes.data.map(it => it?.listingId ?? it?.id).filter(Boolean)
+          : []
+        const likedIds = [...new Set(likedIdsRaw)] 
+
+        if (!likedIds.length) {
+          this.error = '찜한 매물이 없습니다.'
+          this.allListings = []
+          this.stop()
+          return
+        }
+
+        // 추천 API 호출
+        const recRes = await axios.post(`http://localhost:8000/recommend`, { likedListings: likedIds })
+
+        let rec = []
+        if (Array.isArray(recRes.data?.recommendations)) {
+          rec = recRes.data.recommendations
+        } else if (Array.isArray(recRes.data?.ids)) {
+          rec = recRes.data.ids.map(id => ({ id }))
+        } else if (Array.isArray(recRes.data)) {
+          rec = recRes.data
+        }
+
+        this.allListings = rec
+        if (this.totalPages <= 1) this.stop()
+      } catch (e) {
+        console.error('배너 추천 로드 실패:', e)
+        this.error = '추천 매물 불러오기 실패'
+        this.allListings = []
+        this.stop()
+      } finally {
+        this.loading = false
+      }
     },
+
     measure() {
       const el = this.$refs.sliderRef
       if (el) this.slideWidth = Math.min(el.clientWidth || 393, 393)
@@ -125,12 +177,8 @@ export default {
   async mounted() {
     this.measure()
     window.addEventListener('resize', this.onResize)
-    try {
-      await this.fetchListings()
-      this.play()
-    } catch (e) {
-      console.error('배너 데이터 로드 실패:', e)
-    }
+    await this.fetchRecommendations()
+    this.play()
   },
   beforeUnmount() {
     this.stop()
@@ -195,9 +243,9 @@ export default {
 }
 
 .list-page {
-  align-items: flex-start; 
-  padding-top: calc(var(--header-h) + var(--header-gap));   
-  padding-bottom: var(--list-bottom-gap);   
+  align-items: flex-start;
+  padding-top: calc(var(--header-h) + var(--header-gap));
+  padding-bottom: var(--list-bottom-gap);
 }
 
 .ad-wrap { width: 100%; height: 100%; }
@@ -206,7 +254,7 @@ export default {
 .card-list {
   --card-w: 110px;
   --gap: 16px;
-  width: calc(var(--card-w) * 3 + var(--gap) * 2); /* 362px */
+  width: calc(var(--card-w) * 3 + var(--gap) * 2);
   display: flex;
   gap: var(--gap);
   justify-content: center;
