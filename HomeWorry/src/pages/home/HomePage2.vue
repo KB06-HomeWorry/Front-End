@@ -56,7 +56,6 @@
     <div class="card-news-container">
       <RecommendBanner
         :user-name="userName"
-        :base-url="bannerBaseUrl"
         :interval-ms="3000"
         style="--header-gap:6px; --list-bottom-gap:20px;"
       />
@@ -79,7 +78,7 @@
       <HomeBtnSmall
         text="부동산<br/>용어 해석"
         :icon="homeChatbot"
-        @click="() => go('ai/estate-ease')"
+        @click="() => go('/ai/estate-ease')"
       />
       <HomeBtnSmall
         text="부동산<br/>지식 퀴즈"
@@ -166,9 +165,6 @@ const authStore = useAuthStore();
 const isLoggedIn = computed(() => !!authStore.user || !!token);
 
 const userName = computed(() => profile.value.name || '회원');
-
-// 카드배너 테스트용 jsonserver(leeday)
-const bannerBaseUrl = import.meta.env.VITE_JSON_SERVER_URL || 'http://localhost:3001';
 
 function cameFromLogin() {
   return sessionStorage.getItem('auth.justLoggedIn') === '1';
