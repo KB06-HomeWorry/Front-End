@@ -17,7 +17,7 @@
       >
         <div class="page" :style="{ width: slideWidth + 'px' }">
           <div class="ad-wrap">
-            <img :src="adSrc" alt="광고" class="ad-img" />
+            <img :src="adSrcSafe" alt="광고" class="ad-img" @error="onAdError" />
           </div>
         </div>
 
@@ -57,6 +57,9 @@ import axios from 'axios'
 import RecommendCard from '@/pages/home/components/RecommendCard.vue'
 import adImage from '@/assets/icons/home_ad.png'
 
+// listingImage의 URL 정규화 사용(
+import { normalizeImgUrl } from '@/utils/listingImage'
+
 export default {
   name: 'RecommendBanner',
   components: { RecommendCard },
@@ -89,6 +92,9 @@ export default {
     },
     isListingHeader() {
       return this.currentPage >= 1 // 2·3페이지에서만 헤더 보이기
+    },
+    adSrcSafe() {
+      return normalizeImgUrl(this.adSrc || adImage)
     }
   },
   methods: {
@@ -110,7 +116,7 @@ export default {
         const likedIdsRaw = Array.isArray(favRes.data)
           ? favRes.data.map(it => it?.listingId ?? it?.id).filter(Boolean)
           : []
-        const likedIds = [...new Set(likedIdsRaw)] 
+        const likedIds = [...new Set(likedIdsRaw)]
 
         if (!likedIds.length) {
           this.error = '찜한 매물이 없습니다.'
@@ -172,7 +178,13 @@ export default {
       }
     },
     onResize() { this.measure() },
-    restart() { this.play() }
+    restart() { this.play() },
+    onAdError(ev) {
+      if (ev?.target) {
+        ev.target.onerror = null
+        ev.target.src = adImage
+      }
+    }
   },
   async mounted() {
     this.measure()
@@ -196,8 +208,8 @@ export default {
   border-top: 1px solid var(--color-light);
   border-bottom: 1px solid var(--color-light);
 
-  --header-h: 36px;       /* 헤더 고정 높이 */
-  --list-bottom-gap: 20px;/* 카드 영역 하단 여백 - 우하단 표식과 겹침 방지 */
+  --header-h: 36px;        /* 헤더 고정 높이 */
+  --list-bottom-gap: 20px; /* 카드 영역 하단 여백 - 우하단 표식과 겹침 방지 */
 }
 
 .banner-header {
@@ -217,13 +229,13 @@ export default {
 }
 .banner-header.visible { opacity: 1; }
 .banner-icon { 
-    width: 16px; 
-    height: 16px; 
-    margin-right: 4px;
-    margin-bottom: 3px;
+  width: 16px; 
+  height: 16px; 
+  margin-right: 4px;
+  margin-bottom: 3px;
 }
 .highlight { 
-    color: var(--color-primary); 
+  color: var(--color-primary); 
 }
 
 .slider {
