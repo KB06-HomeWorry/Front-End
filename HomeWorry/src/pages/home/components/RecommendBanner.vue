@@ -31,7 +31,12 @@
       >
         <div class="page" :style="{ width: slideWidth + 'px' }">
           <div class="ad-wrap">
-            <img :src="adSrcSafe" alt="광고" class="ad-img" @error="onAdError" />
+            <img
+              :src="adSrcSafe"
+              alt="광고"
+              class="ad-img"
+              @error="onAdError"
+            />
           </div>
         </div>
 
@@ -88,8 +93,8 @@ const recApi = axios.create({
   timeout: 10000,
 });
 
-// listingImage의 URL 정규화 사용(
-import { normalizeImgUrl } from '@/utils/listingImage'
+// listingImage의 URL 정규화 사용
+import { normalizeImgUrl } from '@/components/utils/listingImage';
 
 export default {
   name: 'RecommendBanner',
@@ -122,11 +127,11 @@ export default {
       return 1 + this.listPages.length; // 광고 1장 + 리스트 페이지 수
     },
     isListingHeader() {
-      return this.currentPage >= 1 // 2·3페이지에서만 헤더 보이기
+      return this.currentPage >= 1; // 2·3페이지에서만 헤더 보이기
     },
     adSrcSafe() {
-      return normalizeImgUrl(this.adSrc || adImage)
-    }
+      return normalizeImgUrl(this.adSrc || adImage);
+    },
   },
   methods: {
     async fetchRecommendations() {
@@ -146,9 +151,9 @@ export default {
         const favRes = await api.get('/listing/favorite');
 
         const likedIdsRaw = Array.isArray(favRes.data)
-          ? favRes.data.map(it => it?.listingId ?? it?.id).filter(Boolean)
-          : []
-        const likedIds = [...new Set(likedIdsRaw)]
+          ? favRes.data.map((it) => it?.listingId ?? it?.id).filter(Boolean)
+          : [];
+        const likedIds = [...new Set(likedIdsRaw)];
 
         if (!likedIds.length) {
           this.error = '찜한 매물이 없습니다.';
@@ -220,14 +225,18 @@ export default {
         this.timer = null;
       }
     },
-    onResize() { this.measure() },
-    restart() { this.play() },
+    onResize() {
+      this.measure();
+    },
+    restart() {
+      this.play();
+    },
     onAdError(ev) {
       if (ev?.target) {
-        ev.target.onerror = null
-        ev.target.src = adImage
+        ev.target.onerror = null;
+        ev.target.src = adImage;
       }
-    }
+    },
   },
   async mounted() {
     this.measure();
@@ -251,7 +260,7 @@ export default {
   border-top: 1px solid var(--color-light);
   border-bottom: 1px solid var(--color-light);
 
-  --header-h: 36px;        /* 헤더 고정 높이 */
+  --header-h: 36px; /* 헤더 고정 높이 */
   --list-bottom-gap: 20px; /* 카드 영역 하단 여백 - 우하단 표식과 겹침 방지 */
 }
 
@@ -272,15 +281,17 @@ export default {
   margin-left: 16px;
   margin-top: 4px;
 }
-.banner-header.visible { opacity: 1; }
-.banner-icon { 
-  width: 16px; 
-  height: 16px; 
+.banner-header.visible {
+  opacity: 1;
+}
+.banner-icon {
+  width: 16px;
+  height: 16px;
   margin-right: 4px;
   margin-bottom: 3px;
 }
-.highlight { 
-  color: var(--color-primary); 
+.highlight {
+  color: var(--color-primary);
 }
 
 .slider {
@@ -357,5 +368,7 @@ export default {
   cursor: pointer;
   padding: 0;
 }
-.dot.active { background: var(--color-primary); }
+.dot.active {
+  background: var(--color-primary);
+}
 </style>
