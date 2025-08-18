@@ -212,7 +212,7 @@ async function loadPricelist() {
       );
     }
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error('API 로딩 실패:', error);
   }
 }
 async function loadListings() {
@@ -254,7 +254,7 @@ async function loadListings() {
           selectedTransactionType.value.includes(marker.transactionType))
     );
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error('API 로딩 실패:', error);
   }
 }
 
@@ -275,7 +275,7 @@ async function loadMaximumList() {
     }));
     dongMarkers.value = loadedMarkers;
   } catch (error) {
-    console.error('❌ API 로딩 실패:', error);
+    console.error('API 로딩 실패:', error);
   }
 }
 

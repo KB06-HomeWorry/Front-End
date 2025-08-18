@@ -202,7 +202,7 @@ async function loadPrices() {
     }));
     loaded.value.price = true;
   } catch (e) {
-    console.error('❌ 시세 로딩 실패:', e);
+    console.error('시세 로딩 실패:', e);
   }
 }
 async function loadListings() {
@@ -235,7 +235,7 @@ async function loadListings() {
     }));
     loaded.value.listing = true;
   } catch (e) {
-    console.error('❌ 매물 로딩 실패:', e);
+    console.error('매물 로딩 실패:', e);
   }
 }
 

@@ -1,26 +1,26 @@
 <template>
   <div>
-    <SimpleHeader title="분석 결과 확인"/>
-  <div class="result-page">
-    <div class="content titleBold20px">분석 결과</div>
-    <br />
-    <div class="section-wrapper">
-      <DangerCard />
+    <SimpleHeader title="분석 결과 확인" />
+    <div class="result-page">
+      <div class="content titleBold20px">분석 결과</div>
+      <br />
+      <div class="section-wrapper">
+        <DangerCard />
+      </div>
+      <div class="bodyLight12px">
+        * 본 분석 결과는 참고용이며, 실제 계약 판단은 개인 책임입니다.
+      </div>
+      <br />
+      <br />
+      <div class="content titleBold20px">분석 내용</div>
+      <br />
+      <div class="section-wrapper">
+        <DangerSummery />
+      </div>
+      <div class="section-wrapper">
+        <DangerButtons :moveDefined="moveDefined" />
+      </div>
     </div>
-    <div class="bodyLight12px">
-      * 본 분석 결과는 참고용이며, 실제 계약 판단은 개인 책임입니다.
-    </div>
-    <br />
-    <br />
-    <div class="content titleBold20px">분석 내용</div>
-    <br />
-    <div class="section-wrapper">
-      <DangerSummery />
-    </div>
-    <div class="section-wrapper">
-      <DangerButtons :moveDefined="moveDefined" />
-    </div>
-  </div>
   </div>
 </template>
 
@@ -49,7 +49,7 @@ const loadDangerResult = async () => {
       params: { type, stage, user_id },
     });
 
-    console.log('서버 응답:', data);
+    console.log('서버 응답(위험도 결과):', data);
 
     dangerResultStore.setDangerResult(
       data.grade,
@@ -77,7 +77,7 @@ const loadAnalysisResult = async () => {
       documentData
     );
 
-    console.log('서버 응답:', data);
+    console.log('서버 응답(분석 결과):', data);
 
     dangerResultStore.setDangerResult(
       data.grade,
@@ -93,7 +93,7 @@ const loadAnalysisResult = async () => {
 
 onMounted(() => {
   if (route.query.type && route.query.stage && route.query.user_id) {
-    console.log('체크리스트 분석 실행됨');
+    console.log('체크리스트 분석 실행');
     moveDefined.value = 0;
     loadDangerResult();
   } else {

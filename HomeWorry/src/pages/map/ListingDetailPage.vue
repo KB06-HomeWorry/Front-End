@@ -160,7 +160,7 @@ async function toggleBookmark() {
 // 상세 데이터 로딩
 onMounted(async () => {
   if (!listingId) {
-    console.error('❌ id 없음')
+    console.error('id 없음')
     return
   }
 
@@ -194,7 +194,7 @@ onMounted(async () => {
     await fetchFavoriteStatus()
     await fetchAgency()
   } catch (error) {
-    console.error('❌ 상세정보 로딩 실패:', error)
+    console.error('상세정보 로딩 실패:', error)
     roomImg.value = getListingImage(housingType.value, String(listingId))
   }
 });

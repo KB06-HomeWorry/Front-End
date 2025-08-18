@@ -4,7 +4,7 @@ export default [
     name: 'estate-ease',
     component: () => import('../pages/ai/EstateEase.vue'),
     meta: {
-      hideHeader: true,    // Header 숨김
+      hideHeader: true, // Header 숨김
     },
   },
   {
@@ -12,7 +12,7 @@ export default [
     name: 'aiAnalysis',
     component: () => import('../pages/ai/AIDocumentSubmitPage.vue'),
     meta: {
-      hideHeader: true,    // Header 숨김
+      hideHeader: true, // Header 숨김
     },
   },
   {

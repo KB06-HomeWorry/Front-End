@@ -27,9 +27,9 @@
 </template>
 
 <script setup>
-import { useChecklistStep } from "@/composables/useChecklistStep";
-import BtnSm from "@/components/button/BtnSm.vue";
-import { useChecklistStore } from "@/stores/checklist";
+import { useChecklistStep } from '../composables/useChecklistStep';
+import BtnSm from '@/components/button/BtnSm.vue';
+import { useChecklistStore } from '@/stores/checklist';
 
 const checklistStore = useChecklistStore();
 
@@ -39,13 +39,13 @@ const props = defineProps({
 });
 
 const { setStageByIndex } = useChecklistStep();
-const emit = defineEmits(["update:currentStep", "save"]);
+const emit = defineEmits(['update:currentStep', 'save']);
 
 const goPrev = () => {
   if (props.currentStep > 1) {
     const newStep = props.currentStep - 1;
     setStageByIndex(newStep - 1);
-    emit("update:currentStep", newStep);
+    emit('update:currentStep', newStep);
   }
 };
 
@@ -53,12 +53,12 @@ const goNext = () => {
   if (props.currentStep < props.maxStep) {
     const newStep = props.currentStep + 1;
     setStageByIndex(newStep - 1);
-    emit("update:currentStep", newStep);
+    emit('update:currentStep', newStep);
   }
 };
 
 const save = () => {
-  emit("save");
+  emit('save');
 };
 </script>
 

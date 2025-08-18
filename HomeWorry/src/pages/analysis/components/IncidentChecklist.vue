@@ -86,19 +86,16 @@ watch(
 .checklist-box input[type='checkbox'] {
   width: 22px;
   height: 22px;
-  accent-color: var(--color-lightgray2);
-  transform: scale(1.15);
+  accent-color: var(--color-secondarylight);
   margin: 0;
-  cursor: pointer;
-  transition: accent-color 0.2s;
+  vertical-align: middle;
 }
 
-.checklist-box input[type='checkbox']:hover,
-.checklist-box input[type='checkbox']:focus,
-.checklist-box input[type='checkbox']:checked,
-.checklist-box input[type='checkbox']:checked:hover,
-.checklist-box input[type='checkbox']:checked:focus {
-  accent-color: var(--color-secondarylight);
+.checklist-box input[type='checkbox']:hover {
+  accent-color: #ffaaba;
+}
+.checklist-box input[type='checkbox']:checked:hover {
+  accent-color: #ffaaba;
 }
 
 li > div:last-child {

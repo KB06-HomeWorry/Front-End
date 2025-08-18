@@ -24,7 +24,7 @@
 
 <script setup>
 import { defineProps, defineEmits } from 'vue';
-import { useChecklistStep } from '@/composables/useChecklistStep';
+import { useChecklistStep } from '../composables/useChecklistStep';
 
 const props = defineProps({
   currentStep: {
