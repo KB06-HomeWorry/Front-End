@@ -1,6 +1,8 @@
 <template>
   <div class="progress-bar-bg">
     <div class="progress-bar-fill" :style="{ width: props.percent + '%' }"></div>
+
+    <!-- percent 위치에 이미지 표시 -->
     <img
       v-if="props.pointerImg"
       class="progress-pointer-img"
@@ -9,7 +11,8 @@
       :style="{ left: `calc(${props.percent}% - 12px)` }"
       draggable="false"
     />
-    <span class="progress-label">{{ props.label }}</span>
+
+    <span class="progress-label bodyMedium10px">{{ props.label }}</span>
   </div>
 </template>
 
@@ -17,7 +20,7 @@
 const props = defineProps({
   percent: { type: Number, required: true },
   label: { type: String, default: '' },
-  pointerImg: { type: String, default: '' } 
+  pointerImg: { type: String, default: '' }
 })
 </script>
 
@@ -28,9 +31,8 @@ const props = defineProps({
   background: #f1f3f6;
   border-radius: 5px;
   overflow: visible;
-  margin-bottom: 24px;
+  margin: 12px 0 24px;
   position: relative;
-  margin-top: 12px;
 }
 
 .progress-bar-fill {
@@ -53,12 +55,10 @@ const props = defineProps({
 
 .progress-label {
   position: absolute;
-  right: 12px;
+  right: 8px;
   bottom: -20px;
-  top: auto;
-  font-size: 13px;
-  color: #666;
-  font-weight: 500;
+  color: var(--color-darkgray);
+  letter-spacing: -0.1em;
   z-index: 3;
 }
 </style>
