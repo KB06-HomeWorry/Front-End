@@ -31,6 +31,14 @@
         :disabled="loading"
       />
     </form>
+
+    <!-- 성공 알림 모달 -->
+    <CustomModal
+      v-model="successOpen"
+      :message="successMsg"
+      confirmText="확인"
+      @confirm="handleSuccessConfirm"
+    />
   </div>
 </template>
 
@@ -41,6 +49,7 @@ import axios from 'axios'
 import AuthTitle from '@/pages/auth/components/AuthTitle.vue'
 import InputField from '@/components/input/InputField.vue'
 import BtnMed from '@/components/button/BtnMed.vue'
+import CustomModal from '@/components/modal/CustomModal.vue' 
 
 const router = useRouter()
 const route = useRoute()
@@ -50,6 +59,10 @@ const passwordCheck = ref('')
 const formError = ref('')
 const loading = ref(false)
 
+// 성공 모달 상태
+const successOpen = ref(false)
+const successMsg = ref('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.')
+
 const token = route.query.token || route.params.token || ''
 
 /* 클라이언트 검증 -> 서버 요청 -> 후처리 */
@@ -57,8 +70,8 @@ async function onSubmit() {
   if (loading.value) return
   formError.value = ''
   loading.value = true
-  // 유효성 검사
 
+  // 유효성 검사
   if (!password.value.trim() || !passwordCheck.value.trim()) {
     formError.value = '새 비밀번호와 확인란을 모두 입력해주세요.'
     loading.value = false
@@ -96,9 +109,7 @@ async function onSubmit() {
     // 토큰 제거 및 인증 헤더 초기화
     localStorage.removeItem('user-token')
     delete axios.defaults.headers.common['Authorization']
-
-    alert('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.')
-    router.replace('/auth/login')
+    successOpen.value = true
   } catch (err) {
     formError.value =
       err.response?.data?.message ||
@@ -106,6 +117,11 @@ async function onSubmit() {
   } finally {
     loading.value = false
   }
+}
+
+// 모달 확인 시 로그인 페이지로 이동
+function handleSuccessConfirm() {
+  router.replace('/auth/login')
 }
 </script>
 
