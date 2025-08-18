@@ -5,27 +5,27 @@
     :class="{ 'with-border': showSimpleHeader, 'pad': !showSimpleHeader }"
   >
     <div class="left">
-      <!-- SimpleHeader 체크리스트 / AI 분석 / 서류 분석에서만 -->
+      <!-- SimpleHeader 체크리스트 / AI 분석 / 서류 분석만 -->
       <SimpleHeader v-if="showSimpleHeader" :title="simpleHeaderTitle" />
 
-      <!-- 그 외 페이지 H1 간단 타이틀 -->
+      <!-- 기본 헤더(H1) -->
       <h1 v-else :class="isHomePage || isAgentPage ? 'titleBold24px' : 'bodyMedium16px'">
         집걱정단
       </h1>
     </div>
 
-    <!-- 초기화 버튼 /checklist 에서만 (stage는 제외) -->
-    <div class="right" v-if="isChecklistPage && !isChecklistStagePage">
+    <!-- 초기화 버튼 /checklist (stage 제외) -->
+    <div class="right" :class="rightPadClass" v-if="isChecklistPage && !isChecklistStagePage">
       <BtnMini text="초기화" @click="isConfirmModalVisible = true" />
     </div>
 
-    <!-- 설명 버튼 /analysis 에서만 -->
-    <div class="right" v-else-if="isAnalysisPage">
+    <!-- 설명 버튼 /analysis -->
+    <div class="right" :class="rightPadClass" v-else-if="isAnalysisPage">
       <BtnMini text="설명" @click="isInfoModalVisible = true" />
     </div>
 
     <!-- 홈에서만 로그인/로그아웃 노출 -->
-    <div class="right" v-else>
+    <div class="right" :class="rightPadClass" v-else>
       <template v-if="isHomePage">
         <template v-if="!isLoggedIn">
           <BtnTiny text="로그인/회원가입" @click="goToLogin" />
@@ -36,7 +36,7 @@
       </template>
     </div>
 
-    <!-- 모달 -->
+    <!-- 모달들 -->
     <CustomModal
       v-model="isConfirmModalVisible"
       :message="`현재 단계 체크리스트를 초기화할까요? 지금까지의 답변이 모두 삭제됩니다.`"
@@ -84,17 +84,16 @@ const isLoggedIn = computed(() => !!authStore.user)
 
 const isChecklistPage = computed(() => route.path.startsWith('/checklist'))
 const isChecklistStagePage = computed(() => route.path.startsWith('/checklist-stage'))
-const isAIPage = computed(() => route.path.startsWith('/ai'))           // AI 계약서 분석
-const isAnalysisPage = computed(() => route.path.startsWith('/analysis'))// 서류 분석
+const isAIPage = computed(() => route.path.startsWith('/ai'))
+const isAnalysisPage = computed(() => route.path.startsWith('/analysis'))
 const isHomePage = computed(() => route.path === '/')
-const isAgentPage = computed(() => route.path.startsWith('/agency/list')) // H1 폰트 크기 분기용
+const isAgentPage = computed(() => route.path.startsWith('/agency/list'))
 
 const showSimpleHeader = computed(
   () => isChecklistPage.value || isChecklistStagePage.value || isAIPage.value || isAnalysisPage.value
 )
 
 const type = computed(() => route.query.type || '')
-
 const simpleHeaderTitle = computed(() => {
   if (isChecklistPage.value || isChecklistStagePage.value) return `${type.value} 계약 체크리스트`
   if (isAIPage.value) return 'AI 계약서 분석'
@@ -102,22 +101,25 @@ const simpleHeaderTitle = computed(() => {
   return '집걱정단'
 })
 
-// 모달 상태
+/* SimpleHeader일 때만 오른쪽에 여백 추가 */
+const rightPadClass = computed(() => ({ 'right-pad': showSimpleHeader.value }))
+
+// 모달
 const isConfirmModalVisible = ref(false)
 const isAlertModalVisible = ref(false)
 const isLogoutAlertVisible = ref(false)
 const isInfoModalVisible = ref(false)
-
-// 액션
-const resetChecklist = () => {
-  checklistStore.resetChecklist()
-  isConfirmModalVisible.value = false
-  isAlertModalVisible.value = true
-}
+const resetChecklist = () => { checklistStore.resetChecklist(); isConfirmModalVisible.value = false; isAlertModalVisible.value = true }
 const goToLogin = () => router.push('/auth/login')
 const handleLogout = async () => { await authStore.logout(); isLogoutAlertVisible.value = true }
 const onLogoutAlertConfirm = () => { isLogoutAlertVisible.value = false; router.push('/') }
 </script>
+
+<style>
+:root {
+  --header-side-gap: 16px;
+}
+</style>
 
 <style scoped>
 .header {
@@ -136,7 +138,7 @@ const onLogoutAlertConfirm = () => { isLogoutAlertVisible.value = false; router.
 }
 
 .header.pad {
-  padding: 0 16px;
+  padding: 0 var(--header-side-gap, 16px);
 }
 
 /* SimpleHeader일 때만 하단 보더 */
@@ -156,5 +158,15 @@ const onLogoutAlertConfirm = () => { isLogoutAlertVisible.value = false; router.
   white-space: nowrap;
   margin-top: 5px;
   margin-left: 4px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+}
+
+/* SimpleHeader일 때 오른쪽 패딩 추가(버튼 붙는 쪽) */
+.right.right-pad {
+  padding-right: var(--header-side-gap, 16px);
 }
 </style>
