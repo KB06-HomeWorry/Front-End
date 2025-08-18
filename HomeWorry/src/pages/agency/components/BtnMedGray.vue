@@ -1,6 +1,7 @@
 <template>
   <button
     class="btn-med-wrapper bodyMedium18px"
+    type="button"
     @click="$emit('click')"
   >
     {{ text }}
@@ -9,12 +10,10 @@
 
 <script setup>
 const props = defineProps({
-  text: {
-    type: String,
-    required: true,
-  },
-});
-defineEmits(['click']);
+  text: { type: String, required: true }
+})
+
+defineEmits(['click'])
 </script>
 
 <style scoped>
