@@ -11,7 +11,7 @@
 
       <!-- 중개사 리스트 -->
       <ul class="agency-list">
-        <li v-for="(agency, idx) in pagedList" :key="agency.officeId">
+        <li v-for="(agency) in pagedList" :key="agency.officeId">
           <AgencyCard
             :id="agency.officeId"
             :name="agency.officeName"
