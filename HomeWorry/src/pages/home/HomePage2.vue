@@ -193,7 +193,7 @@ const handleCategoryClick = (category) => {
     const query = {
       type: (checklistStore.checklistData.type = mappedType),
       stage: '계약 전',
-      userId: checklistStore.checklistData.userId,
+      userId: (checklistStore.checklistData.userId = JSON.parse(localStorage.getItem('user')).userId),
     };
     router.push({ path: '/checklist-stage', query });
   }
