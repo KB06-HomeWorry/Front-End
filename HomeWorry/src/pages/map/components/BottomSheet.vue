@@ -29,7 +29,7 @@ function close() { emit('close') }
 .bs-sheet {
   width: 393px;            
   height: 250px;
-  margin-bottom: 64px;   
+  margin-bottom: 70px;   
   background: var(--color-white);
   color:var(--color-primary);
   border-radius: 12px 12px 0 0;
