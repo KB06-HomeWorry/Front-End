@@ -164,7 +164,10 @@ const onLogoutAlertConfirm = () => {
   max-width: 393px;
   width: 393px;
   margin: 0 auto;
-  /* border-bottom: 0.5px solid var(--color-light); */
+  padding: 0;
+}
+
+.header.pad {
   padding: 0 16px;
 }
 

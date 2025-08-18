@@ -257,8 +257,8 @@ export default {
   width: 100%;
   max-width: 393px;
   height: 200px;
-  border-top: 1px solid var(--color-light);
-  border-bottom: 1px solid var(--color-light);
+  /* border-top: 1px solid var(--color-light);
+  border-bottom: 1px solid var(--color-light); */
 
   --header-h: 36px; /* 헤더 고정 높이 */
   --list-bottom-gap: 20px; /* 카드 영역 하단 여백 - 우하단 표식과 겹침 방지 */
@@ -319,6 +319,7 @@ export default {
   align-items: flex-start;
   padding-top: calc(var(--header-h) + var(--header-gap));
   padding-bottom: var(--list-bottom-gap);
+  background-color: #f8f8f8;
 }
 
 .ad-wrap {

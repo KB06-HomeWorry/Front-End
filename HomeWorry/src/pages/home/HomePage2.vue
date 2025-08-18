@@ -214,7 +214,6 @@ const handleCategoryClick = (category) => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 10px;
 }
 
 .home-btn-lg-col {

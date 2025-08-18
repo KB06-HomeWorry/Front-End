@@ -54,7 +54,8 @@ onMounted(() => {
 
 .main-content {
   flex: 1;
-  padding-bottom: 70px;
+  padding-bottom: 64px;
+  overflow-x: hidden;
 }
 .main-content.has-header {
   padding-top: 60px;
