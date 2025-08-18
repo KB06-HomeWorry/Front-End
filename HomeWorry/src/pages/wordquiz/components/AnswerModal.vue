@@ -102,7 +102,7 @@ function onClose() {
   margin: 170px auto 32px auto;
   display: flex;
   flex-direction: column;
-  align-items: center; /* <-- 중앙정렬! */
+  align-items: center;
   justify-content: center;
   padding: 16px 16px 18px 16px;
   box-sizing: border-box;
