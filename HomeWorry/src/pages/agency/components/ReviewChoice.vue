@@ -4,6 +4,7 @@
     @click="handleClick"
     role="button"
     tabindex="0"
+    :aria-pressed="selected"
   >
     <div class="choice-left">
       <span class="choice-label bodyMedium10px">{{ label }}</span>
@@ -16,11 +17,11 @@
 
 <script setup>
 const props = defineProps({
-  type: { type: String, required: true },
-  label: { type: String, required: true },
-  emoji: { type: String, required: true },
-  text: { type: String, required: true },
-  selected: { type: Boolean, default: false }
+  type: { type: String, required: true },     // 'good' / 'soso' / 'bad'
+  label: { type: String, required: true },    // 좌측 라벨 텍스트
+  emoji: { type: String, required: true },    // 라벨 옆 이모지
+  text: { type: String, required: true },     // 본문 텍스트
+  selected: { type: Boolean, default: false } // 선택 상태
 })
 const emit = defineEmits(['select'])
 
@@ -32,7 +33,6 @@ function handleClick() {
 <style scoped>
 .choice-box {
   width: 100%;
-  /* min-width: 329px; */
   height: 35px;
   display: flex;
   align-items: center;
@@ -51,20 +51,18 @@ function handleClick() {
   color: var(--color-primary);
   background: var(--color-primary-10);
 }
-
 .choice-box.selected {
   border: 1px solid var(--color-primary);
   background: var(--color-primary-10);
-
 }
 
 .choice-left {
   display: flex;
   align-items: center;
   width: 58px;
-  flex-shrink: 0; 
+  flex-shrink: 0;
   gap: 2px;
-  justify-content: flex-end; 
+  justify-content: flex-end;
 }
 
 .choice-text {
@@ -76,7 +74,7 @@ function handleClick() {
 
 .good .choice-label  { color: var(--color-primary); }
 .soso .choice-label  { color: var(--color-mediumgray); }
-.bad .choice-label   { color: #961212; }
+.bad  .choice-label  { color: #961212; }
 
 .choice-slash.good  { color: var(--color-primary); }
 .choice-slash.soso  { color: var(--color-mediumgray); }
