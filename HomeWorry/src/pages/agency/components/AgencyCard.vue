@@ -4,6 +4,7 @@
       <div class="agency-card-left">
         <img :src="computedImg" alt="프로필" class="agency-profile-img" />
       </div>
+
       <div class="agency-card-main">
         <div class="agency-header">
           <div class="agency-name bodyMedium16px">{{ name }}</div>
@@ -11,6 +12,7 @@
             <span class="star bodyMedium10px">★</span> {{ displayTrustScore }}
           </div>
         </div>
+
         <div class="agency-address bodyMedium12px">{{ address }}</div>
         <div class="agency-phone bodyLight12px">{{ phone }}</div>
       </div>
@@ -28,23 +30,21 @@ const props = defineProps({
   address: String,
   phone: String,
   trustScore: [Number, String],
-  img: String,
-  profileIdx: { type: Number, default: 0 },
+  img: String
 })
 
 const computedImg = computed(() =>
   getAgencyImage(props.img || '', String(props.id ?? ''))
 )
 
-/** 0~100 또는 0~5 입력을 모두 0~5 스케일로 변환해 1자리 소수로 표시 */
+// 0~100, 0~5 입력을 모두 0~5 스케일로 변환해 1자리로 표시
 const displayTrustScore = computed(() => {
   const raw = Number(props.trustScore)
   if (Number.isNaN(raw)) return '0.0'
 
-  // 6 이상이면 0~100 스케일로 판단 → 0~5 변환
+  // 6 이상이면 0~100 스케일로 판단해서 0~5 변환
   const fiveScale = raw > 5 ? raw / 20 : raw
 
-    // 안전 범위 클램프 후 표시 포맷
   const clamped = Math.min(5, Math.max(0, fiveScale))
   return clamped.toFixed(1)
 })
@@ -72,7 +72,7 @@ const displayTrustScore = computed(() => {
   height: 70px;
   object-fit: cover;
   border-radius: 12px;
-  background: #f3f3f3;
+  background: var(--color-lightgray2);
   border: 1px solid #eee;
   display: block;
   margin-left: 4px;
@@ -94,6 +94,7 @@ const displayTrustScore = computed(() => {
   gap: 8px;
   margin-bottom: 2px;
 }
+
 .agency-name {
   color: var(--color-primary);
   white-space: nowrap;
@@ -108,14 +109,15 @@ const displayTrustScore = computed(() => {
   color: var(--color-primary);
   border-radius: 7px;
   display: flex;
-  align-items: center; 
-  justify-content: center; 
+  align-items: center;
+  justify-content: center;
   gap: 2px;
   line-height: 16px;
   text-align: center;
   padding-top: 1px;
   padding-right: 2px;
 }
+
 .trust-badge .star {
   margin-right: 1px;
 }
@@ -126,6 +128,7 @@ const displayTrustScore = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .agency-phone {
   color: var(--color-darkgray);
 }
