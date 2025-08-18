@@ -32,7 +32,6 @@ const iconSrc = '/src/assets/icons/ex_calculator.png';
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  /* border-radius: 12px; */
   margin-left: -32px;
   margin-bottom: 28px;
   box-sizing: border-box;
