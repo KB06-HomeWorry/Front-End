@@ -71,7 +71,7 @@ const currentQuiz = computed(() =>
 );
 
 const showModal = ref(false);
-const answerResult = ref(''); // 'correct' or 'wrong'
+const answerResult = ref('');
 
 const userId = computed(() => authStore.user?.userId || null);
 
