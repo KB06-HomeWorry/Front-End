@@ -76,7 +76,7 @@ import axios from 'axios';
 import RecommendCard from '@/pages/home/components/RecommendCard.vue';
 import adImage from '@/assets/icons/home_ad.png';
 
-// 메인 백엔드 API (토큰 자동 첨부)
+// 메인 백엔드 API
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
   timeout: 10000,
@@ -87,13 +87,13 @@ api.interceptors.request.use((cfg) => {
   return cfg;
 });
 
-// 추천 API (토큰 없음)
+// 추천 API
 const recApi = axios.create({
   baseURL: 'http://localhost:8000',
   timeout: 10000,
 });
 
-// listingImage의 URL 정규화 사용
+// listingImage 정규화 사용
 import { normalizeImgUrl } from '@/components/utils/listingImage';
 
 export default {
@@ -116,7 +116,7 @@ export default {
     };
   },
   computed: {
-    // 6개만 받아 3개씩 분할하여 2페이지로 표시
+    // 6개 받아와서 3개씩 분할하여 2페이지로 표시
     listPages() {
       const src = (this.allListings || []).slice(0, 6);
       const out = [];
