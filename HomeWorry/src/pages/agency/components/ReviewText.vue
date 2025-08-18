@@ -45,7 +45,6 @@ function onInput(e) {
   margin-bottom: 24px;
 }
 
-/* 타이틀 라벨 */
 .q-text {
   margin-bottom: 8px;
   display: block;
@@ -54,7 +53,6 @@ function onInput(e) {
   letter-spacing: -0.03em;
 }
 
-/* input 박스 심플 스타일 */
 .review-textarea {
   width: 100%;
   min-height: 64px;
@@ -74,7 +72,7 @@ function onInput(e) {
   opacity: 1;
 }
 
-/* 글자수 info (우하단) */
+/* 글자수 (우하단) */
 .comment-length-info {
   text-align: right;
   color: var(--color-mediumgray);
