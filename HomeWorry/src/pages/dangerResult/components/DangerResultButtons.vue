@@ -47,7 +47,6 @@ const saveAsImage = async () => {
 };
 
 const checklistAgain = () => {
-  console.log('점검 다시하기 버튼 클릭');
   if (props.moveDefined === 0) {
     router.push({
       path: '/checklist',

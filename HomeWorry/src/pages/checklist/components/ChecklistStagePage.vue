@@ -26,17 +26,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-import { useChecklistStore } from "@/stores/checklist";
-import { useChecklistStep } from "@/composables/useChecklistStep";
+import { ref, onMounted, onBeforeUnmount } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { useChecklistStore } from '@/stores/checklist';
+import { useChecklistStep } from '@/composables/useChecklistStep';
 
 const router = useRouter();
 const checklistStore = useChecklistStore();
 const steps = ref([]);
 const activeIndex = ref(0);
-const emojis = ["📝", "💰", "🏠", "🎉"];
+const emojis = ['📝', '💰', '🏠', '🎉'];
 let intervalId = null;
 
 // 체크리스트 화면으로 이동
@@ -44,7 +44,7 @@ function goToChecklist(step) {
   checklistStore.checklistData.stage = step;
 
   router.push({
-    path: "/checklist",
+    path: '/checklist',
     query: {
       type: checklistStore.checklistData.type,
       stage: checklistStore.checklistData.stage,
@@ -65,26 +65,26 @@ onMounted(async () => {
   }
 
   try {
-    if (localStorage.getItem("user-token") === null) {
-      // 🔹 토큰이 없으면 로그인 페이지로 리다이렉트
-      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-      router.push("/auth/login");
+    if (localStorage.getItem('user-token') === null) {
+      // 토큰이 없으면 로그인 페이지로 리다이렉트
+      alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      router.push('/auth/login');
       return;
     }
 
     const { data } = await axios.get(
-      "http://localhost:8080/checklist/answers/five"
+      'http://localhost:8080/checklist/answers/five'
     );
 
     checklistStore.topFiveAnswers = data;
-    console.log("서버 응답:", checklistStore.topFiveAnswers);
+    console.log('서버 응답(상위 5개):', checklistStore.topFiveAnswers);
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      // 🔹 401 Unauthorized 처리
-      alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
-      router.push("/auth/login");
+      // 401 Unauthorized 처리
+      alert('로그인이 필요합니다. 로그인 페이지로 이동합니다.');
+      router.push('/auth/login');
     } else {
-      console.error("불러오기 오류: ", error);
+      console.error('불러오기 오류: ', error);
     }
   }
 

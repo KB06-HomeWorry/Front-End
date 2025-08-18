@@ -36,12 +36,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import InputField from "@/components/input/InputField.vue";
-import { openPostcode } from "@/composables/usePostcode.js";
-import { useAnalysisStore } from "@/stores/analysis.js";
-import { storeToRefs } from "pinia";
-import HelpButton from "@/components/button/HelpButton.vue";
+import { ref, watch } from 'vue';
+import InputField from '@/components/input/InputField.vue';
+import { openPostcode } from '../composables/usePostcode.js';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
+import HelpButton from '@/components/button/HelpButton.vue';
 
 const analysisStore = useAnalysisStore();
 const { middleAgent } = storeToRefs(analysisStore);
@@ -50,10 +50,10 @@ const agentName = ref(middleAgent.value.agentName);
 const address = ref(middleAgent.value.address);
 const agentRegisterNumber = ref(middleAgent.value.agentRegisterNumber);
 const addressMessage = ref(
-  "앞에서 입력한 주소의 매물을 관리하는 중개사무소를 찾고 없다면 입력받아 사용자에게 중개사무소 정보를 알려줍니다."
+  '앞에서 입력한 주소의 매물을 관리하는 중개사무소를 찾고 없다면 입력받아 사용자에게 중개사무소 정보를 알려줍니다.'
 );
 const agentIdMessage = ref(
-  "중개사무소의 등록번호를 검색해서 전문 중개 사무소인지 확인합니다."
+  '중개사무소의 등록번호를 검색해서 전문 중개 사무소인지 확인합니다.'
 );
 
 function handleOpenPostcode() {

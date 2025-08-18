@@ -27,8 +27,6 @@ export const useDangerResultStore = defineStore('dangerResult', () => {
     newdescriptionContent,
     newimageUrl
   ) {
-    // console.log(newdescriptionContent);
-
     // 상태 업데이트
     grade.value = newgrade;
     message.value = newmessage;
