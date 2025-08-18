@@ -96,12 +96,14 @@ function goDetail() {
   cursor: pointer;
   transition: background 0.12s;
 }
+
 .listing-header {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
+
 .listing-summary {
   display: flex;
   flex-direction: column;
@@ -109,6 +111,7 @@ function goDetail() {
   flex: 1 1 0%;
   min-width: 0;
 }
+
 .deal-type { 
   margin-right: 6px; 
 }
@@ -116,6 +119,7 @@ function goDetail() {
 .deal-detail { 
   color: var(--color-primary); 
 }
+
 .address {
   color: var(--color-darkgray);
   white-space: nowrap;
@@ -123,6 +127,7 @@ function goDetail() {
   text-overflow: ellipsis;
   max-width: 220px;
 }
+
 .specs {
   color: var(--color-darkgray);
   white-space: nowrap;
@@ -131,12 +136,14 @@ function goDetail() {
   max-width: 220px;
   letter-spacing: -0.05em;
 }
+
 .image-wrapper {
   position: relative;
   width: 90px;
   height: 90px;
   flex-shrink: 0;
 }
+
 .listing-image {
   width: 100%;
   height: 100%;
@@ -145,6 +152,7 @@ function goDetail() {
   background: var(--color-lightgray);
   display: block;
 }
+
 .bookmark-btn {
   position: absolute;
   right: 2px;
@@ -160,6 +168,7 @@ function goDetail() {
   cursor: pointer;
   transition: background 0.12s;
 }
+
 .bookmark-icon {
   width: 22px;
   height: 22px;
