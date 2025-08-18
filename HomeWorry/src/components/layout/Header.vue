@@ -137,7 +137,6 @@ const onLogoutAlertConfirm = () => { isLogoutAlertVisible.value = false; router.
   padding: 0;
 }
 
-/* H1 사용하는 경우에만 패딩 부여 */
 .header.pad {
   padding: 0 16px;
 }
