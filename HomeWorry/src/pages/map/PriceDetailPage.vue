@@ -63,19 +63,21 @@
         </div>
       </div>
     </section>
-    <img
-      v-if="bpImg"
-      :src="bpImg"
-      @error="onImgError"
-      alt="평면도"
-      style="
-        width: 100%;
-        height: auto;
-        max-height: 200px;
-        object-fit: cover;
-        margin-bottom: 10px;
-      "
-    />
+    <template v-if="bpImg">
+        <div class="menu-list titleBold20px">평면도</div>    
+        <img
+        :src="bpImg"
+        @error="onImgError"
+        alt="평면도"
+        style="
+          width: 100%;
+          height: auto;
+          max-height: 200px;
+          object-fit: cover;
+          margin-bottom: 10px;
+        "
+      />
+    </template>
     <div class="map-container">
       <DetailLocation
         :lat="trendlat"
