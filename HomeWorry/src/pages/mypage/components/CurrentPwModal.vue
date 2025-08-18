@@ -100,7 +100,7 @@ function close() {
 }
 
 .pw-input {
-  width: 100%; /* modal-content 폭 기준 */
+  width: 100%; 
   margin-top: 8px;
   border: 1px solid var(--color-light);
   border-radius: 12px;
@@ -125,7 +125,7 @@ function close() {
 .modal-actions {
   margin-top: 12px;
   display: flex;
-  gap: 8px; /* 버튼 사이 간격 */
+  gap: 8px;
   justify-content: center;
   width: 100%;
 }
