@@ -319,7 +319,7 @@ export default {
   align-items: flex-start;
   padding-top: calc(var(--header-h) + var(--header-gap));
   padding-bottom: var(--list-bottom-gap);
-  background-color: #f9f9f9;
+  background-color: #f8f8f8;
 }
 
 .ad-wrap {
