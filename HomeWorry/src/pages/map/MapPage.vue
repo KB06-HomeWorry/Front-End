@@ -298,10 +298,11 @@ function onSearchLocation(keyword) {
     }
   });
 }
-
+/** 리스팅 토글로 매물 표시 */
 function toggleListings() {
   isListingsVisible.value = !isListingsVisible.value;
 }
+/** 현위치 반환 */
 function moveToCurrentLocation() {
   if (!mapInstance.value || !currentLocation.value) return;
   const center = new window.kakao.maps.LatLng(

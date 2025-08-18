@@ -193,6 +193,7 @@ watch(selectedListingTypes, loadListings);
 watch(selectedTransactionType, loadListings);
 watch([minPyeong, maxPyeong], loadListings);
 
+/** 시세 가격  받아오기 */
 async function loadPricelist() {
   try {
     const response = await fetch('/api/pricetrend');
@@ -215,6 +216,7 @@ async function loadPricelist() {
     console.error('❌ API 로딩 실패:', error);
   }
 }
+/** 매물 가격  받아오기 */
 async function loadListings() {
   try {
     const response = await fetch('/api/listing');
@@ -258,6 +260,7 @@ async function loadListings() {
   }
 }
 
+/** 동별 표기할 최대값 fetching */
 async function loadMaximumList() {
   try {
     const response = await fetch('/api/pricetrend/max');
@@ -279,6 +282,7 @@ async function loadMaximumList() {
   }
 }
 
+/** 로드시에 필요한 데이터 fetching */
 async function loadAllData() {
   await loadPricelist();
   await loadMaximumList();
