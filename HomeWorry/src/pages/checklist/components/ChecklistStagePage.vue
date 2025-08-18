@@ -30,7 +30,7 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { useChecklistStore } from '@/stores/checklist';
-import { useChecklistStep } from '@/composables/useChecklistStep';
+import { useChecklistStep } from '../composables/useChecklistStep';
 
 const router = useRouter();
 const checklistStore = useChecklistStore();
