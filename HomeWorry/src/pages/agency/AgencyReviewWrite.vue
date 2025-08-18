@@ -21,7 +21,7 @@
 
         <div class="write-review">
           <div class="review-list">
-        <!-- 질문 단계별로 하나씩 보여줌 -->
+            <!-- 질문 단계별로 하나씩 보여줌 -->
             <ReviewQuestion
               v-for="(q, idx) in visibleQuestions"
               :key="idx"
@@ -33,7 +33,7 @@
             />
           </div>
 
-      <!-- 텍스트 입력란(마지막 step에서만 노출) -->
+          <!-- 텍스트 입력란(마지막 step에서만 노출) -->
           <ReviewText
             v-if="showTextInput"
             v-model="additionalComment"
@@ -41,7 +41,7 @@
             :minlength="10"
           />
 
-      <!-- 후기작성 완료 버튼(마지막 step에서만, 조건 만족 시 활성화) -->
+          <!-- 후기작성 완료 버튼(마지막 step에서만, 조건 만족 시 활성화) -->
           <BtnMedSlim
             v-if="showTextInput"
             :text="'후기 작성 완료하기'"
@@ -52,6 +52,14 @@
         </div>
       </div>
     </div>
+
+    <!-- 성공 알림 모달 -->
+    <CustomModal
+      v-model="successOpen"
+      :message="successMsg"
+      confirmText="확인"
+      @confirm="handleSuccessConfirm"
+    />
   </div>
 </template>
 
@@ -66,6 +74,7 @@ import ReviewQuestion from '@/pages/agency/components/ReviewQuestion.vue'
 import ReviewText from '@/pages/agency/components/ReviewText.vue'
 import BtnMedGray from '@/pages/agency/components/BtnMedGray.vue'
 import BtnMedSlim from '@/components/button/BtnMedSlim.vue'
+import CustomModal from '@/components/modal/CustomModal.vue' 
 
 import { useTrustScore } from '@/pages/agency/composables/useTrustScore.js'
 import ProgressAvatar from '@/assets/icons/progress-avatar.png'
@@ -91,10 +100,11 @@ onMounted(async () => {
 /* 진행바 아이콘 */
 const avatar = ProgressAvatar
 
-const reviewType = ref(null)             
-const additionalComment = ref('')         // 후기 자유 입력란
-const answers = ref([])                  
-const currentStep = ref(0)               
+/* 작성 상태 */
+const reviewType = ref(null)
+const additionalComment = ref('')
+const answers = ref([])
+const currentStep = ref(0)
 
 // 모든 질문 목록(상담만 or 거래완료에 따라 다르게 사용)
 const allQuestions = [
@@ -138,7 +148,7 @@ const allQuestions = [
       { type: 'bad',  label: 'Bad',  emoji: '🤔', text: '설명이 부족하거나 혼란스러웠어요' }
     ]
   },
-      // 거래 완료 시 추가 문항 (6-7)
+        // 거래 완료 시 추가 문항 (6-7)
   {
     text: '계약서 작성과 특약사항 조율 과정이 투명하게 진행됐나요?',
     choices: [
@@ -164,24 +174,24 @@ const activeQuestions = computed(() => {
   return []
 })
 
-/* 현재 step까지 보여줄 문항 */
+/* 현재 step까지의 문항 */
 const visibleQuestions = computed(() =>
   activeQuestions.value.slice(0, Math.min(currentStep.value + 1, activeQuestions.value.length))
 )
 
-/* 마지막 단계 여부(텍스트 입력 노출) */
+/* 마지막 단계 여부 */
 const showTextInput = computed(() => currentStep.value === activeQuestions.value.length)
 
 /* 총 단계 수 = 객관식 문항 수 + 텍스트 1 */
 const total = computed(() => activeQuestions.value.length + 1)
 
-/* 완료 개수 계산 */
+/* 완료 개수 */
 const completedAnswersCount = computed(() => {
   if (showTextInput.value && additionalComment.value.length >= 10) return total.value
   return answers.value.filter(ans => ans !== null).length
 })
 
-/* 진행률 계산 */
+/* 진행률 */
 const progressPercent = computed(() => {
   if (total.value === 0) return 0
   if (showTextInput.value && additionalComment.value.length >= 10) return 100
@@ -212,6 +222,9 @@ function onSelect(idx, answerIdx) {
   }
 }
 
+const successOpen = ref(false)
+const successMsg = ref('리뷰가 등록되었습니다.')
+
 /* 제출: 점수 계산 후 서버 전송 */
 async function submitReview() {
   const reviewData = calculateTrustScore(
@@ -224,13 +237,16 @@ async function submitReview() {
 
   try {
     await axios.post('http://localhost:8080/agent/reviews', reviewData)
-    alert('리뷰가 등록되었습니다.')
-    router.push(`/agency/${officeId}`)
+    successOpen.value = true
   } catch (error) {
     console.error('리뷰 작성 실패:', error)
     const errorMessage = error.response?.data?.message || '리뷰 등록 중 오류가 발생했습니다.'
     alert(errorMessage)
   }
+}
+
+function handleSuccessConfirm() {
+  router.push(`/agency/${officeId}`)
 }
 </script>
 
