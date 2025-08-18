@@ -18,19 +18,19 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import InputField from "@/components/input/InputField.vue";
-import { openPostcode } from "@/composables/usePostcode.js";
-import { useAnalysisStore } from "@/stores/analysis.js";
-import { storeToRefs } from "pinia";
-import HelpButton from "@/components/button/HelpButton.vue";
+import { ref, watch } from 'vue';
+import InputField from '@/components/input/InputField.vue';
+import { openPostcode } from '../composables/usePostcode.js';
+import { useAnalysisStore } from '@/stores/analysis.js';
+import { storeToRefs } from 'pinia';
+import HelpButton from '@/components/button/HelpButton.vue';
 
 const analysisStore = useAnalysisStore();
 const { houseAddress } = storeToRefs(analysisStore);
 
 const propertyAddress = ref(houseAddress.value);
 const message = ref(
-  "주소를 사용하여 건축물 대장에서 일치하는 건물을 찾고 불법건축물 여부를 판단합니다."
+  '주소를 사용하여 건축물 대장에서 일치하는 건물을 찾고 불법건축물 여부를 판단합니다.'
 );
 
 function handleOpenPostcode() {
