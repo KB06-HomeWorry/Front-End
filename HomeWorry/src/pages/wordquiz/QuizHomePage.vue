@@ -105,7 +105,7 @@ import SimpleHeader from '@/components/layout/SimpleHeader.vue';
 import level1 from '@/assets/icons/level1.png';
 import level2 from '@/assets/icons/level2.png';
 import level3 from '@/assets/icons/level3.png';
-import quiz from '@/assets/icons/quiz (4).png';
+import quiz from '@/assets/icons/quiz.png';
 
 import CustomModal from '@/components/modal/CustomModal.vue';
 import LoadingAnimation from '@/components/lottie/LoadingAnimation.vue';
