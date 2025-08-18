@@ -204,7 +204,7 @@ const handleCategoryClick = (category) => {
 .home-root {
   width: 393px;
   margin: 0 auto;
-  padding: 0px 16px 8px 16px;
+  padding: 0px 16px 0 16px;
   box-sizing: border-box;
 }
 
@@ -214,7 +214,7 @@ const handleCategoryClick = (category) => {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
 
 .home-btn-lg-col {
