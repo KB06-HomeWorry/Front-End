@@ -444,10 +444,6 @@ const goToReviewPage = () => router.push(`/agency/${office_id}/review-write`)
   border-bottom-right-radius: 12px;
 }
 
-.bodyMedium12px .bodyLight12px { 
-  color: var(--color-primary); 
-}
-
 .hashtags {
   display: flex;
   justify-content: center; 
