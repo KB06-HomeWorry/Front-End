@@ -63,19 +63,21 @@
         </div>
       </div>
     </section>
-    <img
-      v-if="bpImg"
-      :src="bpImg"
-      @error="onImgError"
-      alt="평면도"
-      style="
-        width: 100%;
-        height: auto;
-        max-height: 200px;
-        object-fit: cover;
-        margin-bottom: 10px;
-      "
-    />
+    <template v-if="bpImg">
+        <div class="menu-list titleBold20px">평면도</div>    
+        <img
+        :src="bpImg"
+        @error="onImgError"
+        alt="평면도"
+        style="
+          width: 100%;
+          height: auto;
+          max-height: 200px;
+          object-fit: cover;
+          margin-bottom: 10px;
+        "
+      />
+    </template>
     <div class="map-container">
       <DetailLocation
         :lat="trendlat"
@@ -121,7 +123,7 @@ function onImgError() {
   }
 }
 
-// Computed properties for formatted display
+// 가격 억대로 표현
 const price = computed(() => {
   if (!priceDetailData.value?.price) return '-';
   return formatKoreanPrice(priceDetailData.value.price);
@@ -174,7 +176,7 @@ const addressInfo = computed(() => {
   return priceDetailData.value?.address || '-';
 });
 
-// Price formatting function
+/**  숫자를 스트링화 해서 출력 */
 function formatKoreanPrice(price) {
   const num = Number(price);
   if (isNaN(num) || num === 0) return '-';
@@ -290,12 +292,6 @@ li {
   animation: pop 0.28s cubic-bezier(0.4, 2, 0.6, 1) both;
 }
 
-/* .section-bar {
-  display: flex;
-  justify-content: space-around;
-  padding: 12px 8px;
-  border-bottom: 1px solid var(--color-mediumgray);
-} */
 .section-btn {
   border: none;
   padding: 6px 12px;
