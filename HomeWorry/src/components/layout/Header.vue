@@ -30,12 +30,12 @@
       </h1>
     </div>
 
-    <!-- 초기화 버튼: /checklist일 때만 -->
+    <!-- 초기화 버튼 /checklist일 때만 -->
     <div class="right" v-if="isChecklistPage && !isChecklistStagePage">
       <BtnMini text="초기화" @click="isConfirmModalVisible = true" />
     </div>
 
-    <!-- 설명 버튼: /analysis일 때만 -->
+    <!-- 설명 버튼 /analysis일 때만 -->
     <div class="right" v-else-if="isAnalysisPage">
       <BtnMini text="설명" @click="isInfoModalVisible = true" />
     </div>
@@ -162,14 +162,10 @@ const onLogoutAlertConfirm = () => {
   background-color: var(--color-white);
   z-index: 100;
   max-width: 393px;
-  width: 100%;
+  width: 393px;
   margin: 0 auto;
-  border-bottom: 0.5px solid var(--color-light);
+  /* border-bottom: 0.5px solid var(--color-light); */
   padding: 0 16px;
-}
-
-.right{
-  margin-right: 16px;
 }
 
 .left {
@@ -181,7 +177,7 @@ const onLogoutAlertConfirm = () => {
 }
 
 .header {
-  padding: 0 3px;
+  padding: 0 16px;
 }
 
 .left h1 {
