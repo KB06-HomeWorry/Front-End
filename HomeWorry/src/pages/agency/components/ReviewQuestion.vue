@@ -1,9 +1,10 @@
 <template>
   <div class="review-question-wrap">
     <div class="question-title-flex">
-      <span class="q-number bodyMedium14px">{{ index+1 }}.</span>
+      <span class="q-number bodyMedium14px">{{ index + 1 }}.</span>
       <span class="q-text bodyMedium14px">{{ question }}</span>
     </div>
+
     <div class="choices-row">
       <ReviewChoice
         v-for="(c, idx) in choices"
@@ -13,7 +14,7 @@
         :emoji="c.emoji"
         :text="c.text"
         :selected="modelValue === idx"
-        @click="select(idx)"
+        @click="select(idx)" 
       />
     </div>
   </div>
@@ -21,12 +22,14 @@
 
 <script setup>
 import ReviewChoice from '@/pages/agency/components/ReviewChoice.vue'
+
 const props = defineProps({
-  index:    { type: Number, required: true },
-  question:   { type: String, required: true },
-  choices:    { type: Array, required: true },
+  index: { type: Number, required: true },
+  question: { type: String, required: true },
+  choices: { type: Array, required: true },
   modelValue: { type: Number, default: null }
 })
+
 const emit = defineEmits(['update:modelValue'])
 
 function select(idx) {
@@ -37,10 +40,6 @@ function select(idx) {
 <style scoped>
 .review-question-wrap {
   margin-bottom: 24px;
-}
-
-.question-title {
-  margin-bottom: 12px;
 }
 
 .question-title-flex {
