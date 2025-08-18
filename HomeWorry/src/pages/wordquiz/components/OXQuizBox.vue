@@ -1,6 +1,5 @@
 <template>
   <div class="quiz-card">
-    <!-- 상단 헤더 (이미지+초급-문제1번) -->
     <QuizHeader :level="level" :number="number" />
     <!-- 질문 -->
     <div class="quiz-question">
@@ -29,7 +28,6 @@ const props = defineProps({
 const emit = defineEmits(['select']);
 
 function onOXSelect(userAnswer) {
-  // 여기서 정답 체크, 모달 show 등 진행!
   answerResult.value =
     userAnswer === currentQuiz.value.correctAnswer ? 'correct' : 'wrong';
   showModal.value = true;

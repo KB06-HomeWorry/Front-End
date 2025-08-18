@@ -1,4 +1,5 @@
 <template>
+  <!-- 상단 검색 바 컨테이너 -->
   <div>
     <div class="search-bar bodyMedium14px">
       <LocationSearch class="search-input-left" @search="onSearch" />

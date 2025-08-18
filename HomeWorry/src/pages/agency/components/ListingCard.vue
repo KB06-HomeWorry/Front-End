@@ -15,6 +15,8 @@
           <span v-if="direction"> · {{ direction }}</span>
         </div>
       </div>
+
+      <!-- 이미지 실패 시 폴백 이미지로 교체 -->
       <img
         :src="img || roomImg"
         @error="onImgError"
@@ -27,7 +29,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import roomImg from '@/assets/icons/home_villa.png' // 기본(폴백) 이미지
+import roomImg from '@/assets/icons/home_villa.png' 
 
 const router = useRouter()
 
@@ -41,14 +43,13 @@ const props = defineProps({
   areaInfo: String,
   floorInfo: String,
   direction: String,
-  img: { type: String, default: '' },
+  img: { type: String, default: '' }
 })
 
 function goDetail() {
   router.push(`/listing/${props.id}`)
 }
 
-// 이미지 로드 실패 시 기본 이미지로 교체
 function onImgError(e) {
   if (e?.target) e.target.src = roomImg
 }
@@ -64,6 +65,7 @@ function onImgError(e) {
   cursor: pointer;
   transition: background 0.12s;
 }
+
 .listing-card:hover {
   background: #f7f8fa;
 }

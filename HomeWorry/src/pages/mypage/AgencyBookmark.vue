@@ -60,7 +60,7 @@ const userToken = localStorage.getItem('user-token')
 
 // 검색/정렬/페이지네이션 상태
 const searchText = ref('')
-const sortBy = ref('name')         // 'trust'도 가능, 예시에서는 가나다순 기본
+const sortBy = ref('name')  
 const page = ref(1)
 const pageSize = 8                 // 1페이지에 8개씩
 const maxPageDisplay = 5           // 하단 페이지버튼 5개씩
@@ -99,7 +99,6 @@ const filteredList = computed(() =>
 
 const sortedList = computed(() => {
   const list = [...filteredList.value]
-  // (정렬 옵션 확장 시 여기에 추가, 지금은 가나다순만)
   return list.sort((a, b) => a.officeName.localeCompare(b.officeName, 'ko'))
 })
 

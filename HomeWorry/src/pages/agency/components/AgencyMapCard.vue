@@ -2,7 +2,7 @@
   <div class="overlay-card" @click.stop>
     <div class="header-row">
       <div class="title bodyMedium12px">{{ agency.officeName }}</div>
-      <button class="close" @click="$emit('close')" aria-label="닫기">×</button>
+      <button class="close" type="button" @click="$emit('close')" aria-label="닫기">×</button>
     </div>
 
     <div class="content bodyLight10px">
@@ -23,6 +23,7 @@
       <button
         v-if="agencyId"
         class="btn-detail bodyMedium10px"
+        type="button"
         @click="handleDetailClick"
       >
         상세보기
@@ -32,25 +33,25 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed } from 'vue'
 
 const props = defineProps({
   agency: { type: Object, required: true }
-});
+})
 
-const emit = defineEmits(['close', 'detail']);
+const emit = defineEmits(['close', 'detail'])
 
-const agencyId = computed(() => props.agency?.officeId);
+const agencyId = computed(() => props.agency?.officeId)
 
 function handleDetailClick() {
-  emit('detail', props.agency.officeId); 
+  emit('detail', props.agency.officeId)
 }
 
-// 전화번호 링크 관련 로직 (기존과 동일)
-const isDial = computed(() => /^[\d\-+() ]+$/.test(props.agency?.phone || ''));
+// 전화번호 링크 관련 로직
+const isDial = computed(() => /^[\d\-+() ]+$/.test(props.agency?.phone || ''))
 const dialHref = computed(() =>
   isDial.value ? `tel:${(props.agency.phone || '').replaceAll(' ', '')}` : 'https://www.kakaocorp.com/main'
-);
+)
 </script>
 
 <style scoped>
@@ -130,7 +131,7 @@ const dialHref = computed(() =>
   cursor: pointer;
   text-align: center;
   border: none;
-  font-family: inherit; 
+  font-family: inherit;
   padding: 0;
 }
 </style>

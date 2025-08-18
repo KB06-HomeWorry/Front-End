@@ -57,7 +57,6 @@ import { getListingImage } from '@/components/utils/listingImage'
 const listings = ref([])
 const userToken = localStorage.getItem('user-token')
 
-// 정렬/페이지네이션 상태
 const sortBy = ref('name')
 const page = ref(1)
 const pageSize = 8
@@ -85,7 +84,6 @@ async function fetchListingList(){
   }
 }
 
-/* 필터 상태 */
 const selectedTypes = ref(['MONTHLY','JEONSE','SALE'])
 const sortMode = ref('server')
 
@@ -121,7 +119,7 @@ function cmpDefault(a, b) {
   } else if (ta === 'JEONSE') {
     const da = num(a.deposit), db = num(b.deposit)
     if (da !== db) return da - db
-  } else { // SALE
+  } else { 
     const sa = num(a.salePrice ?? a.deposit)
     const sb = num(b.salePrice ?? b.deposit)
     if (sa !== sb) return sa - sb

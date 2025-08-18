@@ -44,12 +44,6 @@ const emit = defineEmits(['update:modelValue', 'check']);
 </script>
 
 <style scoped>
-.email-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 4px;
-}
-
 .email-input-field {
   flex: none;
   width: 100%;
@@ -58,7 +52,7 @@ const emit = defineEmits(['update:modelValue', 'check']);
 
 .input-and-btn {
   display: flex;
-  align-items: center; /* or baseline, center 둘 다 OK */
+  align-items: center;
   gap: 4px;
 }
 

@@ -1,4 +1,3 @@
-<!-- src/pages/agency/components/ReviewItem.vue -->
 <template>
   <div class="review-item">
     <div class="review-header">
@@ -15,12 +14,12 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  index: { type: Number, required: true },  // 익명1, 익명2 ... 표시용
-  date: { type: Object, required: true },   // ISO 또는 'YYYY-MM-DD'
+  index: { type: Number, required: true }, 
+  date: { type: Object, required: true }, 
   content: { type: String, required: true }
 })
 
-// 날짜 포맷 (예: 2024-07-25 → 2024.07.25)
+// 날짜 포맷 (2025-10-11 → 2025.10.11)
 const formattedDate = computed(() => {
   if (!props.date) return '';
 
@@ -50,17 +49,15 @@ const formattedDate = computed(() => {
 
 .reviewer-name {
   color: var(--color-primary);
-  font-weight: 600;
 }
 
 .review-date {
-  color: var(--color-mediumgray);
-  font-size: 11px;
+  color: var(--color-darkgray);
 }
 
 .review-content {
-  color: var(--color-darkgray, #222);
-  line-height: 1.6;
+  color: var(--color-black);
+  line-height: 1.4;
   white-space: pre-line;
 }
 </style>

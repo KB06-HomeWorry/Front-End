@@ -1,11 +1,12 @@
 <template>
   <div class="filter-bar">
-    <!-- 세그먼트 캡슐 안에 4개 버튼 -->
+    <!-- 세그먼트 탭 -->
     <div class="tabs bodyMedium12px">
       <button
         v-for="t in typeTabs"
         :key="t.value"
         class="tab"
+        type="button"
         :class="{ active: localActive === t.value }"
         @click="selectTab(t.value)"
         :aria-pressed="localActive === t.value"
@@ -14,6 +15,7 @@
       </button>
     </div>
 
+    <!-- 정렬 선택 -->
     <SortSelect
       class="sort-host"
       v-model="localSort"
@@ -29,7 +31,7 @@ import SortSelect from '@/pages/agency/components/SortSelect.vue'
 
 const props = defineProps({
   modelValueTypes: { type: Array, default: () => ['MONTHLY','JEONSE','SALE'] },
-  modelValueSort:  { type: String, default: 'server' },
+  modelValueSort:  { type: String, default: 'server' }
 })
 const emit = defineEmits(['update:modelValueTypes','update:modelValueSort'])
 
@@ -37,17 +39,16 @@ const typeTabs = [
   { label: '전체', value: 'ALL' },
   { label: '월세', value: 'MONTHLY' },
   { label: '전세', value: 'JEONSE' },
-  { label: '매매', value: 'SALE' },
+  { label: '매매', value: 'SALE' }
 ]
 const ALL_TYPES = ['MONTHLY','JEONSE','SALE']
-
 const localActive = ref('ALL')
 const localSort   = ref(props.modelValueSort)
 
 const sortOptions = [
   { value: 'server',   label: '기본' },
   { value: 'priceAsc', label: '낮은가격순' },
-  { value: 'priceDesc',label: '높은가격순' },
+  { value: 'priceDesc',label: '높은가격순' }
 ]
 
 watch(() => props.modelValueTypes, (v) => {
@@ -63,6 +64,7 @@ function selectTab(val) {
   localActive.value = val
   emit('update:modelValueTypes', val === 'ALL' ? [...ALL_TYPES] : [val])
 }
+
 function emitSort() {
   emit('update:modelValueSort', localSort.value)
 }
@@ -88,6 +90,7 @@ function emitSort() {
   min-width: 0;
 }
 
+/* 세그먼트 래퍼 */
 .tabs{
   flex: 1 1 auto;
   min-width: 0;
@@ -98,10 +101,10 @@ function emitSort() {
   background: #fff;
   border: 1px solid var(--color-light);
   border-radius: var(--radius);
-  padding: 4px 6px; 
+  padding: 4px 6px;
   height: var(--h);
   box-sizing: border-box;
-  overflow: hidden; 
+  overflow: hidden;
 }
 
 .tab{
@@ -125,7 +128,7 @@ function emitSort() {
 
 .sort-host{ flex: 0 0 auto; }
 .sort-host :deep(select){
-  height: var(--h);                 /* 세그먼트와 정확히 동일 */
+  height: var(--h);                 /* 세그먼트와 동일 높이 */
   border-radius: 24px;
   border: 1px solid var(--color-light);
   background-color: #fff;

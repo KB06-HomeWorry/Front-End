@@ -1,8 +1,8 @@
 <template>
   <div class="root">
     <AuthTitle title="비밀번호 재설정" />
-    <form class="signup-form" @submit.prevent="onSubmit">
-      <!-- 새 비밀번호 -->
+    <!-- 기본 검증은 커스텀 로직 사용 -->
+    <form class="signup-form" @submit.prevent="onSubmit" novalidate>
       <InputField
         label="새로운 비밀번호를 입력해주세요."
         placeholder="새비밀번호를 입력하세요."
@@ -11,7 +11,6 @@
         v-model="password"
       />
 
-      <!-- 새비밀번호 확인 -->
       <InputField
         label="비밀번호를 한 번 더 입력해주세요."
         placeholder="비밀번호를 한 번 더 입력하세요."
@@ -19,10 +18,12 @@
         v-model="passwordCheck"
       />
 
-      <!-- 에러 메시지 -->
-      <div class="form-error" v-html="formError" bodyMedium16px></div>
+      <div
+        class="form-error bodyMedium16px"
+        v-html="formError"
+        aria-live="assertive"
+      ></div>
 
-      <!-- 버튼 하단 고정 -->
       <BtnMed
         class="submit-btn"
         type="submit"
@@ -30,84 +31,102 @@
         :disabled="loading"
       />
     </form>
+
+    <!-- 성공 알림 모달 -->
+    <CustomModal
+      v-model="successOpen"
+      :message="successMsg"
+      confirmText="확인"
+      @confirm="handleSuccessConfirm"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
-import AuthTitle from '@/pages/auth/components/AuthTitle.vue';
-import InputField from '@/components/input/InputField.vue';
-import BtnMed from '@/components/button/BtnMed.vue';
+import { ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+import AuthTitle from '@/pages/auth/components/AuthTitle.vue'
+import InputField from '@/components/input/InputField.vue'
+import BtnMed from '@/components/button/BtnMed.vue'
+import CustomModal from '@/components/modal/CustomModal.vue' 
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
-const password = ref('');
-const passwordCheck = ref('');
-const formError = ref('');
-const loading = ref(false);
+const password = ref('')
+const passwordCheck = ref('')
+const formError = ref('')
+const loading = ref(false)
 
-// 토큰부분!
-const token = route.query.token || route.params.token || '';
+// 성공 모달 상태
+const successOpen = ref(false)
+const successMsg = ref('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.')
 
+const token = route.query.token || route.params.token || ''
+
+/* 클라이언트 검증 -> 서버 요청 -> 후처리 */
 async function onSubmit() {
-  if (loading.value) return;
-  formError.value = '';
-  loading.value = true;
+  if (loading.value) return
+  formError.value = ''
+  loading.value = true
 
   // 유효성 검사
   if (!password.value.trim() || !passwordCheck.value.trim()) {
-    formError.value = '새 비밀번호와 확인란을 모두 입력해주세요.';
-    loading.value = false;
-    return;
+    formError.value = '새 비밀번호와 확인란을 모두 입력해주세요.'
+    loading.value = false
+    return
   }
 
   if (password.value.length < 8) {
-    formError.value = '비밀번호는 8자 이상이어야 합니다.';
-    loading.value = false;
-    return;
+    formError.value = '비밀번호는 8자 이상이어야 합니다.'
+    loading.value = false
+    return
   }
 
   if (password.value !== passwordCheck.value) {
-    formError.value = '비밀번호가 일치하지 않습니다.';
-    loading.value = false;
-    return;
+    formError.value = '비밀번호가 일치하지 않습니다.'
+    loading.value = false
+    return
   }
 
+  // 조합 규칙 - 영문 포함, 숫자 또는 특수 중 최소 하나, 8자 이상
   const passwordRegex =
-    /^(?=.*[A-Za-z])(?=.*\d|.*[!@#$%^&*()_+=\-])[A-Za-z\d!@#$%^&*()_+=\-]{8,}$/;
+    /^(?=.*[A-Za-z])(?:(?=.*\d)|(?=.*[!@#$%^&*()_+=\-]))[A-Za-z\d!@#$%^&*()_+=\-]{8,}$/
   if (!passwordRegex.test(password.value)) {
     formError.value =
-      '영문, 숫자, 특수문자 중 2종류 이상을 조합해 8자 이상 입력하세요.';
-    loading.value = false;
-    return;
+      '영문, 숫자, 특수문자 중 2종류 이상을 조합해 8자 이상 입력하세요.'
+    loading.value = false
+    return
   }
 
-  // --- API 요청 ---
   try {
     await axios.post('http://localhost:8080/member/resetpassword', {
       password: password.value,
-      token: token,
-    });
-    // --- 로그아웃 처리 ---
-    localStorage.removeItem('user-token');
-    delete axios.defaults.headers.common['Authorization'];
-    alert('비밀번호가 재설정되었습니다. 로그인 페이지로 이동합니다.');
-    router.replace('/auth/login');
+      token
+    })
+
+    // 토큰 제거 및 인증 헤더 초기화
+    localStorage.removeItem('user-token')
+    delete axios.defaults.headers.common['Authorization']
+    successOpen.value = true
   } catch (err) {
     formError.value =
       err.response?.data?.message ||
-      '비밀번호 재설정에 실패했습니다.<br>잠시 후 다시 시도해주세요.';
+      '비밀번호 재설정에 실패했습니다.<br>잠시 후 다시 시도해주세요.'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
+}
+
+// 모달 확인 시 로그인 페이지로 이동
+function handleSuccessConfirm() {
+  router.replace('/auth/login')
 }
 </script>
 
 <style scoped>
-.root{
+.root {
   padding-top: 60px;
 }
 

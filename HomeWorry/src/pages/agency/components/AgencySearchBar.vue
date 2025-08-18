@@ -1,4 +1,5 @@
 <template>
+  <!-- 중개사 검색 바 -->
   <div class="agency-search-bar">
     <div class="search-input-wrapper">
       <input
@@ -8,8 +9,7 @@
         @keyup.enter="onSearch"
         placeholder="이름 또는 지역을 입력하세요"
       />
-
-      <button class="icon-btn" @click="onSearch" aria-label="검색">
+      <button class="icon-btn" type="button" @click="onSearch" aria-label="검색">
         <img :src="searchIcon" alt="검색" class="search-icon" />
       </button>
     </div>
@@ -17,13 +17,16 @@
 </template>
 
 <script setup>
-import searchIcon from "@/assets/icons/search_dark.png";
-import { ref } from "vue";
-const emit = defineEmits(["search"]);
-const searchText = ref("");
+import { ref } from "vue"
+import searchIcon from "@/assets/icons/search_dark.png"
 
+const emit = defineEmits(["search"])
+
+const searchText = ref("")
+
+// 공백을 제거한 검색어를 부모로 전달
 function onSearch() {
-  emit("search", searchText.value.trim());
+  emit("search", searchText.value.trim())
 }
 </script>
 
@@ -39,7 +42,6 @@ function onSearch() {
   align-items: center;
   position: relative;
   width: 100%;
-  position: relative;
 }
 
 .search-input {
@@ -49,7 +51,6 @@ function onSearch() {
   border: 1px solid var(--color-lightgray);
   border-radius: 12px;
   padding: 0 40px 0 14px; /* 오른쪽 아이콘 영역 확보 */
-  /* background: #fafbfc; */
   outline: none;
   line-height: 40px;
 }

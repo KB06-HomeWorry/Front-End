@@ -84,7 +84,6 @@ function goToDetail() {
   box-sizing: border-box;
 }
 
-/* 북마크 버튼: 우상단에 고정, 배경/테두리X */
 .bookmark-btn {
   position: absolute;
   top: 6px;
@@ -119,7 +118,7 @@ function goToDetail() {
   object-fit: cover;
   border-radius: 12px;
   border: 1px solid #eee;
-  background: #f3f3f3;
+  background: var(--color-lightgray);
 }
 
 .info-wrap {

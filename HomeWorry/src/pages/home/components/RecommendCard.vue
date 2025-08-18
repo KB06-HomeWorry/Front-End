@@ -117,7 +117,7 @@ const addrUpToDong = (text) => {
     return m ? src.slice(0, src.indexOf(m[0]) + m[0].length) : '';
   };
 
-  // "동" → "읍/면/리" → "구" 순서로 매칭 시도
+  // "동" -> "읍/면/리" -> "구" 순서로 매칭 시도
   // "동"은 뒤에 공백/끝/숫자/하이픈이 오는 경우만 경계로 인정
   let head =
     cutAt(base, /[가-힣0-9]+동(?=\s|$|[0-9-])/) ||

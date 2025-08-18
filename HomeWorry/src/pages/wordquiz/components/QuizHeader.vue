@@ -10,7 +10,6 @@
 <script setup>
 import homeQuizIcon from "@/assets/icons/home_quiz.png";
 const props = defineProps({
-  // imgSrc: { type: String, required: true },
   level: { type: String, required: true }, // "초급" | "중급" | "고급"
   number: { type: [String, Number], required: true },
 });
@@ -21,7 +20,7 @@ const props = defineProps({
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 7px; /* 이미지와 텍스트 사이 여백 */
+  gap: 7px; /* 이미지 텍스트 사이 여백 */
   background: var(--color-white);
   padding: 0 20px;
 }

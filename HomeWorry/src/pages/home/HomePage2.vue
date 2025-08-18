@@ -204,7 +204,7 @@ const handleCategoryClick = (category) => {
 .home-root {
   width: 393px;
   margin: 0 auto;
-  padding: 14px 16px 8px 16px;
+  padding: 0px 16px 8px 16px;
   box-sizing: border-box;
 }
 

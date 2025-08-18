@@ -1,7 +1,9 @@
 <template>
+  <!-- 지도 플로팅 버튼과 지역 선택 모달 -->
   <div ref="fabWrap" class="fab-wrap">
     <button
       class="floating-btn"
+      type="button"
       @click="modalOpen = true"
       aria-label="지도에서 지역검색"
     >
@@ -19,11 +21,9 @@
     <div v-if="modalOpen" class="modal-overlay">
       <div class="region-modal">
         <div class="region-path bodyMedium16px">
-          <!-- 선택 전 -->
           <template v-if="!selectedProvince">
             <span class="placeholder">지역을 선택해주세요</span>
           </template>
-          <!-- 선택 후: 시/도 > 시군구 > 동 -->
           <template v-else>
             <span>{{ selectedProvince }}</span>
             <span v-if="selectedCity"> &gt; {{ selectedCity }}</span>
@@ -32,6 +32,7 @@
 
           <button
             class="close-btn titleBold20px"
+            type="button"
             @click="closeModal"
             aria-label="닫기"
           >
@@ -76,8 +77,10 @@
           </div>
         </div>
 
+        <!-- 지도 이동 -->
         <button
           class="submit-btn bodyMedium16px"
+          type="button"
           :disabled="!selectedDistrict || loading"
           @click="goToMap"
         >
@@ -98,7 +101,6 @@ const cityList = ref([])
 const districtList = ref([])
 
 const loading = ref(false)
-
 const modalOpen = ref(false)
 const selectedProvince = ref(null)
 const selectedCity = ref(null)
@@ -106,12 +108,13 @@ const selectedDistrict = ref(null)
 
 const fabWrap = ref(null)
 
+/* 리스트 컨테이너 우측에 고정 배치 */
 function updateFabPosition() {
   const container = document.querySelector('.agency-list-page')
   if (!container || !fabWrap.value) return
-  const containerRect = container.getBoundingClientRect()
+  const rect = container.getBoundingClientRect()
   fabWrap.value.style.position = 'fixed'
-  fabWrap.value.style.left = `${containerRect.right - 75}px`
+  fabWrap.value.style.left = `${rect.right - 75}px`
   fabWrap.value.style.bottom = '120px'
   fabWrap.value.style.right = 'unset'
 }
@@ -183,6 +186,7 @@ function closeModal() {
   districtList.value = []
 }
 
+/* 좌표 조회 후 지도 페이지로 이동 */
 async function goToMap() {
   if (!selectedDistrict.value || !selectedCity.value || !selectedProvince.value) return
   loading.value = true
