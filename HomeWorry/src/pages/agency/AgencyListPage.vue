@@ -1,6 +1,18 @@
 <template>
   <div>
-    <SimpleHeader title="중개사무소"></SimpleHeader>
+    <SimpleHeader title="중개사무소">
+      <!-- 우측 액션 버튼 -->
+      <template #action>
+        <button
+          class="agency-bookmark-btn"
+          @click="goBookmark"
+          aria-label="북마크 페이지로 이동"
+          title="내 북마크"
+        >
+          <img :src="bookmarkIcon" alt="북마크" class="agency-bookmark-img" />
+        </button>
+      </template>
+    </SimpleHeader>
 
     <div class="agency-list-page">
       <!-- 검색 + 정렬 -->
@@ -57,13 +69,15 @@ import MapFloatingButtonWithModal from '@/pages/agency/components/MapFloatingBut
 import axios from 'axios'
 import { getAgencyImage } from '@/components/utils/agencyImage'
 
+import bookmarkIcon from '@/assets/icons/bookmark_box.png'
+
 const route = useRoute()
 const router = useRouter()
 
 const agencies = ref([])
 
 /* 페이지네이션 */
-const pageSize = 10
+const pageSize = 8
 const page = ref(Math.max(1, parseInt(route.query.page ?? '1', 10) || 1))
 
 /* 검색/정렬 상태 */
@@ -93,6 +107,11 @@ function onSearch(val) {
   page.value = 1
 }
 
+// 오른쪽 북마크 페이지 이동
+function goBookmark() {
+  router.push('/my/agency/bookmark')
+}
+
 const filteredList = computed(() =>
   searchText.value
     ? agencies.value.filter(a => {
@@ -103,12 +122,35 @@ const filteredList = computed(() =>
     : agencies.value
 )
 
+// 한국어 자연 정렬 + 숫자 인식
+const collator = new Intl.Collator('ko', {
+  numeric: true,
+  sensitivity: 'base'
+})
+
+function bucketAndKey(name) {
+  const s = (name ?? '').trim()
+  if (!s) return { bucket: 1, key: '' }
+
+  const first = s[0]
+  const isAlphaNumHangul = /[0-9A-Za-z가-힣]/.test(first)
+  const bucket = isAlphaNumHangul ? 0 : 1 
+  const key = bucket === 0 ? s : s.replace(/^[^0-9A-Za-z가-힣]+/, '')
+  return { bucket, key }
+}
+
 const sortedList = computed(() => {
   const list = [...filteredList.value]
   if (sortBy.value === 'trust') {
     return list.sort((a, b) => (b.totalScore ?? 0) - (a.totalScore ?? 0))
   }
-  return list.sort((a, b) => (a.officeName || '').localeCompare(b.officeName || '', 'ko'))
+  // 이름순 특수문자 시작은 뒤로
+  return list.sort((a, b) => {
+    const A = bucketAndKey(a.officeName)
+    const B = bucketAndKey(b.officeName)
+    if (A.bucket !== B.bucket) return A.bucket - B.bucket
+    return collator.compare(A.key, B.key)
+  })
 })
 
 const totalPages = computed(() => Math.max(1, Math.ceil(sortedList.value.length / pageSize)))
@@ -155,6 +197,31 @@ watch([sortedList, totalPages], () => {
   margin: 0 1rem;
   background: #fff;
   padding: 16px 0;
+}
+
+/* SimpleHeader 우측 버튼 자리 확보 (제목과 겹침 방지) */
+:deep(.simple-header) {
+  padding-right: 44px; /* 우측 아이콘 폭 + 여유 */
+}
+
+/* 우측 상단 고정 액션 버튼 */
+.agency-bookmark-btn {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.agency-bookmark-img {
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  display: block;
 }
 
 .search-sort-row {
