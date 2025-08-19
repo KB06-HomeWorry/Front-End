@@ -1,6 +1,9 @@
 <template>
   <div>
-    <SimpleHeader :title="agency.office_name || ''" />
+    <!-- 고정 래퍼로 감싼 헤더 -->
+    <div class="header-fixed">
+      <SimpleHeader :title="agency.office_name || ''" />
+    </div>
 
     <div class="page-container">
       <div v-if="!reviewType" class="initial-choice-container">
@@ -216,7 +219,7 @@ function onSelect(idx, answerIdx) {
   if (currentStep.value < activeQuestions.value.length) {
     currentStep.value++
     nextTick(() => {
-      // ⬇️ 컨테이너 내부 스크롤만 이동 (헤더는 고정)
+      // ⬇컨테이너 내부 스크롤만 이동 (헤더는 고정)
       const container = document.querySelector('.write-review')
       const lastQ = container?.querySelector('.review-list > div:last-child')
       if (!container || !lastQ) return
@@ -257,24 +260,25 @@ function handleSuccessConfirm() {
 </script>
 
 <style scoped>
+/* ✅ 고정 헤더 래퍼: 내부 구현과 무관하게 항상 고정 */
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  background: #fff;      /* 스크롤 시 깜빡임 방지 */
+  max-width: 393px;      /* 앱 레이아웃 폭 */
+  margin: 0 auto;        /* 중앙 정렬 */
+}
+
+/* 페이지 컨테이너: 고정 헤더 높이만큼 패딩 */
 .page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: #fff;
-  padding-top: 60px; /* ⬅️ 헤더를 fixed로 고정했을 때 본문 내려줌 */
-}
-
-/* SimpleHeader를 상단에 확실히 고정 */
-:deep(.simple-header) {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 393px;
-  z-index: 1200;
-  background: #fff; /* 스크롤 시 깜빡임 방지 */
+  padding-top: 60px; /* ⬅ 헤더 높이 */
 }
 
 /* 초기 선택 화면 */
@@ -305,7 +309,7 @@ function handleSuccessConfirm() {
   position: fixed;
   left: 0;
   right: 0;
-  top: 60px; /* ⬅️ 헤더 높이만큼 내림 (기존 40px → 60px) */
+  top: 60px; /* ⬅ 헤더 높이만큼 내림 */
   z-index: 1100;
   background: #fff;
   padding: 18px 2rem 8px 2rem;
