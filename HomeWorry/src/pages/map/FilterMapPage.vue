@@ -290,18 +290,25 @@ async function loadAllData() {
 }
 
 onMounted(() => {
-  getCurrentLocation(
-    (location) => {
-      lat.value = location.lat;
-      lng.value = location.lng;
-      currentLocation.value = location;
-      mapCenter.value = location;
-      loadAllData();
-    },
-    () => {
-      loadAllData();
-    }
-  );
+  // URL에 위치 정보가 없으면 현재 위치를 가져오고, 있으면 데이터만 로드
+  if (!route.query.center) {
+    getCurrentLocation(
+      (location) => {
+        lat.value = location.lat;
+        lng.value = location.lng;
+        currentLocation.value = location;
+        mapCenter.value = location;
+        loadAllData();
+      },
+      () => {
+        // 위치 정보 가져오기 실패 시 기본 위치로 데이터 로드
+        loadAllData();
+      }
+    );
+  } else {
+    // URL에 위치 정보가 있으면 해당 위치로 데이터 로드
+    loadAllData();
+  }
 });
 
 const getCurrentLocation = (success, fail) => {
@@ -316,15 +323,20 @@ const getCurrentLocation = (success, fail) => {
 };
 
 const moveToCurrentLocation = () => {
-  if (currentLocation.value && mapInstance.value) {
-    const newCenter = new window.kakao.maps.LatLng(
-      currentLocation.value.lat,
-      currentLocation.value.lng
-    );
-    mapInstance.value.panTo(newCenter);
-    mapInstance.value.setLevel(3);
-    updateURL(mapInstance.value);
-  }
+  getCurrentLocation(
+    (location) => {
+      if (mapInstance.value) {
+        currentLocation.value = location; // 현재 위치 정보 업데이트
+        const newCenter = new window.kakao.maps.LatLng(location.lat, location.lng);
+        mapInstance.value.panTo(newCenter);
+        mapInstance.value.setLevel(3);
+        updateURL(mapInstance.value);
+      }
+    },
+    () => {
+      alert('현재 위치를 가져올 수 없습니다.');
+    }
+  );
 };
 
 const onMapReady = (map) => {
