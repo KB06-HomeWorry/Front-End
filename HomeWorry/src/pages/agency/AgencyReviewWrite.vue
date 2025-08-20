@@ -1,6 +1,9 @@
 <template>
   <div>
-    <SimpleHeader :title="agency.office_name || ''" />
+    <!-- 고정 래퍼로 감싼 헤더 -->
+    <div class="header-fixed">
+      <SimpleHeader :title="agency.office_name || ''" />
+    </div>
 
     <div class="page-container">
       <div v-if="!reviewType" class="initial-choice-container">
@@ -148,7 +151,7 @@ const allQuestions = [
       { type: 'bad',  label: 'Bad',  emoji: '🤔', text: '설명이 부족하거나 혼란스러웠어요' }
     ]
   },
-        // 거래 완료 시 추가 문항 (6-7)
+  // 거래 완료 시 추가 문항 (6-7)
   {
     text: '계약서 작성과 특약사항 조율 과정이 투명하게 진행됐나요?',
     choices: [
@@ -216,8 +219,14 @@ function onSelect(idx, answerIdx) {
   if (currentStep.value < activeQuestions.value.length) {
     currentStep.value++
     nextTick(() => {
-      const lastQ = document.querySelector('.review-list > div:last-child')
-      if (lastQ) lastQ.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // ⬇컨테이너 내부 스크롤만 이동 (헤더는 고정)
+      const container = document.querySelector('.write-review')
+      const lastQ = container?.querySelector('.review-list > div:last-child')
+      if (!container || !lastQ) return
+
+      const paddingTop = parseFloat(getComputedStyle(container).paddingTop) || 0
+      const offset = lastQ.offsetTop - paddingTop - 8
+      container.scrollTo({ top: offset, behavior: 'smooth' })
     })
   }
 }
@@ -251,11 +260,25 @@ function handleSuccessConfirm() {
 </script>
 
 <style scoped>
+/* ✅ 고정 헤더 래퍼: 내부 구현과 무관하게 항상 고정 */
+.header-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  background: #fff;      /* 스크롤 시 깜빡임 방지 */
+  max-width: 393px;      /* 앱 레이아웃 폭 */
+  margin: 0 auto;        /* 중앙 정렬 */
+}
+
+/* 페이지 컨테이너: 고정 헤더 높이만큼 패딩 */
 .page-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   background-color: #fff;
+  padding-top: 60px; /* ⬅ 헤더 높이 */
 }
 
 /* 초기 선택 화면 */
@@ -281,12 +304,13 @@ function handleSuccessConfirm() {
   margin-top: 16px;
 }
 
+/* 진행바: 헤더 아래에 고정되도록 top 보정 */
 .progress-bar-fixed {
   position: fixed;
   left: 0;
   right: 0;
-  top: 40px;
-  z-index: 100;
+  top: 60px; /* ⬅ 헤더 높이만큼 내림 */
+  z-index: 1100;
   background: #fff;
   padding: 18px 2rem 8px 2rem;
   max-width: 393px;
@@ -296,7 +320,7 @@ function handleSuccessConfirm() {
 .write-review {
   overflow-y: auto;
   margin: 0 2rem;
-  padding-top: 64px;
+  padding-top: 64px; /* 진행바 높이만큼 여백 */
 }
 .write-review::-webkit-scrollbar { display: none; }
 

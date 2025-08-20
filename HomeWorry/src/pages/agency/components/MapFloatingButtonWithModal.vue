@@ -25,9 +25,26 @@
             <span class="placeholder">지역을 선택해주세요</span>
           </template>
           <template v-else>
-            <span>{{ selectedProvince }}</span>
-            <span v-if="selectedCity"> &gt; {{ selectedCity }}</span>
-            <span v-if="selectedDistrict"> &gt; {{ selectedDistrict }}</span>
+            <!-- 대분류(클릭 시 '시/군/구' 단계로 돌아감: province는 유지, city/district만 해제) -->
+            <button class="crumb" type="button" @click="goCrumb('province')">
+              {{ selectedProvince }}
+            </button>
+            <span v-if="selectedCity"> &gt; </span>
+
+            <!-- 중분류(클릭 시 '동' 선택 단계로 돌아감: district만 해제) -->
+            <template v-if="selectedCity">
+              <button class="crumb" type="button" @click="goCrumb('city')">
+                {{ selectedCity }}
+              </button>
+              <span v-if="selectedDistrict"> &gt; </span>
+            </template>
+
+            <!-- 소분류(클릭 시 해당 단계에서 재선택: district만 해제) -->
+            <template v-if="selectedDistrict">
+              <button class="crumb" type="button" @click="goCrumb('district')">
+                {{ selectedDistrict }}
+              </button>
+            </template>
           </template>
 
           <button
@@ -79,7 +96,7 @@
 
         <!-- 지도 이동 -->
         <button
-          class="submit-btn bodyMedium16px"
+          class="submit-btn bodyMedium14px"
           type="button"
           :disabled="!selectedDistrict || loading"
           @click="goToMap"
@@ -108,7 +125,6 @@ const selectedDistrict = ref(null)
 
 const fabWrap = ref(null)
 
-/* 리스트 컨테이너 우측에 고정 배치 */
 function updateFabPosition() {
   const container = document.querySelector('.agency-list-page')
   if (!container || !fabWrap.value) return
@@ -186,6 +202,23 @@ function closeModal() {
   districtList.value = []
 }
 
+/* 상단 경로(대/중/소) 클릭 시 단계별로 뒤로 */
+function goCrumb(level) {
+  if (level === 'province') {
+    selectedCity.value = null
+    selectedDistrict.value = null
+    districtList.value = []
+    return
+  }
+  if (level === 'city') {
+    selectedDistrict.value = null
+    return
+  }
+  if (level === 'district') {
+    selectedDistrict.value = null
+  }
+}
+
 /* 좌표 조회 후 지도 페이지로 이동 */
 async function goToMap() {
   if (!selectedDistrict.value || !selectedCity.value || !selectedProvince.value) return
@@ -256,7 +289,7 @@ async function goToMap() {
   background: rgba(0, 0, 0, 0.24);
   z-index: 1001;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-start;  
   justify-content: center;
 }
 
@@ -265,7 +298,7 @@ async function goToMap() {
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
   width: 360px;
-  margin: 64px auto 0 auto;
+  margin: 100px auto 0 auto; 
   padding: 24px 22px 16px 22px;
   position: relative;
 }
@@ -280,6 +313,19 @@ async function goToMap() {
   align-items: center;
   gap: 7px;
   margin-bottom: 18px;
+}
+
+/* 상단 경로 클릭 가능하게 */
+.crumb {
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 6px;
+}
+.crumb:hover {
+  background: var(--color-primary-10);
 }
 
 .close-btn {
@@ -299,15 +345,28 @@ async function goToMap() {
   max-height: 200px;
   overflow-y: auto;
   padding-right: 6px;
+
+  grid-auto-rows: 32px; 
 }
 
 .region-item {
-  padding: 6px 0;
+  box-sizing: border-box;    
+  height: 100%;           
+  padding: 0;              
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   text-align: center;
+  line-height: 1;      
   color: var(--color-mediumgray);
   border: 1px solid var(--color-mediumgray);
   border-radius: 12px;
   cursor: pointer;
+
+  white-space: nowrap;  
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 
 .region-item:hover,
@@ -318,12 +377,13 @@ async function goToMap() {
 
 .submit-btn {
   width: 100%;
+  height: 35px;
+  line-height: 35px;
   background: var(--color-primary-10);
   color: var(--color-primary);
   border: none;
-  padding: 12px 0;
-  border-radius: 9px;
-  margin-top: 10px;
+  border-radius: 12px;
+  margin-top: 8px;
   cursor: pointer;
   transition: filter 0.13s;
 }
