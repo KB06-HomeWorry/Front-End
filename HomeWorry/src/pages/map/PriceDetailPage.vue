@@ -3,7 +3,7 @@
   <div class="price-detail-container">
     <img
       :src="roomImg"
-      @error="onImgError"
+      
       alt="매물 이미지"
       style="
         width: 100%;
@@ -67,7 +67,7 @@
         <div class="menu-list titleBold20px">평면도</div>    
         <img
         :src="bpImg"
-        @error="onImgError"
+        
         alt="평면도"
         style="
           width: 100%;
@@ -108,20 +108,7 @@ const priceDetailData = ref({});
 const roomImg = ref('');
 const bpImg = ref('');
 
-function onImgError() {
-  const imageResult = getListingImage(
-    housingType.value,
-    String(route.params.priceTrendId)
-  );
 
-  if (typeof imageResult === 'object' && imageResult.flat && imageResult.blueprint) {
-    roomImg.value = imageResult.flat;
-    bpImg.value = imageResult.blueprint;
-  } else {
-    roomImg.value = imageResult;
-    bpImg.value = '';
-  }
-}
 
 // 가격 억대로 표현
 const price = computed(() => {
@@ -194,43 +181,51 @@ onMounted(async () => {
     return;
   }
 
+  let data2 = {};
   try {
     const endpoint2 = `/api/pricetrend/${priceTrendId}`;
     const response2 = await fetch(endpoint2);
-    const data2 = await response2.json();
-
+    data2 = await response2.json();
+    console.log('Fetched data (data2):', data2);
+    
     trendlat.value = data2.latitude;
     trendlng.value = data2.longitude;
     trendprice.value = data2.price;
     priceDetailData.value = data2;
-    // 서버 이미지 우선, 없으면 유틸이 타입/시드로 폴백
-    const primaryImage =
-      data2.mainImage ||
-      data2.imageUrl ||
-      (Array.isArray(data2.images) && data2.images.length
-        ? data2.images[0]
-        : null);
-
-    const seedKey = String(
-      data2.id ??
-        route.params.priceTrendId ??
-        data2.address ??
-        data2.listing ??
-        ''
-    );
-    const imageResult = getListingImage(housingType.value, seedKey, primaryImage);
-    if (typeof imageResult === 'object' && imageResult.flat && imageResult.blueprint) {
-      roomImg.value = imageResult.flat;
-      bpImg.value = imageResult.blueprint;
-    } else {
-      roomImg.value = imageResult;
-    }
   } catch (error) {
     console.error('데이터 가져오기 실패:', error);
-    roomImg.value = getListingImage(
-      housingType.value,
-      String(route.params.priceTrendId)
-    );
+    // data2 remains empty, fallbacks will be used.
+  }
+
+  console.log('Route params:', route.params);
+
+  const seedKey = String(
+    data2.id ??
+      route.params.priceTrendId ??
+      data2.address ??
+      data2.listing ??
+      ''
+  );
+  console.log('Generated seedKey:', seedKey);
+
+  // We need housingType for the fallback, which depends on data2.
+  // So we compute it after the try-catch.
+  const ht = data2?.housingType || '-';
+
+  const fallbackResult = getListingImage(ht, seedKey);
+
+  const primaryImage = data2.mainImage || data2.imageUrl || (Array.isArray(data2.images) && data2.images.length ? data2.images[0] : null);
+  // Assuming blueprint might also come from server one day
+  const primaryBlueprint = data2.blueprintImage; 
+
+  if (typeof fallbackResult === 'object' && fallbackResult.flat) {
+    // Apartment case
+    roomImg.value = primaryImage || fallbackResult.flat;
+    bpImg.value = primaryBlueprint || fallbackResult.blueprint;
+  } else {
+    // Other cases
+    roomImg.value = primaryImage || fallbackResult;
+    bpImg.value = ''; // No blueprint for non-apartments
   }
 });
 </script>
