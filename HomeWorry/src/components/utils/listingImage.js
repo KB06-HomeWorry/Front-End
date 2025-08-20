@@ -85,19 +85,18 @@ function mapToIndex(seed, n) {
 }
 
 export function getFallbackImage(housingType, seedKey = '') {
-  console.log('getFallbackImage called with:', { housingType, seedKey });
+
   const cat = getCatByHousingType(housingType);
-  console.log('Calculated cat:', cat);
+
   if (cat === 'list-flat' && housingType.includes('아파트')) {
     const flatPool = FALLBACK_POOLS['list-flat'];
     const blueprintPool = FALLBACK_POOLS['list-blueprint'];
-    console.log('Blueprint Pool Length:', blueprintPool.length);
     if (!flatPool || flatPool.length === 0 || !blueprintPool || blueprintPool.length === 0) return '';
     const seed = hash32(String(seedKey) + '|' + String(housingType || ''));
-    console.log('Seed for flat/blueprint:', seed);
+
     const flatIdx = mapToIndex(seed, flatPool.length);
     const blueprintIdx = mapToIndex(seed, blueprintPool.length);
-    console.log('Calculated flatIdx:', flatIdx, 'blueprintIdx:', blueprintIdx);
+
     return {
       flat: flatPool[flatIdx],
       blueprint: blueprintPool[blueprintIdx]

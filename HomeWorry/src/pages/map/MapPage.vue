@@ -240,18 +240,7 @@ async function loadListings() {
 }
 
 /** 초기엔 데이터 안 불러오고 위치만 */
-onMounted(() => {
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        lat.value = pos.coords.latitude;
-        lng.value = pos.coords.longitude;
-        mapCenter.value = { lat: lat.value, lng: lng.value };
-      },
-      () => {}
-    );
-  }
-});
+
 
 /** 지도 이벤트 */
 function onMapReady(map) {
