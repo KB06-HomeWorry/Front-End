@@ -1,10 +1,13 @@
 ## 꼼꼼한 서류 분석과 신뢰성 있는 중개사 정보로 안전한 부동산 거래를 이끄는, **집걱정단**
 
-**👉 [서비스 바로가기](http://home-worry-party-alb-341952107.ap-northeast-2.elb.amazonaws.com)**
+
+<img width="1620" height="1080" alt="집걱정단 표지" src="https://github.com/user-attachments/assets/2782ff20-18e8-44eb-9967-0cbfb076d7d8" />
+
+https://github.com/user-attachments/assets/9da407a8-96df-4990-a846-7536358232aa
 
 **📹 [영상 보러가기](https://youtu.be/QGLd_JbfpK8)**
 
-https://github.com/user-attachments/assets/9da407a8-96df-4990-a846-7536358232aa
+**👉 [서비스 바로가기](http://home-worry-party-alb-341952107.ap-northeast-2.elb.amazonaws.com)**
 
 <br />
 
